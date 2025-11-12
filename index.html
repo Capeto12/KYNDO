@@ -1,11 +1,99 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Memoria Aves</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #1f2937;
+    }
+    h1 {
+      margin: 0 0 4px 0;
+      font-size: 22px;
+    }
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+    #board {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+      max-width: 960px;
+      margin: 0 auto 40px auto;
+    }
+    .card {
+      background: #111827;
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      overflow: hidden;
+      text-align: center;
+      padding: 8px;
+    }
+    .card img {
+      max-width: 100%;
+      max-height: 120px;
+      display: block;
+      margin: 0 auto 8px auto;
+      object-fit: cover;
+    }
+    .card-title {
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Juego de Memoria: Aves</h1>
-  <p>Versión inicial, con 10 cartas.</p>
+  <header>
+    <h1>Juego de Memoria: Aves</h1>
+    <p>Primer paso: mostrar las 10 cartas del paquete <code>pack-1.json</code>.</p>
+  </header>
+
+  <main id="board">
+    <!-- Aquí se dibujan las cartas con JavaScript -->
+  </main>
+
+  <script>
+    async function cargarCartas() {
+      try {
+        const respuesta = await fetch("content/birds/pack-1.json");
+        const datos = await respuesta.json();
+
+        const tablero = document.getElementById("board");
+        tablero.innerHTML = ""; // limpiar
+
+        datos.assets.forEach((carta) => {
+          const div = document.createElement("div");
+          div.className = "card";
+
+          const img = document.createElement("img");
+          img.src = carta.image_url;
+          img.alt = carta.title;
+
+          const titulo = document.createElement("div");
+          titulo.className = "card-title";
+          titulo.textContent = carta.title;
+
+          div.appendChild(img);
+          div.appendChild(titulo);
+          tablero.appendChild(div);
+        });
+      } catch (e) {
+        const tablero = document.getElementById("board");
+        tablero.innerHTML = "<p>No se pudieron cargar las cartas. Revisa la ruta de <code>pack-1.json</code>.</p>";
+        console.error(e);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", cargarCartas);
+  </script>
 </body>
 </html>
