@@ -4,16 +4,56 @@
   "version": 1,
   "count": 10,
   "assets": [
-    { "id": "guacamaya-roja",   "title": "Guacamaya Roja",       "image_url": "content/content/birds/img/guacamaya-roja.webp" },
-    { "id": "condor-andino",    "title": "Cóndor Andino",        "image_url": "content/content/birds/img/condor-andino.webp" },
-    { "id": "tucan",            "title": "Tucán",                "image_url": "content/content/birds/img/tucan.webp" },
-    { "id": "colibri",          "title": "Colibrí",              "image_url": "content/content/birds/img/colibri.webp" },
-    { "id": "garza-blanca",     "title": "Garza Blanca",         "image_url": "content/content/birds/img/garza-blanca.webp" },
-    { "id": "flamenco",         "title": "Flamenco",             "image_url": "content/content/birds/img/flamenco.webp" },
-    { "id": "buho",             "title": "Búho",                 "image_url": "content/content/birds/img/buho.webp" },
-    { "id": "picozapato",       "title": "Picozapato",           "image_url": "content/content/birds/img/picozapato.webp" },
-    { "id": "martin-pescador",  "title": "Martín Pescador",      "image_url": "content/content/birds/img/martin-pescador.webp" },
-    { "id": "halcon",           "title": "Halcón",               "image_url": "content/content/birds/img/halcon.webp" }
+    {
+      "id": "guacamaya-roja",
+      "title": "Guacamaya Roja",
+      "image_url": "content/content/birds/content/birds/img/guacamaya-roja.webp"
+    },
+    {
+      "id": "condor-andino",
+      "title": "Cóndor Andino",
+      "image_url": "content/content/birds/content/birds/img/condor-andino.webp"
+    },
+    {
+      "id": "tucan",
+      "title": "Tucán",
+      "image_url": "content/content/birds/content/birds/img/tucan.webp"
+    },
+    {
+      "id": "colibri",
+      "title": "Colibrí",
+      "image_url": "content/content/birds/content/birds/img/colibri.webp"
+    },
+    {
+      "id": "garza-blanca",
+      "title": "Garza Blanca",
+      "image_url": "content/content/birds/content/birds/img/garza-blanca.webp"
+    },
+    {
+      "id": "flamenco",
+      "title": "Flamenco",
+      "image_url": "content/content/birds/content/birds/img/flamenco.webp"
+    },
+    {
+      "id": "buho",
+      "title": "Búho",
+      "image_url": "content/content/birds/content/birds/img/buho.webp"
+    },
+    {
+      "id": "picozapato",
+      "title": "Picozapato",
+      "image_url": "content/content/birds/content/birds/img/picozapato.webp"
+    },
+    {
+      "id": "martin-pescador",
+      "title": "Martín Pescador",
+      "image_url": "content/content/birds/content/birds/img/martin-pescador.webp"
+    },
+    {
+      "id": "halcon",
+      "title": "Halcón",
+      "image_url": "content/content/birds/content/birds/img/halcon.webp"
+    }
   ],
   "nextPage": null
 }
