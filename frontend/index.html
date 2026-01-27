@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <title>KYNDO — Memory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
+      background: #fff;
     }
 
     header {
@@ -23,10 +25,38 @@
       padding: 12px;
     }
 
-    .card-placeholder {
+    .card {
       aspect-ratio: 1 / 1;
       background: #e0e0e0;
       border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* OVERLAY */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    #overlay.active {
+      display: flex;
+    }
+
+    .focused-card {
+      width: 80vw;
+      max-width: 320px;
+      aspect-ratio: 1 / 1;
+      background: #fff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
     }
 
     footer {
@@ -35,38 +65,54 @@
     }
   </style>
 </head>
+
 <body>
 
-  <header>
-    <h1>Memory</h1>
-  </header>
+<header>
+  <h1>Memory</h1>
+</header>
 
-  <section id="board">
-    <!-- Cartas vivirán aquí -->
-    <div class="card-placeholder"></div>
-    <div class="card-placeholder"></div>
-    <div class="card-placeholder"></div>
-    <div class="card-placeholder"></div>
-    <div class="card-placeholder"></div>
-    <div class="card-placeholder"></div>
-    <div class="card-placeholder"></div>
-    <div class="card-placeholder"></div>
-  </section>
+<section id="board">
+  <!-- Simulación de cartas -->
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+  <div class="card"></div>
+</section>
 
-  <footer>
-    <a href="../">Volver al Home</a>
-  </footer>
+<footer>
+  <a href="../">Volver al Home</a>
+</footer>
 
-</body>
-</html>
+<!-- Overlay de foco -->
+<div id="overlay">
+  <div class="focused-card">
+    Carta
+  </div>
+</div>
 
-  <main>
-    <h1>Memory</h1>
-    <p>Pantalla de juego (estructura)</p>
+<script>
+  const cards = document.querySelectorAll('.card');
+  const overlay = document.getElementById('overlay');
 
-    <p>
-      <a href="../">Volver al Home</a>
-    </p>
-  </main>
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      overlay.classList.add('active');
+    });
+  });
+
+  overlay.addEventListener('click', () => {
+    overlay.classList.remove('active');
+  });
+</script>
+
 </body>
 </html>
