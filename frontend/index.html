@@ -127,9 +127,10 @@
 </header>
 
 <section id="board">
- <script>
+<script>
   const board = document.getElementById('board');
   const overlay = document.getElementById('overlay');
+  const focusedCard = document.querySelector('.focused-card');
 
   let revealedCards = [];
 
@@ -141,7 +142,7 @@
     overlay.classList.remove('active');
   }
 
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 150; i++) {
     const card = document.createElement('div');
     card.className = 'card hidden';
     card.dataset.state = 'hidden';
@@ -155,6 +156,7 @@
       card.classList.add('revealed');
       revealedCards.push(card);
 
+      // IMPORTANTE: abrir foco SIEMPRE
       openFocus();
     });
 
