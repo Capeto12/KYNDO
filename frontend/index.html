@@ -20,7 +20,7 @@
 
     #board {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
       gap: 8px;
       padding: 12px;
     }
@@ -73,19 +73,15 @@
 </header>
 
 <section id="board">
-  <!-- Simulación de cartas -->
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
-  <div class="card"></div>
+  <script>
+  const board = document.getElementById('board');
+  for (let i = 0; i < 96; i++) {
+    const c = document.createElement('div');
+    c.className = 'card';
+    board.appendChild(c);
+  }
+</script>
+
 </section>
 
 <footer>
