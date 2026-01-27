@@ -73,6 +73,15 @@
   align-items: center;
 }
 
+    .card.hidden {
+  background: #bdbdbd;
+}
+
+.card.revealed {
+  background: #ffffff;
+  border: 1px solid #999;
+}
+
 
     /* OVERLAY */
     #overlay {
@@ -118,14 +127,45 @@
 </header>
 
 <section id="board">
-  <script>
+ <script>
   const board = document.getElementById('board');
-  for (let i = 0; i < 150; i++) {
-    const c = document.createElement('div');
-    c.className = 'card';
-    board.appendChild(c);
+  const overlay = document.getElementById('overlay');
+
+  let revealedCards = [];
+
+  function openFocus() {
+    overlay.classList.add('active');
   }
+
+  function closeFocus() {
+    overlay.classList.remove('active');
+  }
+
+  for (let i = 0; i < 120; i++) {
+    const card = document.createElement('div');
+    card.className = 'card hidden';
+    card.dataset.state = 'hidden';
+
+    card.addEventListener('click', () => {
+      if (card.dataset.state !== 'hidden') return;
+      if (revealedCards.length >= 2) return;
+
+      card.dataset.state = 'revealed';
+      card.classList.remove('hidden');
+      card.classList.add('revealed');
+      revealedCards.push(card);
+
+      openFocus();
+    });
+
+    board.appendChild(card);
+  }
+
+  overlay.addEventListener('click', () => {
+    closeFocus();
+  });
 </script>
+
 
 </section>
 
