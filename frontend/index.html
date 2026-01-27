@@ -40,6 +40,38 @@
   font-size: 14px;
   color: rgba(0,0,0,0.3);
 }
+.card-front {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-image {
+  flex: 3;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.card-name {
+  flex: 1;
+  border-top: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.card-stats {
+  flex: 1;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 
 
     /* OVERLAY */
@@ -104,9 +136,25 @@
 <!-- Overlay de foco -->
 <div id="overlay">
   <div class="focused-card">
-    Carta
+    <div class="card-front">
+
+      <div class="card-image">
+        IMAGE
+      </div>
+
+      <div class="card-name">
+        NAME
+      </div>
+
+      <div class="card-stats">
+        <span>ATK</span>
+        <span>DEF</span>
+      </div>
+
+    </div>
   </div>
 </div>
+
 
 <script>
   const cards = document.querySelectorAll('.card');
