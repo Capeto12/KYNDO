@@ -4,8 +4,62 @@
   <meta charset="UTF-8" />
   <title>KYNDO — Memory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .card-placeholder {
+      aspect-ratio: 1 / 1;
+      background: #e0e0e0;
+      border-radius: 6px;
+    }
+
+    footer {
+      padding: 12px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
+
+  <header>
+    <h1>Memory</h1>
+  </header>
+
+  <section id="board">
+    <!-- Cartas vivirán aquí -->
+    <div class="card-placeholder"></div>
+    <div class="card-placeholder"></div>
+    <div class="card-placeholder"></div>
+    <div class="card-placeholder"></div>
+    <div class="card-placeholder"></div>
+    <div class="card-placeholder"></div>
+    <div class="card-placeholder"></div>
+    <div class="card-placeholder"></div>
+  </section>
+
+  <footer>
+    <a href="../">Volver al Home</a>
+  </footer>
+
+</body>
+</html>
+
   <main>
     <h1>Memory</h1>
     <p>Pantalla de juego (estructura)</p>
