@@ -238,7 +238,98 @@ Durante el juego ves:
 ⭐ Puntaje: 85
 Grado: 1
 ```
+---
 
+## 🌐 **Personalización de nombres**
+
+KYNDO permite a cada jugador elegir cómo quiere ver los nombres de las aves en sus cartas.
+
+### **Opciones disponibles:**
+
+#### **1. Nombre científico (por defecto)**
+
+Ideal para: Ornitólogos, científicos, observadores serios
+```
+┌─────────────────────────┐
+│ AQUILA CHRYSAETOS       │ ← Título
+│ Golden Eagle            │ ← Subtítulo 1
+│ Águila Real             │ ← Subtítulo 2
+└─────────────────────────┘
+```
+
+**Ventajas:**
+- Nomenclatura universal
+- Precisa e inequívoca
+- Mismo nombre en todo el mundo
+
+---
+
+#### **2. Nombre en inglés**
+
+Ideal para: Observadores internacionales, angloparlantes
+```
+┌─────────────────────────┐
+│ GOLDEN EAGLE            │ ← Título
+│ Aquila chrysaetos       │ ← Subtítulo 1
+│ Águila Real             │ ← Subtítulo 2
+└─────────────────────────┘
+```
+
+**Ventajas:**
+- Nombres reconocibles globalmente
+- Usados en guías de campo internacionales
+- Fácil comunicación con observadores de otros países
+
+---
+
+#### **3. Nombre común en Colombia**
+
+Ideal para: Pajareros colombianos, principiantes, observadores locales
+```
+┌─────────────────────────┐
+│ ÁGUILA REAL             │ ← Título
+│ Aquila chrysaetos       │ ← Subtítulo 1
+│ Golden Eagle            │ ← Subtítulo 2
+└─────────────────────────┘
+```
+
+**Ventajas:**
+- Nombres familiares en español
+- Usados en guías de campo colombianas
+- Fácil para principiantes
+
+---
+
+### **Cómo cambiar la preferencia:**
+
+1. Ir a **Configuración** (⚙️)
+2. Seleccionar **Formato de nombres de cartas**
+3. Elegir tu preferencia
+4. Ver vista previa
+5. Guardar
+
+**El cambio se aplica inmediatamente** a todas tus cartas sin necesidad de reiniciar.
+
+---
+
+### **Preguntas frecuentes**
+
+**¿Puedo tener diferentes formatos para diferentes cartas?**
+No. La preferencia es global para todas tus cartas. Esto mantiene consistencia visual.
+
+**¿Otros jugadores ven mis cartas con mi formato?**
+No. Cada jugador ve sus propias cartas según su preferencia personal.
+
+**¿El formato afecta el juego?**
+No. Es solo visual. La carta sigue siendo la misma internamente.
+
+**¿Puedo cambiar el formato en cualquier momento?**
+Sí, sin límite de veces.
+
+**¿El cambio se guarda en la nube?**
+Sí, si cambias de dispositivo, mantiene tu preferencia.
+
+---
 **Interpretación:**
 - Has encontrado 7 de 10 pares
 - Usaste 15 de 22 intentos permitidos
