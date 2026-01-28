@@ -424,10 +424,33 @@ class UIManager {
   /**
    * Marca una carta como revelada
    */
-  revealCard(card) {
+  revealCard(card, contentManager) {
     card.dataset.state = 'revealed';
     card.classList.remove('hidden');
     card.classList.add('revealed');
+    
+    // Añadir contenido visual a la carta
+    const content = getCardContent(card.dataset.objectId, contentManager);
+    card.innerHTML = '';
+    
+    if (content.useImage && content.imageUrl) {
+      // Usar imagen real
+      const img = document.createElement('img');
+      img.src = content.imageUrl;
+      img.alt = content.name;
+      img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 6px;';
+      
+      // Manejar error de carga
+      img.onerror = () => {
+        card.innerHTML = '';
+        card.textContent = content.displayText;
+      };
+      
+      card.appendChild(img);
+    } else {
+      // Usar texto de fallback
+      card.textContent = content.displayText;
+    }
   }
 
   /**
@@ -455,6 +478,8 @@ class UIManager {
     card.dataset.state = 'hidden';
     card.classList.remove('pending');
     card.classList.add('hidden');
+    // Limpiar contenido visual
+    card.innerHTML = '';
   }
 
   /**
@@ -538,14 +563,19 @@ class MemoryGame {
     
     const card = event.currentTarget;
     
+    // Si hay cartas pendientes, limpiarlas primero
+    if (this.ui.getPendingCards().length > 0) {
+      this.ui.clearPendingCards();
+      return; // Este click se consume en la limpieza
+    }
+    
     // Validaciones
     if (this.state.pendingLock) return;
-    if (this.ui.getPendingCards().length === 2) return;
     if (card.dataset.state !== 'hidden') return;
     if (this.state.revealedCards.length >= 2) return;
     
-    // Revelar carta
-    this.ui.revealCard(card);
+    // Revelar carta con contenido
+    this.ui.revealCard(card, this.content);
     this.state.revealedCards.push(card);
     
     // Mostrar carta enfocada
@@ -687,8 +717,9 @@ class MemoryGame {
     });
     
     // Click en tablero limpia cartas pendientes
-    this.ui.board.addEventListener('click', () => {
-      if (this.ui.getPendingCards().length === 2) {
+    this.ui.board.addEventListener('click', (event) => {
+      // Solo si el click es en el fondo del tablero (no en una carta)
+      if (event.target === this.ui.board && this.ui.getPendingCards().length > 0) {
         this.ui.clearPendingCards();
       }
     });
