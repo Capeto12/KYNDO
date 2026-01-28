@@ -313,7 +313,47 @@ CREATE INDEX idx_player_state_mmr ON player_state(mmr);
 COMMENT ON TABLE player_state IS 'Estado general del jugador (dominio activo, MMR, liga)';
 ```
 
----
+### 2.2 `player_state` (Estado persistente del jugador)
+```sql
+CREATE TABLE player_state (
+    player_id UUID PRIMARY KEY REFERENCES players(player_id) ON DELETE CASCADE,
+    active_domain UUID NOT NULL REFERENCES domains(domain_id),
+    mmr INT NOT NULL DEFAULT 1000 CHECK (mmr >= 0),
+    league VARCHAR(50) NOT NULL DEFAULT 'bronze'
+        CHECK (league IN ('bronze', 'silver', 'gold', 'platinum', 'diamond')),
+    
+    -- NUEVA COLUMNA: Preferencia de nomenclatura
+    card_name_format VARCHAR(20) NOT NULL DEFAULT 'scientific'
+        CHECK (card_name_format IN ('scientific', 'english', 'colombian')),
+    
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_player_state_domain ON player_state(active_domain);
+CREATE INDEX idx_player_state_mmr ON player_state(mmr);
+
+COMMENT ON TABLE player_state IS 'Estado general del jugador (dominio activo, MMR, liga, preferencias)';
+COMMENT ON COLUMN player_state.card_name_format IS 'Formato de nombres en cartas: scientific (defecto), english, colombian';
+```
+
+**Testing:**
+```sql
+-- Insertar con valor por defecto
+INSERT INTO player_state (player_id, active_domain)
+VALUES (?, ?);
+-- card_name_format será 'scientific' automáticamente
+
+-- Cambiar preferencia
+UPDATE player_state 
+SET card_name_format = 'english', updated_at = NOW()
+WHERE player_id = ?;
+
+-- Debe fallar (valor inválido)
+UPDATE player_state 
+SET card_name_format = 'portuguese'
+WHERE player_id = ?;
+-- Error esperado: violates check constraint
+```
 
 ### 2.3 `player_session_state` (Estado de sesión activa)
 ```sql
