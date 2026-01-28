@@ -36,6 +36,7 @@
 | [Manual-Maestro.md](Manual-Maestro.md) | v1.02 | **Congelado** | Fuente única de verdad. Principios no negociables. |
 | [Manual-Tecnico.md](Manual-Tecnico.md) | v1.2 | Estable | Arquitectura técnica ejecutable. Runtime vs content-time. |
 | [Manual-UX-UI.md](Manual-UX-UI.md) | v1.0 | Estable | Pantallas, estados, transiciones. Qué ve el jugador. |
+| [CONTENT_CREATION_GUIDE.md](CONTENT_CREATION_GUIDE.md) | v1.0 | Activo | **Guía completa de creación de contenido con NanoBanana y Figma.** |
 
 ---
 
@@ -181,7 +182,10 @@ git checkout -b docs/update-balance-params
 | Pantallas y estados UX | [Manual-UX-UI.md](Manual-UX-UI.md) |
 | Qué se excluye del MVP | [Roadmap-MVP.md](Roadmap-MVP.md) |
 | Sistema Ataque/Defensa | [Manual-Maestro.md](Manual-Maestro.md#5-sistema-ataque--defensa-ad) |
-| Pipeline de imágenes IA | [Manual-Maestro.md](Manual-Maestro.md#a1-sistema-visual-y-pipeline-de-cartas) |
+| Pipeline de imágenes IA | [CONTENT_CREATION_GUIDE.md](CONTENT_CREATION_GUIDE.md) |
+| **Creación de contenido (NanoBanana + Figma)** | [CONTENT_CREATION_GUIDE.md](CONTENT_CREATION_GUIDE.md) |
+| **Estado actual del proyecto** | [CONTENT_CREATION_GUIDE.md](CONTENT_CREATION_GUIDE.md#1-resumen-del-estado-actual-del-proyecto) |
+| **Cuánto trabajo falta (MVP)** | [CONTENT_CREATION_GUIDE.md](CONTENT_CREATION_GUIDE.md#13-prioridades-inmediatas-según-roadmap-mvp-v12) |
 
 ---
 
