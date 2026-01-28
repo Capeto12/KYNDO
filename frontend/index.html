@@ -193,9 +193,19 @@
     board.appendChild(card);
   }
 
-  overlay.addEventListener('click', () => {
-    closeFocus();
-  });
+overlay.addEventListener('click', () => {
+  closeFocus();
+
+  if (revealedCards.length === 2) {
+    revealedCards.forEach(card => {
+      card.dataset.state = 'hidden';
+      card.classList.remove('revealed');
+      card.classList.add('hidden');
+    });
+    revealedCards = [];
+  }
+});
+
 </script>
 </body>
 </html>
