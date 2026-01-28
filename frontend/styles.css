@@ -261,9 +261,8 @@ footer a:hover {
   font-size: clamp(10px, 3vw, 14px);
   background: #fafafa;
   padding: 4px 8px;
-  text-align: center;
   overflow: hidden;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
   hyphens: auto;
   line-height: 1.2;
 }
