@@ -127,6 +127,36 @@
 </header>
 
 <section id="board">
+
+
+
+</section>
+
+<footer>
+  <a href="../">Volver al Home</a>
+</footer>
+
+<!-- Overlay de foco -->
+<div id="overlay">
+  <div class="focused-card">
+    <div class="card-front">
+
+      <div class="card-image">
+        IMAGE
+      </div>
+
+      <div class="card-name">
+        NAME
+      </div>
+
+      <div class="card-stats">
+        <span>ATK</span>
+        <span>DEF</span>
+      </div>
+
+    </div>
+  </div>
+</div>
 <script>
   const board = document.getElementById('board');
   const overlay = document.getElementById('overlay');
@@ -167,51 +197,5 @@
     closeFocus();
   });
 </script>
-
-
-</section>
-
-<footer>
-  <a href="../">Volver al Home</a>
-</footer>
-
-<!-- Overlay de foco -->
-<div id="overlay">
-  <div class="focused-card">
-    <div class="card-front">
-
-      <div class="card-image">
-        IMAGE
-      </div>
-
-      <div class="card-name">
-        NAME
-      </div>
-
-      <div class="card-stats">
-        <span>ATK</span>
-        <span>DEF</span>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-<script>
-  const cards = document.querySelectorAll('.card');
-  const overlay = document.getElementById('overlay');
-
-  cards.forEach(card => {
-    card.addEventListener('click', () => {
-      overlay.classList.add('active');
-    });
-  });
-
-  overlay.addEventListener('click', () => {
-    overlay.classList.remove('active');
-  });
-</script>
-
 </body>
 </html>
