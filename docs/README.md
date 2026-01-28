@@ -7,9 +7,14 @@
 ## 🎯 **Por dónde empezar**
 
 **Si eres nuevo:**
-1. Lee [Manual Maestro](Manual-Maestro.md) — Visión general congelada
-2. Lee [Game Rules](GAME_RULES.md) — Reglas jugables (no técnicas)
-3. Prueba el juego: `/frontend/memory/index.html`
+1. Lee [Resumen Ejecutivo](RESUMEN_EJECUTIVO.md) — **Estado actual y trabajo pendiente**
+2. Lee [Manual Maestro](Manual-Maestro.md) — Visión general congelada
+3. Lee [Game Rules](GAME_RULES.md) — Reglas jugables (no técnicas)
+4. Prueba el juego: `/frontend/memory/index.html`
+
+**Si quieres crear contenido:**
+1. [**Guía de Creación de Contenido**](CONTENT_CREATION_GUIDE.md) — **Pipeline completo con NanoBanana y Figma**
+2. [Resumen Ejecutivo](RESUMEN_EJECUTIVO.md) — Estado actual y prioridades
 
 **Si vas a programar:**
 1. [Manual Técnico](Manual-Tecnico.md) — Arquitectura ejecutable
