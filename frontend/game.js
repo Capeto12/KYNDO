@@ -29,6 +29,69 @@ const GRADE_CONFIG = {
 // Clave para almacenamiento local
 const STORAGE_KEY = 'kyndo_memory_v1';
 
+// Ruta del contenido (ajustable según estructura del proyecto)
+const CONTENT_PATH = '../content/content/birds/pack-1.json';
+
+// =========================
+// CARGA DE CONTENIDO
+// =========================
+
+/**
+ * Gestor de contenido del juego
+ */
+class ContentManager {
+  constructor() {
+    this.birds = [];
+    this.loaded = false;
+  }
+
+  /**
+   * Carga el contenido de aves desde el JSON
+   */
+  async loadContent() {
+    try {
+      const response = await fetch(CONTENT_PATH);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      
+      // Procesar y corregir las rutas de imágenes si es necesario
+      this.birds = data.assets.map(bird => ({
+        id: bird.id,
+        title: bird.title,
+        // Corregir la ruta duplicada en el JSON original
+        imageUrl: bird.image_url.replace('content/content/birds/', '../')
+      }));
+      
+      this.loaded = true;
+      console.log(`✓ Contenido cargado: ${this.birds.length} aves`);
+      return true;
+    } catch (error) {
+      console.warn('⚠ No se pudo cargar el contenido de aves, usando fallback:', error);
+      this.loaded = false;
+      return false;
+    }
+  }
+
+  /**
+   * Obtiene un ave por índice
+   */
+  getBird(index) {
+    if (!this.loaded || this.birds.length === 0) {
+      return null;
+    }
+    return this.birds[index % this.birds.length];
+  }
+
+  /**
+   * Obtiene el número de aves disponibles
+   */
+  getCount() {
+    return this.birds.length;
+  }
+}
+
 // =========================
 // ESTADO DEL JUEGO
 // =========================
@@ -133,15 +196,34 @@ function buildObjectIds(pairs) {
 
 /**
  * Genera contenido temporal para las cartas
- * TODO: Integrar con el sistema de contenido real (birds/pack-1.json)
+ * Si hay contenido de aves cargado, lo usa; sino usa fallback
  */
-function getCardContent(objectId) {
+function getCardContent(objectId, contentManager) {
   const oid = Number(objectId);
+  
+  // Intentar usar contenido real
+  if (contentManager && contentManager.loaded) {
+    const bird = contentManager.getBird(oid);
+    if (bird) {
+      // Generar stats basados en el ID para mantener consistencia
+      return {
+        name: bird.title,
+        displayText: bird.title,
+        imageUrl: bird.imageUrl,
+        atk: 10 + (oid % 9),
+        def: 10 + ((oid + 3) % 9),
+        useImage: true
+      };
+    }
+  }
+  
+  // Fallback a contenido temporal
   return {
     name: `AVE ${oid + 1}`,
     displayText: `🜁 ${oid + 1}`,
     atk: 10 + (oid % 9),
-    def: 10 + ((oid + 3) % 9)
+    def: 10 + ((oid + 3) % 9),
+    useImage: false
   };
 }
 
@@ -198,10 +280,31 @@ class UIManager {
   /**
    * Muestra la carta enfocada en pantalla completa
    */
-  openFocus(card) {
-    const content = getCardContent(card.dataset.objectId);
+  openFocus(card, contentManager) {
+    const content = getCardContent(card.dataset.objectId, contentManager);
     
-    this.focusImage.textContent = content.displayText;
+    // Limpiar el contenedor de imagen
+    this.focusImage.innerHTML = '';
+    
+    if (content.useImage && content.imageUrl) {
+      // Usar imagen real
+      const img = document.createElement('img');
+      img.src = content.imageUrl;
+      img.alt = content.name;
+      img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+      
+      // Manejar error de carga
+      img.onerror = () => {
+        this.focusImage.innerHTML = '';
+        this.focusImage.textContent = content.displayText;
+      };
+      
+      this.focusImage.appendChild(img);
+    } else {
+      // Usar texto de fallback
+      this.focusImage.textContent = content.displayText;
+    }
+    
     this.focusName.textContent = content.name;
     this.focusAtk.textContent = `ATK ${content.atk}`;
     this.focusDef.textContent = `DEF ${content.def}`;
@@ -340,9 +443,19 @@ class MemoryGame {
   constructor() {
     this.state = new GameState();
     this.ui = new UIManager();
+    this.content = new ContentManager();
     
     // Cargar progreso guardado
     this.state.loadFromStorage();
+  }
+
+  /**
+   * Inicializa el contenido y el juego
+   */
+  async initialize() {
+    await this.content.loadContent();
+    this.setupEventListeners();
+    this.startRun();
   }
 
   /**
@@ -390,7 +503,7 @@ class MemoryGame {
     this.state.revealedCards.push(card);
     
     // Mostrar carta enfocada
-    this.ui.openFocus(card);
+    this.ui.openFocus(card, this.content);
   }
 
   /**
@@ -536,11 +649,11 @@ class MemoryGame {
   }
 
   /**
-   * Inicializa el juego
+   * Inicializa el juego (deprecated - usar initialize)
    */
   init() {
-    this.setupEventListeners();
-    this.startRun();
+    console.warn('init() is deprecated, use initialize() instead');
+    this.initialize();
   }
 }
 
@@ -548,7 +661,7 @@ class MemoryGame {
 // INICIALIZACIÓN
 // =========================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const game = new MemoryGame();
-  game.init();
+  await game.initialize();
 });
