@@ -3,10 +3,12 @@
 ## 0. Propósito del documento
 
 Esta guía documenta **el proceso completo de creación de contenido** para KYNDO, incluyendo:
-- Generación de imágenes con IA (NanoBanana)
+- Generación de imágenes con IA (servicios como Replicate, Leonardo.ai, Stable Diffusion)
 - Diseño de marcos SVG con Figma
 - Optimización de assets
 - Integración en el catálogo
+
+**Nota sobre servicios IA:** Esta guía usa "NanoBanana" como placeholder genérico en algunos ejemplos, pero los procesos descritos aplican a cualquier servicio de generación de imágenes por IA (Replicate, Leonardo.ai, Midjourney, Stable Diffusion local, etc.).
 
 ---
 
@@ -366,7 +368,16 @@ El SVG base actúa como **contenedor**. La imagen IA se inserta en el placeholde
 
 ### 4.1 ¿Qué es NanoBanana?
 
-**NanoBanana** es un servicio de generación de imágenes por IA basado en Stable Diffusion.
+**NanoBanana** es un ejemplo de servicio de generación de imágenes por IA basado en Stable Diffusion usado en esta guía.
+
+**IMPORTANTE:** El nombre exacto del servicio puede variar. Servicios reales disponibles incluyen:
+- **Replicate** (replicate.com) - API de Stable Diffusion pay-per-use
+- **Stability AI** (platform.stability.ai) - API oficial de Stable Diffusion
+- **Midjourney** (midjourney.com) - Generación por Discord
+- **RunPod** (runpod.io) - GPU en la nube para Stable Diffusion
+- **Leonardo.ai** (leonardo.ai) - Generación con créditos gratis
+
+Esta guía usa "NanoBanana" como placeholder. **Adapta los pasos a tu servicio elegido.**
 
 **Características:**
 - ✅ API REST fácil de usar
@@ -375,33 +386,48 @@ El SVG base actúa como **contenedor**. La imagen IA se inserta en el placeholde
 - ✅ Resolución configurable (hasta 1024×1024)
 - ✅ Batch generation (múltiples imágenes por request)
 
-**Alternativas:**
-- Midjourney (más artístico, requiere Discord)
-- DALL-E 3 (más realista, más costoso)
+**Servicios reales recomendados:**
+- **Replicate** (https://replicate.com) - $0.002-0.02 por imagen
+- **Stability AI** (https://platform.stability.ai) - $0.002-0.01 por imagen
+- **Leonardo.ai** (https://leonardo.ai) - Incluye créditos gratuitos
+- **Midjourney** (https://midjourney.com) - $10/mes básico (200 imágenes)
+
+**Alternativas gratuitas:**
 - Stable Diffusion local (gratis pero requiere GPU)
+- Google Colab con Stable Diffusion (gratis con limitaciones)
 
 ### 4.2 Configuración Inicial
 
-#### **Opción A: API de NanoBanana (Recomendado para producción)**
+#### **Opción A: Replicate API (Recomendado para producción)**
 
-1. Crear cuenta en https://nanobanan.com (ejemplo, verificar URL real)
-2. Obtener API Key
-3. Instalar cliente (si existe):
+Replicate ofrece acceso a Stable Diffusion y otros modelos via API REST simple.
+
+1. Crear cuenta en https://replicate.com
+2. Obtener API Token desde Dashboard
+3. Instalar cliente:
 
 ```bash
-npm install nanobanan-api
+npm install replicate
 # o
-pip install nanobanan-sdk
+pip install replicate
 ```
 
 4. Configurar credenciales:
 
 ```bash
 # .env
-NANOBANAN_API_KEY=tu_api_key_aqui
+REPLICATE_API_TOKEN=tu_token_aqui
 ```
 
-#### **Opción B: Stable Diffusion Local (Para testing)**
+#### **Opción B: Leonardo.ai (Gratis para empezar)**
+
+Leonardo.ai incluye créditos gratuitos diarios.
+
+1. Crear cuenta en https://leonardo.ai
+2. Obtener API Key (si usas API)
+3. O usar interfaz web (no requiere programación)
+
+#### **Opción C: Stable Diffusion Local (Para testing)**
 
 ```bash
 # Requiere: GPU NVIDIA, 8GB+ VRAM, Python 3.10+
@@ -470,14 +496,16 @@ soaring through clear blue sky, motion blur on wingtips ...
 
 ### 4.4 Script de Generación Batch
 
-Automatizar generación para múltiples objetos:
+Automatizar generación para múltiples objetos usando Replicate API:
 
 ```javascript
-// generate-birds.js (Node.js example)
-const NanoBanan = require('nanobanan-api');
+// generate-birds.js (Node.js example with Replicate)
+const Replicate = require('replicate');
 const fs = require('fs');
 
-const client = new NanoBanan(process.env.NANOBANAN_API_KEY);
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN,
+});
 
 const birds = [
   { id: 'aguila-real', name: 'Águila Real', habitat: 'mountain cliff' },
@@ -514,20 +542,31 @@ async function generateBirdImages() {
         + `, ${variant.pose}`;
       
       try {
-        const image = await client.generate({
-          prompt: fullPrompt,
-          negative_prompt: negativePrompt,
-          width: 1024,
-          height: 1024,
-          steps: 30,
-          cfg_scale: 7.5,
-          seed: -1, // random seed
-          sampler: 'DPM++ 2M Karras'
-        });
+        // Usar modelo Stable Diffusion XL en Replicate
+        const output = await replicate.run(
+          "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
+          {
+            input: {
+              prompt: fullPrompt,
+              negative_prompt: negativePrompt,
+              width: 1024,
+              height: 1024,
+              num_inference_steps: 30,
+              guidance_scale: 7.5,
+            }
+          }
+        );
+        
+        // Output es un array con URLs de imágenes
+        const imageUrl = output[0];
+        
+        // Descargar imagen
+        const response = await fetch(imageUrl);
+        const buffer = await response.buffer();
         
         // Guardar imagen
         const filename = `content/birds/img/${bird.id}-${variant.suffix}.png`;
-        fs.writeFileSync(filename, image.data);
+        fs.writeFileSync(filename, buffer);
         console.log(`✓ Guardado: ${filename}`);
         
         // Pausa para no saturar API (respetar rate limits)
@@ -553,8 +592,17 @@ generateBirdImages().then(() => {
 
 **Ejecutar:**
 ```bash
+# Instalar dependencias
+npm install replicate node-fetch
+
+# Configurar token
+export REPLICATE_API_TOKEN=tu_token_aqui
+
+# Ejecutar
 node generate-birds.js
 ```
+
+**Nota:** Adapta el modelo y parámetros según el servicio que uses (Replicate, Leonardo.ai, etc.).
 
 ### 4.5 Control de Calidad de Imágenes IA
 
@@ -1069,7 +1117,8 @@ Para completar un pack (ej: "Birds Pack 1" con 20 objetos):
 | Herramienta | Propósito | Instalación | Costo |
 |-------------|-----------|-------------|-------|
 | **Figma** | Diseño SVG | https://figma.com | Gratis |
-| **NanoBanana** | Generación IA | https://nanobanan.com | API Paga |
+| **Replicate** | Generación IA | https://replicate.com | API Paga ($0.002-0.02/img) |
+| **Leonardo.ai** | Generación IA | https://leonardo.ai | Freemium (créditos gratis) |
 | **cwebp** | Optimización WebP | `brew install webp` | Gratis |
 | **Node.js** | Scripts automatización | https://nodejs.org | Gratis |
 | **VS Code** | Editor código | https://code.visualstudio.com | Gratis |
@@ -1080,7 +1129,7 @@ Para completar un pack (ej: "Birds Pack 1" con 20 objetos):
 | Comercial | Open Source | Notas |
 |-----------|-------------|-------|
 | Figma | **Inkscape** | Vectores, gratis, local |
-| NanoBanana | **Stable Diffusion (local)** | Requiere GPU, más lento |
+| Replicate/Leonardo.ai | **Stable Diffusion (local)** | Requiere GPU, más lento |
 | Photoshop | **GIMP** | Edición raster |
 | Adobe XD | **Penpot** | Diseño web, open source |
 
@@ -1108,13 +1157,15 @@ Para completar un pack (ej: "Birds Pack 1" con 20 objetos):
 
 ## 9. FAQ — Preguntas Frecuentes
 
-### Q1: ¿Cuánto cuesta generar 40 imágenes con NanoBanana?
+### Q1: ¿Cuánto cuesta generar 40 imágenes con servicios IA?
 
-**A:** Depende del plan de NanoBanana. Estimado:
-- Plan básico: ~$0.02-0.05 por imagen → $0.80-$2.00 total
-- Plan pro: ~$0.01 por imagen → $0.40 total
+**A:** Costos aproximados:
+- **Replicate (Stable Diffusion XL):** ~$0.002-0.02 por imagen → $0.08-$0.80 total
+- **Leonardo.ai:** Incluye créditos gratuitos diarios (suficiente para empezar)
+- **Midjourney:** $10/mes básico → ~200 imágenes incluidas
+- **Stability AI:** ~$0.002-0.01 por imagen → $0.08-$0.40 total
 
-Alternativa gratis: Stable Diffusion local (requiere GPU).
+Alternativa gratis: Stable Diffusion local (requiere GPU NVIDIA).
 
 ### Q2: ¿Puedo usar imágenes reales en vez de IA?
 
@@ -1158,10 +1209,11 @@ Empezar con 2. Escalar después según necesidad.
 ### Q6: ¿Qué hago si mi GPU no puede correr Stable Diffusion local?
 
 **A:** Opciones:
-1. Usar **NanoBanana API** (pago pero accesible)
-2. Usar **Google Colab** (gratis con GPU en la nube)
-3. Usar **Replicate** (API pay-per-use de Stable Diffusion)
-4. Usar **Midjourney** (Discord bot, $10/mes plan básico)
+1. Usar **Replicate API** (pay-per-use, muy accesible)
+2. Usar **Leonardo.ai** (créditos gratuitos diarios)
+3. Usar **Google Colab** (gratis con GPU en la nube, tiene límites)
+4. Usar **RunPod** (GPU en la nube por horas, $0.20-0.50/hora)
+5. Usar **Midjourney** (Discord bot, $10/mes plan básico, 200 imágenes)
 
 ### Q7: ¿Cómo asigno los factores A/D sin experiencia en balance?
 

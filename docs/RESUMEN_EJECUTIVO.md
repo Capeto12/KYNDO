@@ -4,6 +4,8 @@
 
 > "Basado en la documentación del repo de KINDO, ¿cómo vamos con el código y cuánto nos falta de trabajo para crear el juego? Hay que crear el contenido con Nano Banan y Figma. ¿Está esto explicado en la documentación?"
 
+**Nota:** El proyecto se llama **KYNDO** (no KINDO). La pregunta original contiene un error tipográfico que hemos preservado para contexto.
+
 ---
 
 ## ✅ Respuesta Directa
@@ -13,7 +15,7 @@
 👉 **[GUÍA DE CREACIÓN DE CONTENIDO](CONTENT_CREATION_GUIDE.md)**
 
 Esta guía nueva incluye:
-- ✅ Proceso completo de generación de imágenes con **NanoBanana**
+- ✅ Proceso completo de generación de imágenes con **servicios IA** (Replicate, Leonardo.ai, Stable Diffusion, etc.)
 - ✅ Diseño de marcos SVG con **Figma** (paso a paso)
 - ✅ Scripts de automatización
 - ✅ Optimización de assets (WebP)
@@ -136,20 +138,23 @@ Esta guía nueva incluye:
 
 ### **1. Crear contenido visual (Fase 1 — Prioridad ALTA)**
 
-#### **Paso 1A: Generar imágenes con NanoBanana**
+#### **Paso 1A: Generar imágenes con servicios IA**
 
 **Lo que necesitas hacer:**
 ```bash
-# 1. Configurar NanoBanana
+# 1. Elegir servicio (Replicate, Leonardo.ai, Midjourney, etc.)
+# Ver: CONTENT_CREATION_GUIDE.md sección 4.1
+
+# 2. Configurar API o cuenta
 # Ver: CONTENT_CREATION_GUIDE.md sección 4.2
 
-# 2. Crear prompt maestro
+# 3. Crear prompt maestro
 # Ver: CONTENT_CREATION_GUIDE.md sección 4.3
 
-# 3. Generar 20 imágenes (2 variantes por ave)
+# 4. Generar 20 imágenes (2 variantes por ave)
 # Ver: CONTENT_CREATION_GUIDE.md sección 4.4 (script de batch)
 
-# 4. Revisar calidad
+# 5. Revisar calidad
 # Ver: CONTENT_CREATION_GUIDE.md sección 4.5 (criterios)
 ```
 
@@ -241,7 +246,8 @@ node validate-catalog.js
 
 ### **🔥 Contenido (Crítico para avanzar)**
 
-- [ ] Instalar y configurar NanoBanana
+- [ ] Elegir servicio de generación IA (Replicate/Leonardo.ai/Midjourney)
+- [ ] Configurar cuenta y API
 - [ ] Crear prompt maestro para aves
 - [ ] Generar 40 imágenes IA (2 por ave × 20 aves)
 - [ ] Revisar y aprobar calidad de imágenes
@@ -444,6 +450,7 @@ Ver: [CONTENT_CREATION_GUIDE.md sección 3.1](CONTENT_CREATION_GUIDE.md#31-por-q
    - ✅ **SÍ, completamente**
    - 👉 Ver: **[CONTENT_CREATION_GUIDE.md](CONTENT_CREATION_GUIDE.md)**
    - Incluye guías paso a paso, scripts, checklist y FAQ
+   - Cubre múltiples servicios IA (Replicate, Leonardo.ai, Midjourney, Stable Diffusion)
 
 **Próximo paso:** Empezar generación de contenido visual siguiendo la guía nueva.
 
