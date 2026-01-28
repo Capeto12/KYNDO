@@ -194,6 +194,267 @@ SELECT * FROM object_images WHERE object_id IN (...);
 
 ---
 
+## 3.5 Configuración de nomenclatura de cartas
+
+### Objetivo
+
+Permitir al usuario personalizar el orden de nombres en las cartas según su preferencia (científico, inglés o colombiano como título principal).
+
+### Ubicación en UI
+
+**Opción A (Recomendada):** Settings → Display Preferences → Card Name Format
+
+**Opción B:** Dentro de la pantalla Colección → botón de engranaje (⚙️)
+
+---
+
+### Datos requeridos (BD)
+```sql
+-- Nueva columna en player_state
+ALTER TABLE player_state 
+ADD COLUMN card_name_format VARCHAR(20) NOT NULL DEFAULT 'scientific'
+CHECK (card_name_format IN ('scientific', 'english', 'colombian'));
+
+-- Query para leer preferencia
+SELECT card_name_format 
+FROM player_state 
+WHERE player_id = ?;
+```
+
+---
+
+### Opciones disponibles
+
+| Formato | Título principal | Subtítulo 1 | Subtítulo 2 | Ejemplo |
+|---------|-----------------|-------------|-------------|---------|
+| `scientific` | Nombre científico | Inglés | Colombiano | **AQUILA CHRYSAETOS**<br>Golden Eagle<br>Águila Real |
+| `english` | Inglés | Científico | Colombiano | **GOLDEN EAGLE**<br>Aquila chrysaetos<br>Águila Real |
+| `colombian` | Colombiano | Científico | Inglés | **ÁGUILA REAL**<br>Aquila chrysaetos<br>Golden Eagle |
+
+---
+
+### UI de configuración
+
+**Pantalla de Settings:**
+```
+┌────────────────────────────────────┐
+│ CONFIGURACIÓN DE CARTAS            │
+├────────────────────────────────────┤
+│                                    │
+│ Formato de nombres:                │
+│                                    │
+│ ○ Nombre científico (por defecto) │
+│   Título: Aquila chrysaetos        │
+│   Subtítulos: Golden Eagle /       │
+│               Águila Real          │
+│                                    │
+│ ○ Nombre en inglés                │
+│   Título: Golden Eagle             │
+│   Subtítulos: Aquila chrysaetos /  │
+│               Águila Real          │
+│                                    │
+│ ○ Nombre común en Colombia        │
+│   Título: Águila Real              │
+│   Subtítulos: Aquila chrysaetos /  │
+│               Golden Eagle         │
+│                                    │
+│ [Vista previa de carta]            │
+│                                    │
+│ [Guardar] [Cancelar]               │
+└────────────────────────────────────┘
+```
+
+---
+
+### Lógica de aplicación
+
+**Frontend (JavaScript/Flutter):**
+```javascript
+function renderCardNames(card, userPreference) {
+  const names = {
+    scientific: card.scientific_name,
+    english: card.english_name,
+    colombian: card.colombian_name
+  };
+  
+  let title, subtitle1, subtitle2;
+  
+  switch(userPreference) {
+    case 'scientific':
+      title = names.scientific;
+      subtitle1 = names.english;
+      subtitle2 = names.colombian;
+      break;
+      
+    case 'english':
+      title = names.english;
+      subtitle1 = names.scientific;
+      subtitle2 = names.colombian;
+      break;
+      
+    case 'colombian':
+      title = names.colombian;
+      subtitle1 = names.scientific;
+      subtitle2 = names.english;
+      break;
+      
+    default:
+      title = names.scientific; // fallback
+      subtitle1 = names.english;
+      subtitle2 = names.colombian;
+  }
+  
+  return {
+    title: title.toUpperCase(), // título siempre en mayúsculas
+    subtitle1: subtitle1,
+    subtitle2: subtitle2
+  };
+}
+```
+
+---
+
+### CSS/Styling
+```css
+.card-name-section {
+  background: rgba(0, 0, 0, 0.85);
+  padding: 12px;
+  text-align: center;
+}
+
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: #E0E0E0;
+  line-height: 1.3;
+}
+
+.card-subtitle:first-of-type {
+  font-style: italic; /* científico siempre en cursiva cuando es subtítulo */
+  opacity: 0.9;
+}
+```
+
+---
+
+### Persistencia
+
+**Al cambiar la preferencia:**
+```javascript
+async function updateCardNameFormat(playerId, newFormat) {
+  // Actualizar en BD
+  await fetch('/api/player/settings', {
+    method: 'PATCH',
+    body: JSON.stringify({
+      player_id: playerId,
+      card_name_format: newFormat
+    })
+  });
+  
+  // Actualizar localStorage (cache)
+  localStorage.setItem('kyndo_card_name_format', newFormat);
+  
+  // Re-renderizar todas las cartas visibles
+  refreshAllCards();
+}
+```
+
+**Al cargar la app:**
+```javascript
+async function loadUserPreferences(playerId) {
+  // Intentar desde localStorage primero (offline-first)
+  let format = localStorage.getItem('kyndo_card_name_format');
+  
+  if (!format) {
+    // Si no existe, obtener del servidor
+    const response = await fetch(`/api/player/${playerId}/state`);
+    const data = await response.json();
+    format = data.card_name_format || 'scientific';
+    
+    // Guardar en cache
+    localStorage.setItem('kyndo_card_name_format', format);
+  }
+  
+  return format;
+}
+```
+
+---
+
+### Reglas de negocio
+
+1. **Valor por defecto:** `scientific` (nombre científico como título)
+2. **Cambio en tiempo real:** Al cambiar la preferencia, todas las cartas visibles se actualizan inmediatamente
+3. **Sin recarga:** No requiere recargar la página
+4. **Persistencia:** Se guarda en BD y en localStorage
+5. **Sincronización:** Al cambiar de dispositivo, mantiene la preferencia
+6. **Vista previa:** Mostrar ejemplo de carta antes de guardar
+
+---
+
+### Acciones permitidas
+
+- ✅ Cambiar formato en cualquier momento
+- ✅ Ver vista previa antes de aplicar
+- ✅ Aplicar cambio sin cerrar sesión
+
+### Acciones bloqueadas
+
+- ❌ No se puede tener formatos diferentes por carta (global por usuario)
+- ❌ No afecta a otros jugadores (preferencia personal)
+
+---
+
+### Casos de uso
+
+**Caso 1: Ornitólogo profesional**
+- Prefiere: `scientific`
+- Razón: Nomenclatura científica es universal y precisa
+
+**Caso 2: Observador de aves recreativo (inglés)**
+- Prefiere: `english`
+- Razón: Nombres en inglés son más reconocibles internacionalmente
+
+**Caso 3: Pajarero colombiano**
+- Prefiere: `colombian`
+- Razón: Nombres comunes en español son más familiares localmente
+
+---
+
+### Testing
+
+**Escenarios a probar:**
+
+1. **Cambio de formato:**
+   - Usuario cambia de `scientific` a `english`
+   - Verificar que todas las cartas en colección se actualizan
+   - Verificar que las cartas en Memory se actualizan
+   - Verificar que el cambio persiste al recargar
+
+2. **Primera vez:**
+   - Usuario nuevo sin preferencia
+   - Verificar que defaults a `scientific`
+
+3. **Sincronización:**
+   - Usuario cambia preferencia en web
+   - Verifica que se sincroniza en móvil
+
+4. **Offline:**
+   - Usuario sin conexión
+   - Verifica que usa valor de localStorage
+   - Al reconectar, sincroniza con servidor
+
+---
+
 ## 4. Pantalla: Colección
 
 ### Objetivo

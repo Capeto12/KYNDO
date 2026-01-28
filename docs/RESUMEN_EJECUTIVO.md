@@ -172,6 +172,8 @@ Esta guía nueva incluye:
 # 2. Crear frame 300×450px
 # Ver: CONTENT_CREATION_GUIDE.md sección 3.2 (estructura)
 
+# 2. Crear frame 300×450px
+# Ver: CONTENT_CREATION_GUIDE.md sección 3.2 (estructura)
 # 3. Diseñar componentes:
 #    - Marco exterior
 #    - Contenedor de imagen

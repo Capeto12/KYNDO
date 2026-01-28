@@ -113,11 +113,21 @@ Ver [`/docs/README.md`](docs/README.md) para el índice completo.
 
 ## 🛠️ **Stack tecnológico**
 
-### **Frontend (actual):**
-- HTML5 + CSS3 + Vanilla JavaScript
+### **Frontend (actual - refactorizado):**
+- HTML5 + CSS3 + **Vanilla JavaScript modular**
+- **10 módulos JavaScript especializados:**
+  - Configuración, Constantes, Utilidades
+  - Error handling, Validaciones
+  - Game Engine (lógica pura)
+  - UI Renderer (presentación)
+  - Storage (persistencia)
+  - Stats (estadísticas y logros)
+  - Performance (monitoring)
+  - Animations (efectos visuales)
 - Sin dependencias externas
 - PWA-ready (instalable como app)
 - Mobile-first responsive
+- **Arquitectura escalable y mantenible**
 
 ### **Backend (planeado):**
 - Node.js o Python (TBD)
@@ -144,12 +154,18 @@ Ver [`/docs/README.md`](docs/README.md) para el índice completo.
 - [x] Pantalla de resultados
 - [x] Estabilización de interacciones pending
 
-### 🚧 **Fase 2: Pulido y expansión (EN PROGRESO)**
-- [ ] Animaciones de transición suaves
-- [ ] Feedback visual mejorado (partículas, efectos)
-- [ ] Estadísticas históricas por jugador
-- [ ] Sistema de logros
-- [ ] Integración con backend (progreso persistente)
+### ✅ **Fase 2: Pulido y expansión (COMPLETADA)**
+- [x] **Refactorización completa a arquitectura modular** (10 módulos JS)
+- [x] Animaciones de transición suaves (6 animaciones CSS + API)
+- [x] Feedback visual mejorado (sistema de animaciones completo)
+- [x] Estadísticas históricas por jugador (tracking completo)
+- [x] Sistema de logros (5 logros desbloqueables)
+- [x] Sistema de error handling robusto
+- [x] Monitoreo de performance (FPS, memoria, timings)
+- [x] Documentación completa de arquitectura
+- [ ] Integración con backend (preparado, pendiente implementación)
+
+**📦 Ver [CHANGELOG.md](CHANGELOG.md) para detalles completos de mejoras**
 
 ### 📋 **Fase 3: Modos adicionales (PLANEADO)**
 - [ ] Memory Nivel 2 (variantes visuales)

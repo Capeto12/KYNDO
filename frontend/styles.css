@@ -1,0 +1,517 @@
+/**
+ * KYNDO - Memory Game Styles
+ * Estilos para el juego cognitivo de memoria
+ */
+
+/* =========================
+   BASE Y LAYOUT
+   ========================= */
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: #fff;
+  color: #111;
+}
+
+/* Header y Footer */
+header {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  background: #fafafa;
+}
+
+header h1 {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+footer {
+  padding: 12px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+footer a {
+  color: #111;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+footer a:hover {
+  background-color: #f0f0f0;
+}
+
+/* HUD (Heads-Up Display) */
+#loading {
+  display: none;
+  font-size: 14px;
+  opacity: 0.85;
+  padding: 8px;
+}
+
+#hud {
+  font-size: 14px;
+  opacity: 0.85;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.grade-info {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 6px;
+}
+
+/* =========================
+   TABLERO DE JUEGO
+   ========================= */
+
+#board {
+  display: grid;
+  gap: 7px;
+  padding: 8px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* =========================
+   CARTAS
+   ========================= */
+
+.card {
+  aspect-ratio: 1 / 1;
+  background: #bdbdbd;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  min-height: 50px;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.card:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estados de carta */
+.card.hidden {
+  background: #bdbdbd;
+}
+
+.card.hidden::after {
+  content: "K";
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+}
+
+.card.revealed {
+  background: #ffffff;
+  border: 1px solid #999;
+  animation: cardReveal 0.2s ease;
+}
+
+.card.pending {
+  background: #e8e8e8;
+  border: 1px dashed #aaa;
+}
+
+.card.matched {
+  background: #f1f1f1;
+  border: 2px solid #aaa;
+  opacity: 0.65;
+  pointer-events: none;
+  transform: scale(0.96);
+  transition: transform 120ms ease, opacity 0.3s ease;
+  cursor: default;
+  animation: cardMatch 0.3s ease;
+}
+
+/* Animaciones */
+@keyframes cardReveal {
+  from {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes cardMatch {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(0.96);
+  }
+}
+
+/* =========================
+   OVERLAY DE FOCO (CARTA GRANDE)
+   ========================= */
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+  animation: overlayFadeIn 0.2s ease;
+}
+
+#overlay.active {
+  display: flex;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.focused-card {
+  width: 90vw;
+  max-width: 350px;
+  max-height: 88vh;
+  aspect-ratio: 2 / 3;
+  background: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: cardZoomIn 0.25s ease;
+}
+
+@keyframes cardZoomIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.card-front {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-image {
+  flex: 3;
+  background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-name {
+  flex: 1;
+  border-top: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  background: #fafafa;
+}
+
+.card-stats {
+  flex: 1;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 14px;
+  background: #fff;
+  font-weight: 600;
+}
+
+.card-stats span {
+  padding: 4px 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+/* =========================
+   OVERLAY DE RESULTADO
+   ========================= */
+
+#resultOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 16px;
+  backdrop-filter: blur(3px);
+  animation: overlayFadeIn 0.3s ease;
+}
+
+#resultOverlay.active {
+  display: flex;
+}
+
+.result-card {
+  width: min(520px, 92vw);
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px 20px 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.30);
+  text-align: center;
+  animation: resultSlideIn 0.3s ease;
+}
+
+@keyframes resultSlideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.result-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #111;
+}
+
+.result-sub {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0 16px;
+  font-size: 13px;
+  text-align: left;
+}
+
+.result-row {
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fafafa;
+  transition: background-color 0.2s;
+}
+
+.result-row:hover {
+  background: #f0f0f0;
+}
+
+.result-row b {
+  display: block;
+  font-size: 11px;
+  opacity: 0.75;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.result-row span {
+  font-size: 18px;
+  font-weight: bold;
+  color: #111;
+}
+
+/* =========================
+   BOTONES
+   ========================= */
+
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 14px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: #111;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #000;
+}
+
+.btn-ghost {
+  background: #efefef;
+  color: #111;
+}
+
+.btn-ghost:hover {
+  background: #e0e0e0;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (min-width: 720px) {
+  header h1 {
+    font-size: 28px;
+  }
+
+  #hud {
+    font-size: 15px;
+  }
+
+  #board {
+    padding: 16px;
+    gap: 10px;
+    max-width: 900px;
+  }
+
+  .card {
+    min-height: 70px;
+  }
+
+  .btn {
+    width: auto;
+    min-width: 180px;
+    margin: 8px 6px 0;
+  }
+
+  .result-title {
+    font-size: 24px;
+  }
+
+  .result-sub {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 20px;
+  }
+
+  #hud {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .card-image {
+    font-size: 36px;
+  }
+
+  .card-name {
+    font-size: 14px;
+  }
+
+  .card-stats {
+    font-size: 12px;
+  }
+
+  .result-title {
+    font-size: 18px;
+  }
+
+  .result-grid {
+    gap: 8px;
+  }
+
+  .result-row {
+    padding: 10px;
+  }
+}
+
+/* =========================
+   ACCESIBILIDAD
+   ========================= */
+
+/* Mejoras para usuarios con reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* Focus visible para navegación por teclado */
+.card:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* Asegurar contraste adecuado */
+::selection {
+  background-color: #0066cc;
+  color: #fff;
+}
