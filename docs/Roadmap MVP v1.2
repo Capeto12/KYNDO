@@ -1,0 +1,665 @@
+# KYNDO — ROADMAP MVP TÉCNICO v1.2
+
+**Objetivo:** Definir **qué se construye primero**, **qué se excluye explícitamente** y **en qué orden** para lanzar un MVP funcional de KYNDO sin deuda innecesaria.
+
+**Principio rector:** *Si no es imprescindible para validar el núcleo, no entra al MVP.*
+
+---
+
+## 0. Definición estricta de MVP
+
+El MVP de KYNDO debe permitir:
+
+1. ✅ Jugar **Memory Nivel 1** (grados 1-5) con progresión real
+2. ✅ Sistema de **grados escalables** (20→30→42→56→72 cartas)
+3. ✅ **Límite de intentos** con castigo por repetir errores
+4. ✅ **Sistema de racha** con bonos acumulativos
+5. ✅ **Persistencia local** (LocalStorage) del grado actual
+6. ✅ **Colección básica** (ver cartas desbloqueadas)
+
+**Métricas de éxito del MVP:**
+- ≥60% de usuarios completan Grado 1
+- ≥30% de usuarios llegan a Grado 3+
+- ≥10% de usuarios alcanzan Grado 5
+- 0 bugs críticos de bloqueo
+- Jugabilidad fluida en mobile (Android/iOS)
+
+---
+
+## 1. Alcance funcional INCLUIDO
+
+### 1.1 Dominio inicial
+
+- ✅ **Un solo dominio** (Aves)
+- ✅ Catálogo reducido: 20-50 objetos reales
+- ✅ Todos los objetos existen en BD desde el inicio
+- ✅ Mínimo 2 variantes visuales por objeto (regla cognitiva)
+- ✅ Arte generado con IA (NanoBanana o similar)
+- ✅ Optimización WebP
+
+**Objetos sugeridos para MVP (Aves):**
+- Águila Real
+- Halcón Peregrino
+- Cóndor Andino
+- Búho Nival
+- Colibrí
+- Tucán
+- Pingüino Emperador
+- Flamenco
+- Loro Guacamayo
+- Pelícano
+- *(Total: 20-50 especies variadas visualmente)*
+
+---
+
+### 1.2 Autenticación y jugador
+
+- ✅ Login básico (email simple, sin verificación en MVP)
+- ✅ Creación de `players`
+- ✅ Inicialización de `player_state`
+- ✅ Dominio activo fijo (Aves)
+- ❌ OAuth (Google/Apple) → **Post-MVP**
+- ❌ Recuperación de contraseña → **Post-MVP**
+
+---
+
+### 1.3 Memory Mode (NÚCLEO DEL MVP)
+
+**Incluye:**
+
+#### **Sistema de grados (1-5)**
+```javascript
+const gradeConfig = {
+  1: 20,  // 5×4, 10 pares, 22 intentos
+  2: 30,  // 6×5, 15 pares, 33 intentos
+  3: 42,  // 7×6, 21 pares, 46 intentos
+  4: 56,  // 8×7, 28 pares, 62 intentos
+  5: 72,  // 9×8, 36 pares, 79 intentos
+};
+```
+
+#### **Mecánicas core**
+- ✅ Generación determinística por `seed`
+- ✅ Grid dinámico: `columns = ceil(sqrt(totalCards))`
+- ✅ Límite de intentos: `totalPares × 2.2`
+- ✅ Castigo por repetir error: `+1 intento`, `-2 puntos`
+- ✅ Sistema de racha: `5 × (racha - 1)` bono acumulativo
+- ✅ Overlay de foco (carta grande)
+- ✅ Estados visuales: `hidden`, `revealed`, `pending`, `matched`
+- ✅ Limpieza de pending (click para continuar)
+- ✅ Condición de ascenso: completar + dentro del límite
+
+#### **Persistencia**
+- ✅ LocalStorage para grado actual
+- ✅ Key: `kyndo_memory_v1`
+- ✅ Estructura: `{ memoryGrade: number }`
+
+#### **UX/UI**
+- ✅ HUD completo (pares, intentos, racha, puntaje, grado)
+- ✅ Pantalla de resultado (victoria/no superado)
+- ✅ Botones: Continuar / Reintentar / Cerrar
+- ✅ Responsive mobile-first
+- ✅ Sin animaciones complejas (transiciones CSS básicas OK)
+
+**Excluye en MVP:**
+- ❌ Tutoriales interactivos
+- ❌ IA adaptativa de dificultad
+- ❌ Hints o ayudas
+- ❌ Modo contra reloj
+- ❌ Sonidos (audio opcional, no crítico)
+
+---
+
+### 1.4 Sistema de cartas
+
+**Incluye:**
+- ✅ Carta A visible al descubrir objeto (Memory)
+- ✅ Cartas B y C **existen en BD** pero bloqueadas
+- ✅ Desbloqueo automático vía progreso en Memory (lógica simple)
+- ✅ Estados visuales obligatorios: `hidden`, `discovered`, `unlocked`
+- ✅ Visualización simple (sin animaciones de flip complejas)
+
+**Desbloqueo sugerido (MVP):**
+```javascript
+// Carta A: automática al completar 1 par con ese objeto
+// Carta B: completar grado 3 con ese objeto
+// Carta C: completar grado 5 con ese objeto
+```
+
+**Excluye en MVP:**
+- ❌ Carta C con habilidades activas (solo visual)
+- ❌ Sistema de rareza complejo
+- ❌ Animaciones de desbloqueo elaboradas
+
+---
+
+### 1.5 Motor A/D (preparación, NO jugable en MVP)
+
+**Incluye (solo backend/BD):**
+- ✅ Tablas: `attack_factors`, `defense_factors`, `rulesets`
+- ✅ Factores asignados a todos los objetos (0-10)
+- ✅ Ruleset v1.0.0 creado
+- ✅ Funciones SQL: `calculate_attack()`, `calculate_defense()`
+
+**NO incluye:**
+- ❌ Modo Battle jugable (UI/UX)
+- ❌ Matchmaking
+- ❌ Combates reales
+
+**Razón:** Validar Memory primero. Battle es fase post-MVP prioritaria.
+
+---
+
+### 1.6 Colección
+
+**Incluye:**
+- ✅ Pantalla de colección básica
+- ✅ Grid de cartas (scroll vertical)
+- ✅ Filtro por estado: Todas / Desbloqueadas
+- ✅ Zoom de carta (modal simple)
+- ✅ Visualización de:
+  - Nombre común
+  - Nombre científico (si unlocked)
+  - Imágenes (variantes)
+  - Estado (`hidden` = silueta)
+
+**Excluye:**
+- ❌ Filtros avanzados (rareza, dominio)
+- ❌ Búsqueda por nombre
+- ❌ Comparación de cartas
+- ❌ Estadísticas detalladas por carta
+
+---
+
+## 2. Alcance EXPLÍCITAMENTE EXCLUIDO
+
+Esto **NO** entra al MVP, aunque exista en la visión:
+
+### ❌ **Monetización**
+- Tienda
+- Compra de packs
+- Moneda dura
+- Suscripciones
+- Ads
+
+### ❌ **Social**
+- Amigos
+- Chat
+- Compartir en redes
+- Leaderboards globales
+
+### ❌ **Backend completo**
+- API real (usar LocalStorage en MVP)
+- Cuentas en servidor
+- Sincronización multi-dispositivo
+- Cloud save
+
+### ❌ **Modos adicionales**
+- Memory Nivel 2 (variantes visuales)
+- Memory Nivel 3 (objetos similares)
+- Battle A/D jugable
+- Enciclopedia interactiva
+- Quiz
+- Conquista Temporal de Cartas
+
+### ❌ **Features avanzadas**
+- Animaciones complejas (partículas, confetti)
+- Sonidos y música
+- Tutorial interactivo paso a paso
+- Sistema de logros
+- Estadísticas históricas detalladas
+- Replay de partidas
+- Modo oscuro
+- Multiidioma
+
+### ❌ **Infraestructura**
+- PWA instalable (puede agregarse fácilmente post-MVP)
+- Notificaciones push
+- Offline-first completo
+- Analytics avanzado
+
+**Nota:** Excluir esto es una **decisión estratégica**, no una limitación. Queremos validar el núcleo antes de agregar complejidad.
+
+---
+
+## 3. Orden de implementación (ESTRICTO)
+
+### 🔵 **FASE 1 — Fundaciones (Semana 1-2)**
+
+**Objetivo:** Infraestructura mínima funcional
+
+**Tareas:**
+
+1. **Base de datos (3 días)**
+   - Crear esquema completo (según Esquema-BD.md v1.2)
+   - Scripts de migración
+   - Funciones auxiliares (`calculate_attack`, `calculate_defense`)
+   - Seed de datos de prueba (20 objetos del dominio Aves)
+
+2. **Pipeline de contenido (4 días)**
+   - Definir SVG base (marco de carta)
+   - Generar 40+ imágenes IA (2 por objeto × 20 objetos)
+   - Optimizar a WebP
+   - Popular tablas: `objects`, `object_images`, `cards`
+   - Asignar factores A/D a todos los objetos
+   - Crear ruleset v1.0.0
+
+3. **Autenticación básica (2 días)**
+   - Login simple (email hardcodeado para pruebas)
+   - Función `initialize_new_player()`
+   - LocalStorage para sesión
+
+4. **Estado inicial (1 día)**
+   - Inicializar `player_state`
+   - Inicializar `player_session_state`
+   - Inicializar `player_wallet`
+   - Inicializar `player_card_state` (todas hidden)
+
+**Entregable:** BD poblada, contenido generado, login funcional
+
+---
+
+### 🟢 **FASE 2 — Memory Core (Semana 3-4)**
+
+**Objetivo:** Juego Memory completamente funcional
+
+**Tareas:**
+
+1. **Motor de tablero (5 días)**
+   - Función `startRun()`
+   - Grid dinámico según `gradeConfig`
+   - Generación determinística (seed)
+   - Render de cartas en DOM
+   - Estados visuales (CSS)
+
+2. **Lógica de juego (4 días)**
+   - Click en carta → reveal
+   - Overlay de foco
+   - Evaluación de par (`resolvePair`)
+   - Sistema de intentos
+   - Castigo por repetir error
+   - Sistema de racha
+   - `checkEndOfLevel()`
+
+3. **HUD y feedback (2 días)**
+   - Contador de pares
+   - Contador de intentos
+   - Indicador de racha
+   - Puntaje en tiempo real
+   - Indicador de grado actual
+
+4. **Pantalla de resultado (1 día)**
+   - Modal de victoria/no superado
+   - Resumen de métricas
+   - Botones: Continuar / Reintentar
+   - Lógica de ascenso de grado
+
+5. **Persistencia local (1 día)**
+   - Guardar `memoryGrade` en LocalStorage
+   - Cargar al iniciar
+   - Validar integridad
+
+**Entregable:** Memory Nivel 1 jugable de principio a fin, grados 1-5 funcionales
+
+---
+
+### 🟡 **FASE 3 — Cartas y Colección (Semana 5)**
+
+**Objetivo:** Sistema de progreso visible
+
+**Tareas:**
+
+1. **Desbloqueos (2 días)**
+   - Lógica de desbloqueo por progreso
+   - Actualizar `player_card_state`
+   - Feedback visual de desbloqueo (simple)
+
+2. **Pantalla de colección (3 días)**
+   - Grid de cartas
+   - Estados visuales (silueta/revelada/desbloqueada)
+   - Filtro básico
+   - Zoom de carta (modal)
+   - Datos del objeto (nombre, científico)
+
+3. **Integración (2 días)**
+   - Navegación Home ↔ Memory ↔ Colección
+   - Sincronización de estado
+   - Testing de flujo completo
+
+**Entregable:** Colección funcional, desbloqueos visibles, progreso persistente
+
+---
+
+### 🟠 **FASE 4 — Preparación A/D (Semana 6)**
+
+**Objetivo:** Backend listo para Battle (sin UI)
+
+**Tareas:**
+
+1. **Factores A/D (2 días)**
+   - Asignar factores a todos los objetos (si no se hizo en Fase 1)
+   - Validar balanceo básico
+   - Crear ruleset v1.0.0
+   - Testear funciones `calculate_attack/defense`
+
+2. **Tablas de batalla (1 día)**
+   - `battles`
+   - `battle_participants`
+   - `battle_rounds`
+   - Scripts de inserción de prueba
+
+3. **Documentación (2 días)**
+   - Documentar fórmulas
+   - Ejemplos de cálculos
+   - Preparar para implementación UI (post-MVP)
+
+**Entregable:** Backend A/D completo, listo para integrar UI en post-MVP
+
+---
+
+### 🔴 **FASE 5 — Pulido MVP (Semana 7-8)**
+
+**Objetivo:** Producto estable y testeado
+
+**Tareas:**
+
+1. **Testing exhaustivo (5 días)**
+   - Testing en móviles reales (Android/iOS)
+   - Testing en diferentes tamaños de pantalla
+   - Testing de todos los grados (1-5)
+   - Testing de casos extremos:
+     - Completar con exactamente `maxAttempts`
+     - Completar con `maxAttempts + 1`
+     - Abandonar partida
+     - Reintentar múltiples veces
+   - Bug fixing
+
+2. **Optimización (3 días)**
+   - Performance en grado 5 (72 cartas)
+   - Optimización de imágenes si es necesario
+   - Reducir tamaño de assets
+   - Lazy loading de imágenes (opcional)
+
+3. **UX refinements (2 días)**
+   - Transiciones CSS suaves
+   - Feedback visual mejorado
+   - Loading states
+   - Error handling
+
+4. **Documentación final (2 días)**
+   - README actualizado
+   - CHANGELOG.md inicial
+   - Guía de instalación
+   - Preparar para deploy
+
+**Entregable:** MVP estable, testeado, listo para usuarios beta
+
+---
+
+## 4. Criterios de aceptación por fase
+
+### ✅ **Fase 1 — Fundaciones**
+- [ ] BD creada con esquema completo
+- [ ] 20 objetos con 2 imágenes cada uno
+- [ ] Login funciona (aunque sea hardcodeado)
+- [ ] Jugador se inicializa correctamente
+
+### ✅ **Fase 2 — Memory Core**
+- [ ] Puedo jugar una partida completa
+- [ ] Grid se calcula correctamente (5×4, 6×5, etc.)
+- [ ] Límite de intentos funciona
+- [ ] Castigo por repetir error funciona
+- [ ] Racha se calcula correctamente
+- [ ] Ascenso de grado funciona
+- [ ] LocalStorage persiste el grado
+
+### ✅ **Fase 3 — Cartas y Colección**
+- [ ] Cartas se desbloquean según progreso
+- [ ] Colección muestra estado correcto
+- [ ] Puedo ver detalle de carta desbloqueada
+- [ ] Navegación entre pantallas funciona
+
+### ✅ **Fase 4 — Preparación A/D**
+- [ ] Todos los objetos tienen factores A/D
+- [ ] Funciones SQL calculan valores correctamente
+- [ ] Ruleset v1.0.0 existe y es válido
+
+### ✅ **Fase 5 — Pulido**
+- [ ] 0 bugs críticos
+- [ ] Funciona en mobile (Android + iOS)
+- [ ] Performance aceptable (60fps en grado 5)
+- [ ] Documentación completa
+
+---
+
+## 5. Post-MVP Priorizado
+
+Una vez completado el MVP (8 semanas), estas son las expansiones priorizadas:
+
+### 🥇 **P1: Memory PvP Asíncrono (2-3 semanas)**
+
+**Por qué primero:**
+- Reutiliza 100% de la lógica de Memory existente
+- No requiere tiempo real (más fácil)
+- Aumenta engagement dramáticamente
+- Prepara terreno para Battle A/D
+
+**Features:**
+- Matchmaking basado en MMR
+- Misma seed para ambos jugadores
+- Comparación de resultados (pares → puntos → intentos)
+- Recompensas y ajuste de MMR
+- Tabla nueva: `memory_pvp_matches`
+
+**Endpoints nuevos:**
+```
+POST /memory/pvp/matchmake
+POST /memory/pvp/finish
+GET  /memory/pvp/leaderboard (opcional)
+```
+
+---
+
+### 🥈 **P2: Backend real + sincronización (3-4 semanas)**
+
+**Por qué segundo:**
+- Permite progreso multi-dispositivo
+- Preparación para monetización
+- Análisis de métricas real
+- Base para features sociales
+
+**Tareas:**
+- Migrar de LocalStorage a API real
+- Implementar todos los endpoints (Checklist-Endpoints.md)
+- JWT authentication
+- Cloud hosting (Vercel/Railway/Fly.io)
+- PostgreSQL managed (Supabase/Neon)
+
+---
+
+### 🥉 **P3: Battle A/D jugable (2-3 semanas)**
+
+**Por qué tercero:**
+- Ya está el backend preparado (Fase 4)
+- Solo falta UI/UX
+- Modo diferenciado de Memory
+- Usa sistema de cartas completo
+
+**Features:**
+- Pantalla de batalla
+- Selección de carta
+- Animación de comparación A/D
+- Resultado por rondas
+- Ajuste de MMR
+
+---
+
+### 🏅 **P4: Sistema de logros y estadísticas (1-2 semanas)**
+
+**Features:**
+- Historial de partidas
+- Récords personales por grado
+- Badges desbloqueables
+- Gráficas de progreso
+- Comparación con promedio global
+
+---
+
+### 🏅 **P5: Memory Nivel 2 — Variantes visuales (3-4 semanas)**
+
+**Features:**
+- 2+ imágenes del mismo objeto
+- Emparejar variantes (no duplicados exactos)
+- Movimientos de tablero (rotaciones de filas/columnas)
+- Grados 1-5 con mayor dificultad cognitiva
+- Desbloqueo de Carta C con habilidades reales
+
+---
+
+### 🏅 **P6: PWA + Monetización (2-3 semanas)**
+
+**Features:**
+- Manifest.json
+- Service worker (offline básico)
+- Instalable en home screen
+- Freemium: grados 1-3 gratis, resto con unlock
+- Stripe Checkout integrado
+- Precio sugerido: $4.99 unlock completo
+
+---
+
+## 6. Recursos necesarios
+
+### **Equipo mínimo MVP:**
+- 1 desarrollador full-stack (tú)
+- 1 generador de imágenes IA (NanoBanana/Stable Diffusion)
+- 1 diseñador vectorial (SVG base) — opcional si usas templates
+
+### **Herramientas:**
+- Editor: VS Code
+- BD: PostgreSQL local (Docker) o SQLite para pruebas
+- IA: NanoBanana API / Replicate
+- Assets: Figma / Inkscape (SVG)
+- Deploy: Vercel / Netlify (frontend), Railway (backend futuro)
+- Version control: GitHub
+
+### **Tiempo estimado:**
+- **MVP completo:** 8 semanas (1 desarrollador, medio tiempo)
+- **MVP + P1 (PvP):** 10-11 semanas
+- **MVP + P1 + P2 (Backend):** 14-15 semanas
+
+---
+
+## 7. Riesgos y mitigaciones
+
+### ⚠️ **Riesgo 1: Generación de contenido lenta**
+
+**Impacto:** Fase 1 se extiende
+
+**Mitigación:**
+- Empezar generación de imágenes en paralelo a desarrollo de BD
+- Usar 10 objetos inicialmente, escalar a 20 después
+- Batch prompts en NanoBanana
+
+---
+
+### ⚠️ **Riesgo 2: Balance de grados incorrecto**
+
+**Impacto:** Usuarios frustrados o aburridos
+
+**Mitigación:**
+- Testing interno exhaustivo en Fase 5
+- Beta cerrada con 10-20 usuarios
+- Parámetros editables (`ATTEMPT_FACTOR`, etc.)
+- Iteración rápida post-lanzamiento
+
+---
+
+### ⚠️ **Riesgo 3: Performance en grado 5 (72 cartas)**
+
+**Impacto:** Lag en mobile
+
+**Mitigación:**
+- Testing temprano en dispositivos reales
+- Optimización de imágenes (WebP, tamaño reducido)
+- Lazy rendering (solo cartas visibles)
+- CSS transforms (hardware-accelerated)
+
+---
+
+### ⚠️ **Riesgo 4: Scope creep**
+
+**Impacto:** MVP nunca termina
+
+**Mitigación:**
+- **Este documento es vinculante**
+- Decir NO a features no listadas
+- Registrar ideas en backlog para post-MVP
+- Revisión semanal de scope
+
+---
+
+## 8. Métricas de éxito
+
+### **Métricas técnicas (MVP):**
+- ✅ 0 bugs críticos de bloqueo
+- ✅ Performance: ≥60fps en grado 5 (mobile)
+- ✅ Tiempo de carga: <3s (primera visita)
+- ✅ Tamaño total: <5MB (con assets)
+
+### **Métricas de jugabilidad (primeros 100 usuarios):**
+- ✅ ≥60% completan grado 1
+- ✅ ≥30% llegan a grado 3+
+- ✅ ≥10% alcanzan grado 5
+- ✅ Tiempo promedio por grado: 3-7 minutos
+- ✅ Tasa de abandono: <40% en grado 1
+
+### **Métricas de retención (primera semana):**
+- ✅ D1 retention: ≥40%
+- ✅ D7 retention: ≥20%
+- ✅ Sesiones promedio: ≥2 por día
+
+**Si estas métricas se cumplen → MVP exitoso → Continuar con post-MVP**
+
+---
+
+## 9. Definición de "Hecho"
+
+Una fase se considera **completa** solo si:
+
+1. ✅ Todos los criterios de aceptación cumplidos
+2. ✅ Testing manual exitoso
+3. ✅ 0 bugs conocidos de severidad alta
+4. ✅ Código commiteado y pusheado
+5. ✅ Documentación actualizada
+6. ✅ Demo funcional disponible
+
+**No hay medias tintas. O está hecho o no está hecho.**
+
+---
+
+## 10. Regla final
+
+**Si una feature no está en este roadmap, NO se construye hasta completar el MVP.**
+
+Esto no es rigidez, es **disciplina**. El objetivo es lanzar rápido, validar, iterar.
+
+---
+
+## Estado del documento
+
+- **Versión:** v1.2
+- **Dependencia:** Manual Maestro v1.02, Manual Técnico v1.2, Manual UX/UI v1.0
+- **Última actualización:** Enero 2025
+
+**Cambios clave v1.2:**
+- Orden de fases estricto con semanas estimadas
+- Criterios de aceptación por fase
+- Post-MVP priorizado (PvP primero)
+- Riesgos y mitigaciones
+- Métricas de éxito cuantificables
+- Definición de "Hecho"
+
+---
+
+**Fin del Roadmap MVP v1.2**
