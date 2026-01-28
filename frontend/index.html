@@ -409,6 +409,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================
+  // ⚡ LIMPIEZA DE PENDING (CRÍTICO)
+  // =========================
+  function clearPendingCards() {
+    const pending = board.querySelectorAll('.card.pending');
+    if (pending.length === 2) {
+      pending.forEach(card => {
+        card.dataset.state = 'hidden';
+        card.classList.remove('pending');
+        card.classList.add('hidden');
+      });
+      return true; // se limpiaron
+    }
+    return false; // no había nada que limpiar
+  }
+
+  // =========================
   // Motor de intento (resolver 2 cartas)
   // =========================
   function resolvePair(a, b) {
@@ -512,13 +528,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ev.stopPropagation();
         if (pendingLock) return;
 
-        // si hay 2 pending visibles, obligamos a limpiar antes de seguir
-        const pending = board.querySelectorAll('.card.pending');
-        if (pending.length === 2) return;
+        // ⚡ CRÍTICO: si hay 2 pending, limpiarlas PRIMERO
+        if (clearPendingCards()) {
+          return; // este click se usó para limpiar, no para abrir
+        }
 
+        // Si la carta no está oculta, ignorar
         if (card.dataset.state !== 'hidden') return;
+        
+        // Si ya hay 2 reveladas, ignorar
         if (revealedCards.length >= 2) return;
 
+        // Revelar carta
         card.dataset.state = 'revealed';
         card.classList.remove('hidden');
         card.classList.add('revealed');
@@ -549,15 +570,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // click extra para limpiar pending y continuar (Nivel 1)
-  board.addEventListener('click', () => {
-    const pending = board.querySelectorAll('.card.pending');
-    if (pending.length === 2) {
-      pending.forEach(card => {
-        card.dataset.state = 'hidden';
-        card.classList.remove('pending');
-        card.classList.add('hidden');
-      });
+  // ⚡ Click en el tablero (fuera de cartas) también limpia pending
+  board.addEventListener('click', (ev) => {
+    if (ev.target === board) {
+      clearPendingCards();
     }
   });
 
@@ -569,3 +585,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+```
+
+---
+
+## ✅ Cambios implementados
+
+### 1. **Nueva función `clearPendingCards()`**
+Centraliza la lógica de limpieza y retorna `true` si limpió algo.
+
+### 2. **Prioridad en el click de carta**
+Antes de hacer cualquier cosa, verifica si hay pending y las limpia. Si las limpió, ese click se "consume" en la limpieza.
+
+### 3. **Click en tablero vacío**
+También limpia pending si clickeas el fondo del board.
+
+---
+
+## 🎮 Flujo garantizado
+```
+Abrir carta 1 → overlay → click cierra
+Abrir carta 2 → overlay → click cierra
+→ Evaluación automática
+→ Si falla: 2 cartas quedan pending
+→ Click en cualquier carta o tablero → limpia pending
+→ Juego continúa sin bloqueos
