@@ -62,15 +62,34 @@ KYNDO **no** usa el memory clásico de parejas simples.
 
 ### 4.1 Escalabilidad visual
 
-**Límites por nivel:**
+**Estructura de niveles y grados:**
 
-- **Nivel 1 (fundacional):** hasta ~40 cartas por tablero
-- **Nivel 2 (avanzado):** hasta ~80 cartas por tablero
-- **Nivel 3 (experto):** hasta ~120 cartas por tablero
+KYNDO Memory tiene **3 niveles** (modos de juego diferentes).  
+Cada nivel tiene **múltiples grados** (escalones de dificultad).
+
+**Nivel 1 (Fundacional) — Implementado:**
+
+| Grado | Cartas | Grid | Descripción |
+|-------|--------|------|-------------|
+| 1 | 20 | 5×4 | Introducción |
+| 2 | 30 | 6×5 | Escalamiento básico |
+| 3 | 42 | 7×6 | Densidad media |
+| 4 | 56 | 8×7 | Desafío visual |
+| 5 | 72 | 9×8 | Maestría |
+
+**Cálculo del grid:** `columns = ceil(sqrt(totalCards))`
+
+**Nivel 2 (Avanzado) — Planeado:**
+- Variantes visuales de un mismo objeto (2+ imágenes por carta)
+- Movimientos del tablero (rotaciones de filas/columnas)
+- Hasta ~80 cartas con modo denso
+
+**Nivel 3 (Experto) — Planeado:**
+- Objetos visualmente similares mezclados
+- Contra reloj
+- Hasta ~120 cartas
 
 **Límite práctico:** ~40px por carta en pantalla móvil.
-
-**Nota:** Los "niveles" son modos de juego diferentes. Dentro de cada nivel existen "grados" que aumentan la cantidad de cartas progresivamente.
 
 ### 4.2 Mecánicas avanzadas
 
