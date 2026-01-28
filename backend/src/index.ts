@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
+app.get('/health', (_req: Request, res: Response) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -30,7 +30,7 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 // Queue stats endpoint (admin only in production)
-app.get('/api/admin/queue/stats', async (req: Request, res: Response) => {
+app.get('/api/admin/queue/stats', async (_req: Request, res: Response) => {
   try {
     const stats = await getQueueStats();
     res.json(stats);
@@ -46,12 +46,12 @@ app.get('/api/cards/:id/presentation', getCardPresentation);
 app.use('/api/admin', adminCardsRouter);
 
 // 404 handler
-app.use((req: Request, res: Response) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
 // Error handler
-app.use((err: Error, req: Request, res: Response, next: any) => {
+app.use((err: Error, _req: Request, res: Response, _next: any) => {
   console.error('Unhandled error:', err);
   res.status(500).json({
     error: 'Internal server error',

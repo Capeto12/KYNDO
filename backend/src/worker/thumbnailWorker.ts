@@ -9,7 +9,6 @@ import prisma from '../prismaClient';
 dotenv.config();
 
 const queue = getCardUpdateQueue();
-const UPLOADS_DIR = process.env.UPLOADS_DIR || './uploads';
 const THUMBNAILS_DIR = process.env.THUMBNAILS_DIR || './uploads/thumbnails';
 
 /**

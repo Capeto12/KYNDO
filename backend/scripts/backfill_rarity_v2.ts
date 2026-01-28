@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import prisma from '../src/prismaClient';
-import { enqueueCardUpdate } from '../src/queue';
+// import { enqueueCardUpdate } from '../src/queue'; // Uncomment to regenerate thumbnails
 
 dotenv.config();
 

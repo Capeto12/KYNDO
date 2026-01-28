@@ -5,16 +5,18 @@ import { enqueueCardUpdate } from '../queue';
 /**
  * Middleware to validate admin key
  */
-export function validateAdminKey(req: Request, res: Response, next: NextFunction) {
+export function validateAdminKey(req: Request, res: Response, next: NextFunction): void {
   const adminKey = req.headers['x-admin-key'];
   const expectedKey = process.env.ADMIN_KEY;
 
   if (!expectedKey) {
-    return res.status(500).json({ error: 'Admin key not configured on server' });
+    res.status(500).json({ error: 'Admin key not configured on server' });
+    return;
   }
 
   if (!adminKey || adminKey !== expectedKey) {
-    return res.status(401).json({ error: 'Unauthorized: Invalid admin key' });
+    res.status(401).json({ error: 'Unauthorized: Invalid admin key' });
+    return;
   }
 
   next();
