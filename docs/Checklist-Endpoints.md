@@ -126,6 +126,84 @@ Checklist técnico derivado **directamente** del Manual UX/UI Técnico (MVP), la
 
 ---
 
+## 1.5 Preferencias del jugador
+
+### PATCH `/player/settings`
+
+**Propósito:** Actualizar preferencias del jugador
+
+**Usado por:** Pantalla de configuración
+
+**Request:**
+```json
+{
+  "player_id": "uuid",
+  "card_name_format": "english"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "settings": {
+    "card_name_format": "english",
+    "updated_at": "2025-01-29T10:30:00Z"
+  }
+}
+```
+
+**Acciones server-side:**
+1. Validar `card_name_format` (scientific/english/colombian)
+2. Actualizar `player_state.card_name_format`
+3. Actualizar `player_state.updated_at`
+4. Retornar confirmación
+
+**Errores:**
+- `400` — Formato inválido
+- `401` — No autenticado
+- `404` — Jugador no encontrado
+
+**Validación:**
+```javascript
+const VALID_FORMATS = ['scientific', 'english', 'colombian'];
+
+if (!VALID_FORMATS.includes(card_name_format)) {
+  return 400; // Bad Request
+}
+```
+
+---
+
+### GET `/player/{player_id}/settings`
+
+**Propósito:** Obtener preferencias del jugador
+
+**Usado por:** Carga inicial de la app
+
+**Request:** Headers con `Authorization: Bearer {token}`
+
+**Response:**
+```json
+{
+  "player_id": "uuid",
+  "settings": {
+    "card_name_format": "scientific",
+    "updated_at": "2025-01-29T10:30:00Z"
+  }
+}
+```
+
+**Acciones server-side:**
+- Lee `player_state.card_name_format`
+- No modifica estado
+
+**Errores:**
+- `401` — No autenticado
+- `404` — Jugador no encontrado
+
+---
+
 ## 2. Memory
 
 ### POST `/memory/start`
