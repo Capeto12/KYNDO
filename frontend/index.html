@@ -194,27 +194,42 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeFocus() {
     overlay.classList.remove('active');
   }
+const totalCards = 150;
+const totalPairs = totalCards / 2;
 
-  for (let i = 0; i < 150; i++) {
-    const card = document.createElement('div');
-    card.className = 'card hidden';
-    card.dataset.state = 'hidden';
-    card.dataset.objectId = Math.floor(i / 2);
+// Creamos pares: [0,0,1,1,2,2...]
+let objectIds = [];
+for (let i = 0; i < totalPairs; i++) {
+  objectIds.push(i);
+  objectIds.push(i);
+}
 
-    card.addEventListener('click', () => {
-      if (card.dataset.state !== 'hidden') return;
-      if (revealedCards.length >= 2) return;
+// Mezcla Fisher–Yates
+for (let i = objectIds.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [objectIds[i], objectIds[j]] = [objectIds[j], objectIds[i]];
+}
 
-      card.dataset.state = 'revealed';
-      card.classList.remove('hidden');
-      card.classList.add('revealed');
-      revealedCards.push(card);
+ for (let i = 0; i < totalCards; i++) {
+  const card = document.createElement('div');
+  card.className = 'card hidden';
+  card.dataset.state = 'hidden';
+  card.dataset.objectId = objectIds[i];
 
-      openFocus();
-    });
+  card.addEventListener('click', () => {
+    if (card.dataset.state !== 'hidden') return;
+    if (revealedCards.length >= 2) return;
 
-    board.appendChild(card);
-  }
+    card.dataset.state = 'revealed';
+    card.classList.remove('hidden');
+    card.classList.add('revealed');
+    revealedCards.push(card);
+
+    openFocus();
+  });
+
+  board.appendChild(card);
+}
 
   overlay.addEventListener('click', () => {
     closeFocus();
