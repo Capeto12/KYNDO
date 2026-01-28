@@ -85,6 +85,12 @@
   background: #e8e8e8;
   border: 1px dashed #aaa;
 }
+.card.matched {
+  background: #f1f1f1;
+  border: 2px solid #aaa;
+  opacity: 0.6;
+  pointer-events: none;
+}
 
 
     /* OVERLAY */
@@ -128,6 +134,12 @@
 
 <header>
   <h1>Memory</h1>
+  <div id="hud" style="font-size:14px; opacity:.85;">
+  🧠 <span id="hud-matches">0</span>
+  &nbsp; 🔁 <span id="hud-attempts">0</span>
+  &nbsp; ⭐ <span id="hud-score">0</span>
+</div>
+
 </header>
 
 <section id="board">
@@ -162,11 +174,18 @@
   </div>
 </div>
 <script>
+ <script>
+  // === SCORE NIVEL 1 ===
+  let score = 0;
+  let matches = 0;
+  let attempts = 0;
+
   const board = document.getElementById('board');
   const overlay = document.getElementById('overlay');
   const focusedCard = document.querySelector('.focused-card');
 
   let revealedCards = [];
+
 
   function openFocus() {
     overlay.classList.add('active');
@@ -180,6 +199,8 @@
     const card = document.createElement('div');
     card.className = 'card hidden';
     card.dataset.state = 'hidden';
+    card.dataset.objectId = Math.floor(i / 2);
+
 
     card.addEventListener('click', () => {
       if (card.dataset.state !== 'hidden') return;
@@ -200,14 +221,42 @@
 overlay.addEventListener('click', () => {
   closeFocus();
 
-  if (revealedCards.length === 2) {
-    revealedCards.forEach(card => {
-      card.dataset.state = 'pending';
-      card.classList.remove('revealed');
-      card.classList.add('pending');
-    });
-  }
+  if (revealedCards.length !== 2) return;
+
+  const [a, b] = revealedCards;
+  const isMatch = a.dataset.objectId === b.dataset.objectId;
+attempts += 1;
+
+if (isMatch) {
+  matches += 1;
+  score += 10;
+}
+
+document.getElementById('hud-matches').textContent = matches;
+document.getElementById('hud-attempts').textContent = attempts;
+document.getElementById('hud-score').textContent = score;
+
+  if (isMatch) {
+    // MATCH
+    a.dataset.state = 'matched';
+    b.dataset.state = 'matched';
+    a.classList.remove('revealed');
+    b.classList.remove('revealed');
+    a.classList.add('matched');
+    b.classList.add('matched');
+    revealedCards = [];
+ } else {
+  // NO MATCH → Nivel 1 (pending)
+  revealedCards.forEach(card => {
+    card.dataset.state = 'pending';
+    card.classList.remove('revealed');
+    card.classList.add('pending');
+  });
+  revealedCards = [];
+}
+
 });
+
 board.addEventListener('click', () => {
   const pending = document.querySelectorAll('.card.pending');
   if (pending.length === 2) {
