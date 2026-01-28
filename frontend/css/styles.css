@@ -228,7 +228,13 @@ footer {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 14px;
+  font-size: clamp(10px, 3vw, 14px);
+  padding: 4px 8px;
+  text-align: center;
+  overflow: hidden;
+  word-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.2;
 }
 
 .card-stats {
