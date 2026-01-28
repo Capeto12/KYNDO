@@ -18,12 +18,12 @@
       border-bottom: 1px solid #ccc;
     }
 
-    #board {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
-      gap: 7px;
-      padding: 8px;
-    }
+   #board {
+  display: grid;
+  gap: 7px;
+  padding: 8px;
+}
+
 
     .card {
   aspect-ratio: 1 / 1;
@@ -180,73 +180,81 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-  // === SCORE NIVEL 1 ===
+  // ===== CONFIGURACIÓN DE GRADO =====
+  const memoryGrade = 1; // cambia a 2, 3, 4...
+  const gradeConfig = {
+    1: 20,
+    2: 30,
+    3: 42,
+    4: 56,
+    5: 72
+  };
+
+  const totalCards = gradeConfig[memoryGrade];
+  const totalPairs = totalCards / 2;
+
+  // ===== DOM =====
+  const board = document.getElementById('board');
+  const overlay = document.getElementById('overlay');
+
+  // ===== GRID DINÁMICO =====
+  const columns = Math.ceil(Math.sqrt(totalCards));
+  board.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+
+  // ===== HUD =====
   let score = 0;
   let matches = 0;
   let attempts = 0;
 
-  const board = document.getElementById('board');
-  const overlay = document.getElementById('overlay');
-  const focusedCard = document.querySelector('.focused-card');
-
   let revealedCards = [];
 
-  function openFocus() {
-    overlay.classList.add('active');
+  // ===== CREAR IDS DE OBJETOS =====
+  let objectIds = [];
+  for (let i = 0; i < totalPairs; i++) {
+    objectIds.push(i);
+    objectIds.push(i);
   }
 
-  function closeFocus() {
-    overlay.classList.remove('active');
+  // Shuffle
+  for (let i = objectIds.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [objectIds[i], objectIds[j]] = [objectIds[j], objectIds[i]];
   }
-const totalCards = 20;
-const totalPairs = totalCards / 10;
 
-// Creamos pares: [0,0,1,1,2,2...]
-let objectIds = [];
-for (let i = 0; i < totalPairs; i++) {
-  objectIds.push(i);
-  objectIds.push(i);
-}
+  // ===== CREAR CARTAS =====
+  for (let i = 0; i < totalCards; i++) {
+    const card = document.createElement('div');
+    card.className = 'card hidden';
+    card.dataset.state = 'hidden';
+    card.dataset.objectId = objectIds[i];
 
-// Mezcla Fisher–Yates
-for (let i = objectIds.length - 1; i > 0; i--) {
-  const j = Math.floor(Math.random() * (i + 1));
-  [objectIds[i], objectIds[j]] = [objectIds[j], objectIds[i]];
-}
+    card.addEventListener('click', () => {
+      if (card.dataset.state !== 'hidden') return;
+      if (revealedCards.length >= 2) return;
 
- for (let i = 0; i < totalCards; i++) {
-  const card = document.createElement('div');
-  card.className = 'card hidden';
-  card.dataset.state = 'hidden';
-  card.dataset.objectId = objectIds[i];
+      card.dataset.state = 'revealed';
+      card.classList.remove('hidden');
+      card.classList.add('revealed');
 
-  card.addEventListener('click', () => {
-    if (card.dataset.state !== 'hidden') return;
-    if (revealedCards.length >= 2) return;
+      revealedCards.push(card);
+      overlay.classList.add('active');
+    });
 
-    card.dataset.state = 'revealed';
-    card.classList.remove('hidden');
-    card.classList.add('revealed');
-    revealedCards.push(card);
+    board.appendChild(card);
+  }
 
-    openFocus();
-  });
-
-  board.appendChild(card);
-}
-
+  // ===== RESOLVER MATCH =====
   overlay.addEventListener('click', () => {
-    closeFocus();
+    overlay.classList.remove('active');
 
     if (revealedCards.length !== 2) return;
 
     const [a, b] = revealedCards;
     const isMatch = a.dataset.objectId === b.dataset.objectId;
-
-    attempts += 1;
+    attempts++;
 
     if (isMatch) {
-      matches += 1;
+      matches++;
       score += 10;
 
       a.dataset.state = 'matched';
@@ -255,22 +263,22 @@ for (let i = objectIds.length - 1; i > 0; i--) {
       b.classList.remove('revealed');
       a.classList.add('matched');
       b.classList.add('matched');
-
-      revealedCards = [];
     } else {
       revealedCards.forEach(card => {
         card.dataset.state = 'pending';
         card.classList.remove('revealed');
         card.classList.add('pending');
       });
-      revealedCards = [];
     }
+
+    revealedCards = [];
 
     document.getElementById('hud-matches').textContent = matches;
     document.getElementById('hud-attempts').textContent = attempts;
     document.getElementById('hud-score').textContent = score;
   });
 
+  // ===== LIMPIAR PENDING =====
   board.addEventListener('click', () => {
     const pending = document.querySelectorAll('.card.pending');
     if (pending.length === 2) {
