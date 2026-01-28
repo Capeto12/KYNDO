@@ -258,7 +258,7 @@ footer a:hover {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: clamp(10px, 3vw, 16px);
+  font-size: clamp(10px, 3vw, 14px);
   background: #fafafa;
   padding: 4px 8px;
   text-align: center;
@@ -472,9 +472,7 @@ footer a:hover {
     font-size: 36px;
   }
 
-  .card-name {
-    font-size: clamp(9px, 2.5vw, 14px);
-  }
+
 
   .card-stats {
     font-size: 12px;
