@@ -81,6 +81,10 @@
   background: #ffffff;
   border: 1px solid #999;
 }
+.card.pending {
+  background: #e8e8e8;
+  border: 1px dashed #aaa;
+}
 
 
     /* OVERLAY */
@@ -198,13 +202,24 @@ overlay.addEventListener('click', () => {
 
   if (revealedCards.length === 2) {
     revealedCards.forEach(card => {
-      card.dataset.state = 'hidden';
+      card.dataset.state = 'pending';
       card.classList.remove('revealed');
+      card.classList.add('pending');
+    });
+  }
+});
+board.addEventListener('click', () => {
+  const pending = document.querySelectorAll('.card.pending');
+  if (pending.length === 2) {
+    pending.forEach(card => {
+      card.dataset.state = 'hidden';
+      card.classList.remove('pending');
       card.classList.add('hidden');
     });
     revealedCards = [];
   }
 });
+
 
 </script>
 </body>
