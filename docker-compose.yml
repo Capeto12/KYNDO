@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  api:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - ADMIN_KEY=CambiaMe123!
+      - UPLOADS_DIR=./uploads
+  worker:
+    build: .
+    command: npm run worker
+    depends_on:
+      - api
+  # Redis: opcional si decides usar bull en producción
+  # redis:
+  #   image: "redis:6-alpine"
+  #   ports:
+  #     - "6379:6379"
