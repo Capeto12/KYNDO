@@ -77,6 +77,90 @@ Esta carpeta contiene los módulos JavaScript del juego Memory, organizados seg�
 
 ---
 
+### `stats.js` ⭐ NEW
+**Propósito:** Sistema de estadísticas y logros.
+
+**Exports:**
+- `GameStats` - Clase para gestionar estadísticas
+- `gameStats` - Instancia singleton
+- `analyzePerformance()` - Analiza rendimiento de partida
+
+**Características:**
+- Tracking de partidas y victorias
+- Estadísticas por grado
+- Sistema de logros desbloqueables
+- Análisis de performance con feedback
+- Exportación de datos
+- Persistencia automática
+
+**Logros disponibles:**
+- Primera Victoria
+- Memoria Perfecta
+- Racha Completa
+- Por los Pelos
+- Veterano
+
+---
+
+### `performance.js` ⭐ NEW
+**Propósito:** Monitoreo de performance y optimización.
+
+**Exports:**
+- `PerformanceTimer` - Clase para medir tiempos
+- `FPSMeter` - Medidor de FPS
+- `MemoryMonitor` - Monitor de memoria
+- `GamePerformanceMonitor` - Monitor integral
+- `perfTimer` - Timer global
+- `perfMonitor` - Monitor global
+- `timed()` - Decorator para timing
+- `withTiming()` - Wrapper para timing
+
+**Características:**
+- Medición precisa de tiempos
+- Estadísticas (min, max, avg, median)
+- Monitoreo de FPS en tiempo real
+- Tracking de uso de memoria
+- Reportes detallados
+
+---
+
+### `animations.js` ⭐ NEW
+**Propósito:** Sistema de animaciones y efectos visuales.
+
+**Exports:**
+- `CardAnimations` - Animaciones de cartas
+- `ParticleEffects` - Efectos de partículas
+- `UIAnimations` - Animaciones de UI
+- `PageTransitions` - Transiciones de página
+- `ANIMATION_CSS` - CSS de animaciones
+
+**Características:**
+- Animaciones fluidas con Web Animations API
+- Efectos de partículas (confetti, shine, pulse)
+- Transiciones de elementos
+- Animación de números
+- Typewriter effect
+
+---
+
+### `error-handler.js`
+**Propósito:** Manejo centralizado de errores.
+
+**Exports:**
+- `GameError`, `StorageError`, `ValidationError`, `ConfigError`
+- `ErrorHandler` - Clase manejadora
+- `errorHandler` - Instancia singleton
+- Funciones de validación
+
+**Características:**
+- Tipos de error personalizados
+- Captura global de errores
+- Historial con límite
+- Estadísticas por tipo
+- Validaciones reutilizables
+
+---
+
 ### `game-controller.js`
 **Propósito:** Orquestador principal que conecta lógica y presentación.
 
@@ -103,10 +187,20 @@ Esta carpeta contiene los módulos JavaScript del juego Memory, organizados seg�
          │      └─→ config.js   (parámetros)
          │
          ├──→ ui-renderer.js    (presentación)
-         │      └─→ config.js   (constantes)
+         │      ├─→ config.js   (constantes)
+         │      └─→ animations.js (efectos)
          │
-         └──→ storage.js        (persistencia)
-                └─→ config.js   (keys)
+         ├──→ storage.js        (persistencia)
+         │      └─→ config.js   (keys)
+         │
+         ├──→ stats.js          (estadísticas)
+         │      └─→ config.js   (keys)
+         │
+         ├──→ error-handler.js  (errores)
+         │      └─→ utils.js    (logger)
+         │
+         └──→ performance.js    (monitoring)
+                └─→ utils.js    (logger)
 ```
 
 ## 🎯 Beneficios de esta Arquitectura
@@ -162,13 +256,18 @@ console.log(result); // { isMatch: true, scoreChange: 10, ... }
 ## 📝 Próximas Mejoras
 
 - [ ] Unit tests para game-engine.js
+- [ ] Integración de stats.js en game-controller
+- [ ] Integración de animations.js en ui-renderer
 - [ ] Sistema de eventos (pub/sub) para desacoplar más
-- [ ] Animaciones avanzadas en ui-renderer.js
 - [ ] Soporte para múltiples idiomas
 - [ ] Integración con backend API
+- [ ] Panel de estadísticas en UI
+- [ ] Modo debug con performance monitoring
+- [ ] Replay de partidas guardadas
 
 ---
 
-**Versión:** 1.0  
+**Versión:** 1.1  
 **Fecha:** Enero 2025  
-**Estado:** Refactorización completada según ARCHITECTURE.md
+**Estado:** Refactorización completada + Stats + Performance + Animations
+**Módulos totales:** 10 archivos JavaScript modulares
