@@ -8,6 +8,8 @@
  */
 
 import { STORAGE_KEY } from './config.js';
+import { StorageError, errorHandler } from './error-handler.js';
+import { logger } from './utils.js';
 
 /**
  * Clase que maneja la persistencia del progreso
@@ -26,7 +28,9 @@ export class ProgressStorage {
       const data = localStorage.getItem(this.storageKey);
       return data ? JSON.parse(data) : {};
     } catch (error) {
-      console.warn('Error al cargar progreso:', error);
+      const storageError = new StorageError('Error al cargar progreso desde localStorage');
+      errorHandler.handleError(storageError);
+      logger.warn('No se pudo cargar el progreso, usando valores por defecto');
       return {};
     }
   }
@@ -38,10 +42,14 @@ export class ProgressStorage {
    */
   save(progress) {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(progress));
+      const data = JSON.stringify(progress);
+      localStorage.setItem(this.storageKey, data);
+      logger.info('Progreso guardado correctamente');
       return true;
     } catch (error) {
-      console.error('Error al guardar progreso:', error);
+      const storageError = new StorageError('Error al guardar progreso en localStorage');
+      errorHandler.handleError(storageError);
+      logger.error('No se pudo guardar el progreso');
       return false;
     }
   }
@@ -74,9 +82,12 @@ export class ProgressStorage {
   clear() {
     try {
       localStorage.removeItem(this.storageKey);
+      logger.info('Progreso limpiado correctamente');
       return true;
     } catch (error) {
-      console.error('Error al limpiar progreso:', error);
+      const storageError = new StorageError('Error al limpiar progreso');
+      errorHandler.handleError(storageError);
+      logger.error('No se pudo limpiar el progreso');
       return false;
     }
   }

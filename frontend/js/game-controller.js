@@ -8,7 +8,7 @@
  */
 
 import { GRADE_CONFIG, CARD_STATES } from './config.js';
-import { DOM_IDS } from './constants.js';
+import { DOM_IDS, MESSAGES } from './constants.js';
 import {
   MemoryGameState,
   computeColumns,
@@ -24,6 +24,12 @@ import {
   showResultWithDelay
 } from './ui-renderer.js';
 import { progressStorage } from './storage.js';
+import {
+  errorHandler,
+  validateElement,
+  validateRequiredElements,
+  ValidationError
+} from './error-handler.js';
 
 /**
  * Controlador principal del juego Memory
@@ -284,41 +290,56 @@ export class MemoryGameController {
  * Inicializa el juego cuando el DOM está listo
  */
 export function initGame() {
-  // Recolectar todos los elementos del DOM usando constantes
-  const elements = {
-    board: document.getElementById(DOM_IDS.BOARD),
-    overlay: document.getElementById(DOM_IDS.OVERLAY),
-    resultOverlay: document.getElementById(DOM_IDS.RESULT_OVERLAY),
-    
-    // HUD
-    hudMatches: document.getElementById(DOM_IDS.HUD.MATCHES),
-    hudPairs: document.getElementById(DOM_IDS.HUD.PAIRS),
-    hudAttempts: document.getElementById(DOM_IDS.HUD.ATTEMPTS),
-    hudMaxAttempts: document.getElementById(DOM_IDS.HUD.MAX_ATTEMPTS),
-    hudStreak: document.getElementById(DOM_IDS.HUD.STREAK),
-    hudScore: document.getElementById(DOM_IDS.HUD.SCORE),
-    hudGrade: document.getElementById(DOM_IDS.HUD.GRADE),
-    
-    // Focus overlay
-    focusImage: document.getElementById(DOM_IDS.FOCUS.IMAGE),
-    focusName: document.getElementById(DOM_IDS.FOCUS.NAME),
-    focusAtk: document.getElementById(DOM_IDS.FOCUS.ATK),
-    focusDef: document.getElementById(DOM_IDS.FOCUS.DEF),
-    
-    // Result overlay
-    resultTitle: document.getElementById(DOM_IDS.RESULT.TITLE),
-    resultSub: document.getElementById(DOM_IDS.RESULT.SUBTITLE),
-    resultPairs: document.getElementById(DOM_IDS.RESULT.PAIRS),
-    resultAttempts: document.getElementById(DOM_IDS.RESULT.ATTEMPTS),
-    resultScore: document.getElementById(DOM_IDS.RESULT.SCORE),
-    resultMaxStreak: document.getElementById(DOM_IDS.RESULT.MAX_STREAK),
-    btnPrimary: document.getElementById(DOM_IDS.RESULT.BTN_PRIMARY),
-    btnSecondary: document.getElementById(DOM_IDS.RESULT.BTN_SECONDARY)
-  };
+  try {
+    // Recolectar todos los elementos del DOM usando constantes
+    const elements = {
+      board: document.getElementById(DOM_IDS.BOARD),
+      overlay: document.getElementById(DOM_IDS.OVERLAY),
+      resultOverlay: document.getElementById(DOM_IDS.RESULT_OVERLAY),
+      
+      // HUD
+      hudMatches: document.getElementById(DOM_IDS.HUD.MATCHES),
+      hudPairs: document.getElementById(DOM_IDS.HUD.PAIRS),
+      hudAttempts: document.getElementById(DOM_IDS.HUD.ATTEMPTS),
+      hudMaxAttempts: document.getElementById(DOM_IDS.HUD.MAX_ATTEMPTS),
+      hudStreak: document.getElementById(DOM_IDS.HUD.STREAK),
+      hudScore: document.getElementById(DOM_IDS.HUD.SCORE),
+      hudGrade: document.getElementById(DOM_IDS.HUD.GRADE),
+      
+      // Focus overlay
+      focusImage: document.getElementById(DOM_IDS.FOCUS.IMAGE),
+      focusName: document.getElementById(DOM_IDS.FOCUS.NAME),
+      focusAtk: document.getElementById(DOM_IDS.FOCUS.ATK),
+      focusDef: document.getElementById(DOM_IDS.FOCUS.DEF),
+      
+      // Result overlay
+      resultTitle: document.getElementById(DOM_IDS.RESULT.TITLE),
+      resultSub: document.getElementById(DOM_IDS.RESULT.SUBTITLE),
+      resultPairs: document.getElementById(DOM_IDS.RESULT.PAIRS),
+      resultAttempts: document.getElementById(DOM_IDS.RESULT.ATTEMPTS),
+      resultScore: document.getElementById(DOM_IDS.RESULT.SCORE),
+      resultMaxStreak: document.getElementById(DOM_IDS.RESULT.MAX_STREAK),
+      btnPrimary: document.getElementById(DOM_IDS.RESULT.BTN_PRIMARY),
+      btnSecondary: document.getElementById(DOM_IDS.RESULT.BTN_SECONDARY)
+    };
 
-  // Crear controlador e iniciar juego
-  const controller = new MemoryGameController(elements);
-  controller.startRun();
-  
-  return controller;
+    // Validar que todos los elementos críticos existan
+    const requiredElements = [
+      'board', 'overlay', 'resultOverlay',
+      'hudMatches', 'hudPairs', 'hudAttempts', 'hudMaxAttempts',
+      'hudStreak', 'hudScore', 'hudGrade'
+    ];
+    
+    validateRequiredElements(elements, requiredElements);
+
+    // Crear controlador e iniciar juego
+    const controller = new MemoryGameController(elements);
+    controller.startRun();
+    
+    return controller;
+  } catch (error) {
+    errorHandler.handleError(error);
+    errorHandler.showUserError(MESSAGES.ERROR_INIT);
+    throw error;
+  }
 }

@@ -16,6 +16,7 @@ import {
   GRADE_CONFIG,
   CARD_STATES
 } from './config.js';
+import { validateGrade, validateNumber, ConfigError } from './error-handler.js';
 
 /**
  * Calcula el número de columnas del grid basado en el total de cartas
@@ -93,8 +94,17 @@ export function calculateStreakBonus(currentStreak) {
  */
 export class MemoryGameState {
   constructor(grade) {
+    // Validar grado
+    validateGrade(grade, GRADE_CONFIG);
+    
     this.grade = grade;
-    this.totalCards = GRADE_CONFIG[grade] || 20;
+    this.totalCards = GRADE_CONFIG[grade];
+    
+    // Validar que las cartas sean un número par
+    if (this.totalCards % 2 !== 0) {
+      throw new ConfigError(`El grado ${grade} tiene un número impar de cartas: ${this.totalCards}`);
+    }
+    
     this.totalPairs = this.totalCards / 2;
     this.maxAttempts = calculateMaxAttempts(this.totalPairs);
     
