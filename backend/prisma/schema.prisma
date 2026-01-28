@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Card {
+  id            String   @id @default(cuid())
+  cardId        String   @unique // e.g., "guacamaya-roja"
+  title         String
+  imageUrl      String?
+  thumbnailPath String?
+  rarity        String   @default("common") // common, rare, epic, legendary
+  rarityV2      String?  @map("rarity_v2") // New rarity field for migrations
+  packId        String   @default("birds")
+  metadata      Json?    // Additional metadata as JSON
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  auditLogs AuditLog[]
+
+  @@index([packId])
+  @@index([rarity])
+  @@map("cards")
+}
+
+model PresentationRule {
+  id          String   @id @default(cuid())
+  rarity      String   @unique // Rarity level this rule applies to
+  frameColor  String   // Hex color for card frame
+  glowEffect  Boolean  @default(false)
+  badgeIcon   String?  // Icon name or URL
+  sortOrder   Int      @default(0)
+  metadata    Json?    // Additional presentation settings
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("presentation_rules")
+}
+
+model Asset {
+  id           String   @id @default(cuid())
+  assetKey     String   @unique // e.g., "thumbnails/guacamaya-roja-thumb.webp"
+  assetType    String   // "thumbnail", "image", "icon", etc.
+  filePath     String
+  fileSize     Int?
+  mimeType     String?
+  metadata     Json?
+  generatedBy  String?  // "sharp", "manual", etc.
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([assetType])
+  @@map("assets")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  cardId      String?
+  action      String   // "update_rarity", "regenerate_thumbnail", etc.
+  performedBy String   // Admin user identifier or "system"
+  changes     Json?    // Details of what changed
+  metadata    Json?    // Additional context
+  createdAt   DateTime @default(now())
+
+  card Card? @relation(fields: [cardId], references: [id])
+
+  @@index([cardId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

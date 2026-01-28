@@ -1,0 +1,73 @@
+{
+  "packId": "birds",
+  "title": "Aves Ejemplo",
+  "version": 1,
+  "count": 5,
+  "cards": [
+    {
+      "cardId": "guacamaya-roja",
+      "title": "Guacamaya Roja",
+      "imageUrl": "content/birds/img/guacamaya-roja.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Ara macao",
+        "habitat": "Tropical rainforests",
+        "size": "Large",
+        "description": "Colorful parrot native to Central and South America"
+      }
+    },
+    {
+      "cardId": "condor-andino",
+      "title": "Cóndor Andino",
+      "imageUrl": "content/birds/img/condor-andino.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Vultur gryphus",
+        "habitat": "Mountain ranges",
+        "size": "Very large",
+        "description": "Majestic bird of prey in the Andes mountains"
+      }
+    },
+    {
+      "cardId": "colibri",
+      "title": "Colibrí",
+      "imageUrl": "content/birds/img/colibri.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Trochilidae",
+        "habitat": "Gardens and forests",
+        "size": "Tiny",
+        "description": "Smallest bird that can hover in mid-air"
+      }
+    },
+    {
+      "cardId": "tucan",
+      "title": "Tucán",
+      "imageUrl": "content/birds/img/tucan.webp",
+      "rarity": "epic",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Ramphastidae",
+        "habitat": "Tropical forests",
+        "size": "Medium",
+        "description": "Distinctive bird with large colorful beak"
+      }
+    },
+    {
+      "cardId": "buho",
+      "title": "Búho",
+      "imageUrl": "content/birds/img/buho.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Strigiformes",
+        "habitat": "Various habitats",
+        "size": "Medium to large",
+        "description": "Nocturnal bird of prey with excellent vision"
+      }
+    }
+  ]
+}
