@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>KYNDO — Memory (Nivel 1)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Motor de juegos cognitivos que convierte reconocimiento superficial en comprensión estratégica progresiva." />
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+<header>
+  <h1 style="margin:0 0 6px;">Memory</h1>
+  <div id="hud" style="font-size:14px; opacity:.85;">
+    🧠 <span id="hud-matches">0</span>/<span id="hud-pairs">0</span>
+    &nbsp; 🔁 <span id="hud-attempts">0</span>/<span id="hud-maxAttempts">0</span>
+    &nbsp; 🔥 <span id="hud-streak">0</span>
+    &nbsp; ⭐ <span id="hud-score">0</span>
+  </div>
+  <div style="font-size:12px; opacity:.7; margin-top:6px;">
+    Grado: <span id="hud-grade">1</span>
+  </div>
+</header>
+
+<section id="board"></section>
+
+<footer>
+  <a href="../">Volver al Home</a>
+</footer>
+
+<!-- Overlay de foco (carta grande) -->
+<div id="overlay">
+  <div class="focused-card">
+    <div class="card-front">
+      <div class="card-image" id="focusImage">KYNDO</div>
+      <div class="card-name" id="focusName">—</div>
+      <div class="card-stats">
+        <span id="focusAtk">ATK —</span>
+        <span id="focusDef">DEF —</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay fin de grado -->
+<div id="resultOverlay">
+  <div class="result-card">
+    <div class="result-title" id="resultTitle">—</div>
+    <div class="result-sub" id="resultSub">—</div>
+
+    <div class="result-grid">
+      <div class="result-row"><b>Pares</b><span id="resultPairs">—</span></div>
+      <div class="result-row"><b>Intentos</b><span id="resultAttempts">—</span></div>
+      <div class="result-row"><b>Puntaje</b><span id="resultScore">—</span></div>
+      <div class="result-row"><b>Racha máx.</b><span id="resultMaxStreak">—</span></div>
+    </div>
+
+    <div style="margin-top:6px;">
+      <button class="btn btn-primary" id="btnPrimary">Continuar</button>
+      <button class="btn btn-ghost" id="btnSecondary">Reintentar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts modulares -->
+<script type="module">
+  import { initGame } from './js/game-controller.js';
+  
+  // Inicializar el juego cuando el DOM esté listo
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      initGame();
+    } catch (error) {
+      console.error('Error al inicializar el juego:', error);
+      alert('Error al cargar el juego. Por favor, recarga la página.');
+    }
+  });
+</script>
+
+</body>
+</html>
