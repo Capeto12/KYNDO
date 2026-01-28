@@ -3,6 +3,7 @@
 ## Pregunta del Usuario
 
 > "Basado en la documentación del repo de KINDO, ¿cómo vamos con el código y cuánto nos falta de trabajo para crear el juego? Hay que crear el contenido con Nano Banan y Figma. ¿Está esto explicado en la documentación?"
+
 **Nota:** El proyecto se llama **KYNDO** (no KINDO). La pregunta original contiene un error tipográfico que hemos preservado para contexto.
 
 ---
@@ -167,6 +168,10 @@ Esta guía nueva incluye:
 ```
 # 1. Abrir Figma
 # Ver: CONTENT_CREATION_GUIDE.md sección 3.3 (guía paso a paso)
+
+# 2. Crear frame 300×450px
+# Ver: CONTENT_CREATION_GUIDE.md sección 3.2 (estructura)
+
 # 2. Crear frame 300×450px
 # Ver: CONTENT_CREATION_GUIDE.md sección 3.2 (estructura)
 # 3. Diseñar componentes:
@@ -174,6 +179,7 @@ Esta guía nueva incluye:
 #    - Contenedor de imagen
 #    - Sección de nombre
 #    - Sección de stats
+
 # 4. Exportar SVG optimizado
 # Ver: CONTENT_CREATION_GUIDE.md sección 3.4 (optimización)
 ```

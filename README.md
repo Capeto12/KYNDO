@@ -94,6 +94,7 @@ Ver [`/docs/README.md`](docs/README.md) para el índice completo.
 - [Manual Maestro](docs/Manual-Maestro.md) — Fuente única de verdad (congelado)
 - [Manual Técnico](docs/Manual-Tecnico.md) — Arquitectura ejecutable
 - [Manual UX/UI](docs/Manual-UX-UI.md) — Interfaz y estados del jugador
+- [**Guía de Creación de Contenido**](docs/CONTENT_CREATION_GUIDE.md) — **Pipeline completo con servicios IA y Figma**
 
 #### **Base de datos y backend:**
 - [Esquema de BD](docs/Esquema-BD.md) — Tablas, relaciones, constraints
@@ -135,9 +136,10 @@ Ver [`/docs/README.md`](docs/README.md) para el índice completo.
 
 ### **Content pipeline:**
 - SVG vectorial (marcos y estructura)
-- AI-generated images (NanoBanana)
+- AI-generated images (Replicate, Leonardo.ai, Stable Diffusion)
 - WebP optimizado
 - JSON/SQLite catálogo maestro
+- **Ver [Guía de Creación de Contenido](docs/CONTENT_CREATION_GUIDE.md) para detalles completos**
 
 ---
 
