@@ -174,7 +174,8 @@
   </div>
 </div>
 <script>
- <script>
+document.addEventListener('DOMContentLoaded', () => {
+
   // === SCORE NIVEL 1 ===
   let score = 0;
   let matches = 0;
@@ -185,7 +186,6 @@
   const focusedCard = document.querySelector('.focused-card');
 
   let revealedCards = [];
-
 
   function openFocus() {
     overlay.classList.add('active');
@@ -201,7 +201,6 @@
     card.dataset.state = 'hidden';
     card.dataset.objectId = Math.floor(i / 2);
 
-
     card.addEventListener('click', () => {
       if (card.dataset.state !== 'hidden') return;
       if (revealedCards.length >= 2) return;
@@ -211,65 +210,61 @@
       card.classList.add('revealed');
       revealedCards.push(card);
 
-      // IMPORTANTE: abrir foco SIEMPRE
       openFocus();
     });
 
     board.appendChild(card);
   }
 
-overlay.addEventListener('click', () => {
-  closeFocus();
+  overlay.addEventListener('click', () => {
+    closeFocus();
 
-  if (revealedCards.length !== 2) return;
+    if (revealedCards.length !== 2) return;
 
-  const [a, b] = revealedCards;
-  const isMatch = a.dataset.objectId === b.dataset.objectId;
-attempts += 1;
+    const [a, b] = revealedCards;
+    const isMatch = a.dataset.objectId === b.dataset.objectId;
 
-if (isMatch) {
-  matches += 1;
-  score += 10;
-}
+    attempts += 1;
 
-document.getElementById('hud-matches').textContent = matches;
-document.getElementById('hud-attempts').textContent = attempts;
-document.getElementById('hud-score').textContent = score;
+    if (isMatch) {
+      matches += 1;
+      score += 10;
 
-  if (isMatch) {
-    // MATCH
-    a.dataset.state = 'matched';
-    b.dataset.state = 'matched';
-    a.classList.remove('revealed');
-    b.classList.remove('revealed');
-    a.classList.add('matched');
-    b.classList.add('matched');
-    revealedCards = [];
- } else {
-  // NO MATCH → Nivel 1 (pending)
-  revealedCards.forEach(card => {
-    card.dataset.state = 'pending';
-    card.classList.remove('revealed');
-    card.classList.add('pending');
+      a.dataset.state = 'matched';
+      b.dataset.state = 'matched';
+      a.classList.remove('revealed');
+      b.classList.remove('revealed');
+      a.classList.add('matched');
+      b.classList.add('matched');
+
+      revealedCards = [];
+    } else {
+      revealedCards.forEach(card => {
+        card.dataset.state = 'pending';
+        card.classList.remove('revealed');
+        card.classList.add('pending');
+      });
+      revealedCards = [];
+    }
+
+    document.getElementById('hud-matches').textContent = matches;
+    document.getElementById('hud-attempts').textContent = attempts;
+    document.getElementById('hud-score').textContent = score;
   });
-  revealedCards = [];
-}
+
+  board.addEventListener('click', () => {
+    const pending = document.querySelectorAll('.card.pending');
+    if (pending.length === 2) {
+      pending.forEach(card => {
+        card.dataset.state = 'hidden';
+        card.classList.remove('pending');
+        card.classList.add('hidden');
+      });
+    }
+  });
 
 });
-
-board.addEventListener('click', () => {
-  const pending = document.querySelectorAll('.card.pending');
-  if (pending.length === 2) {
-    pending.forEach(card => {
-      card.dataset.state = 'hidden';
-      card.classList.remove('pending');
-      card.classList.add('hidden');
-    });
-    revealedCards = [];
-  }
-});
-
-
 </script>
+
 </body>
 </html>
