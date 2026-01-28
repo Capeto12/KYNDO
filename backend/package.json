@@ -1,0 +1,52 @@
+{
+  "name": "kyndo-backend",
+  "version": "1.0.0",
+  "description": "KYNDO Backend API - Card management and thumbnail regeneration",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "worker": "ts-node src/worker/thumbnailWorker.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "bulk:promote": "ts-node scripts/bulk_promote.ts",
+    "seed": "ts-node seeds/seed_dev.ts",
+    "backfill": "ts-node scripts/backfill_rarity_v2.ts",
+    "export:json": "ts-node scripts/export_sqlite_to_json.ts"
+  },
+  "keywords": [
+    "cards",
+    "game",
+    "api",
+    "cognitive"
+  ],
+  "author": "KYNDO Team",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.8.0",
+    "bull": "^4.12.0",
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "sharp": "^0.33.1"
+  },
+  "devDependencies": {
+    "@types/bull": "^4.10.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.10.6",
+    "prisma": "^5.8.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

@@ -56,3 +56,11 @@ ENV/
 *.bak
 *.backup
 *.cache
+
+# Backend specific
+backend/uploads/
+backend/exports/
+backend/*.sql
+backend/.env
+backend/dist/
+backend/node_modules/
