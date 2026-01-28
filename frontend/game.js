@@ -237,6 +237,7 @@ class UIManager {
     this.board = document.getElementById('board');
     this.overlay = document.getElementById('overlay');
     this.resultOverlay = document.getElementById('resultOverlay');
+    this.loading = document.getElementById('loading');
     
     // Referencias DOM - HUD
     this.hudMatches = document.getElementById('hud-matches');
@@ -246,6 +247,7 @@ class UIManager {
     this.hudStreak = document.getElementById('hud-streak');
     this.hudScore = document.getElementById('hud-score');
     this.hudGrade = document.getElementById('hud-grade');
+    this.hud = document.getElementById('hud');
     
     // Referencias DOM - Carta enfocada
     this.focusImage = document.getElementById('focusImage');
@@ -262,6 +264,22 @@ class UIManager {
     this.resultMaxStreak = document.getElementById('resultMaxStreak');
     this.btnPrimary = document.getElementById('btnPrimary');
     this.btnSecondary = document.getElementById('btnSecondary');
+  }
+
+  /**
+   * Muestra el indicador de carga
+   */
+  showLoading() {
+    if (this.loading) this.loading.style.display = 'block';
+    if (this.hud) this.hud.style.display = 'none';
+  }
+
+  /**
+   * Oculta el indicador de carga
+   */
+  hideLoading() {
+    if (this.loading) this.loading.style.display = 'none';
+    if (this.hud) this.hud.style.display = 'flex';
   }
 
   /**
@@ -453,7 +471,15 @@ class MemoryGame {
    * Inicializa el contenido y el juego
    */
   async initialize() {
-    await this.content.loadContent();
+    this.ui.showLoading();
+    
+    try {
+      await this.content.loadContent();
+    } catch (error) {
+      console.warn('Error loading content:', error);
+    }
+    
+    this.ui.hideLoading();
     this.setupEventListeners();
     this.startRun();
   }
