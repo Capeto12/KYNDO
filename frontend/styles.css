@@ -47,6 +47,13 @@ footer a:hover {
 }
 
 /* HUD (Heads-Up Display) */
+#loading {
+  display: none;
+  font-size: 14px;
+  opacity: 0.85;
+  padding: 8px;
+}
+
 #hud {
   font-size: 14px;
   opacity: 0.85;
@@ -55,6 +62,12 @@ footer a:hover {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.grade-info {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 6px;
 }
 
 /* =========================
@@ -480,10 +493,13 @@ footer a:hover {
 
 /* Mejoras para usuarios con reducción de movimiento */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
   }
 }
 

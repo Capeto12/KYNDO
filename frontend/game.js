@@ -30,6 +30,7 @@ const GRADE_CONFIG = {
 const STORAGE_KEY = 'kyndo_memory_v1';
 
 // Ruta del contenido (ajustable según estructura del proyecto)
+// Estructura esperada: frontend/index.html y content/content/birds/pack-1.json
 const CONTENT_PATH = '../content/content/birds/pack-1.json';
 
 // =========================
@@ -57,12 +58,20 @@ class ContentManager {
       const data = await response.json();
       
       // Procesar y corregir las rutas de imágenes si es necesario
-      this.birds = data.assets.map(bird => ({
-        id: bird.id,
-        title: bird.title,
-        // Corregir la ruta duplicada en el JSON original
-        imageUrl: bird.image_url.replace('content/content/birds/', '../')
-      }));
+      this.birds = data.assets.map(bird => {
+        let imageUrl = bird.image_url;
+        
+        // Corregir ruta duplicada si existe
+        if (imageUrl.includes('content/content/birds/')) {
+          imageUrl = imageUrl.replace('content/content/birds/', '../');
+        }
+        
+        return {
+          id: bird.id,
+          title: bird.title,
+          imageUrl: imageUrl
+        };
+      });
       
       this.loaded = true;
       console.log(`✓ Contenido cargado: ${this.birds.length} aves`);
@@ -70,6 +79,12 @@ class ContentManager {
     } catch (error) {
       console.warn('⚠ No se pudo cargar el contenido de aves, usando fallback:', error);
       this.loaded = false;
+      
+      // Notificar al usuario (podría mejorarse con UI toast)
+      if (typeof window !== 'undefined' && window.console) {
+        console.info('ℹ️ El juego funcionará con contenido de prueba');
+      }
+      
       return false;
     }
   }
@@ -141,6 +156,11 @@ class GameState {
       }));
     } catch (error) {
       console.warn('Error al guardar progreso:', error);
+      
+      // Notificar al usuario (podría mejorarse con UI toast)
+      if (typeof window !== 'undefined' && window.console) {
+        console.info('ℹ️ No se pudo guardar tu progreso. Puede que el almacenamiento local esté deshabilitado.');
+      }
     }
   }
 }
@@ -676,10 +696,10 @@ class MemoryGame {
 
   /**
    * Inicializa el juego (deprecated - usar initialize)
+   * Mantenido para compatibilidad con versiones anteriores
    */
   init() {
-    console.warn('init() is deprecated, use initialize() instead');
-    this.initialize();
+    return this.initialize();
   }
 }
 
@@ -690,4 +710,10 @@ class MemoryGame {
 document.addEventListener('DOMContentLoaded', async () => {
   const game = new MemoryGame();
   await game.initialize();
+  
+  // Exponer para debugging (solo en desarrollo)
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    window.kyndoGame = game;
+    console.info('🐛 Debug: window.kyndoGame disponible');
+  }
 });
