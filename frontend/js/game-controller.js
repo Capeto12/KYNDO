@@ -8,6 +8,7 @@
  */
 
 import { GRADE_CONFIG, CARD_STATES } from './config.js';
+import { DOM_IDS } from './constants.js';
 import {
   MemoryGameState,
   computeColumns,
@@ -283,36 +284,36 @@ export class MemoryGameController {
  * Inicializa el juego cuando el DOM está listo
  */
 export function initGame() {
-  // Recolectar todos los elementos del DOM
+  // Recolectar todos los elementos del DOM usando constantes
   const elements = {
-    board: document.getElementById('board'),
-    overlay: document.getElementById('overlay'),
-    resultOverlay: document.getElementById('resultOverlay'),
+    board: document.getElementById(DOM_IDS.BOARD),
+    overlay: document.getElementById(DOM_IDS.OVERLAY),
+    resultOverlay: document.getElementById(DOM_IDS.RESULT_OVERLAY),
     
     // HUD
-    hudMatches: document.getElementById('hud-matches'),
-    hudPairs: document.getElementById('hud-pairs'),
-    hudAttempts: document.getElementById('hud-attempts'),
-    hudMaxAttempts: document.getElementById('hud-maxAttempts'),
-    hudStreak: document.getElementById('hud-streak'),
-    hudScore: document.getElementById('hud-score'),
-    hudGrade: document.getElementById('hud-grade'),
+    hudMatches: document.getElementById(DOM_IDS.HUD.MATCHES),
+    hudPairs: document.getElementById(DOM_IDS.HUD.PAIRS),
+    hudAttempts: document.getElementById(DOM_IDS.HUD.ATTEMPTS),
+    hudMaxAttempts: document.getElementById(DOM_IDS.HUD.MAX_ATTEMPTS),
+    hudStreak: document.getElementById(DOM_IDS.HUD.STREAK),
+    hudScore: document.getElementById(DOM_IDS.HUD.SCORE),
+    hudGrade: document.getElementById(DOM_IDS.HUD.GRADE),
     
     // Focus overlay
-    focusImage: document.getElementById('focusImage'),
-    focusName: document.getElementById('focusName'),
-    focusAtk: document.getElementById('focusAtk'),
-    focusDef: document.getElementById('focusDef'),
+    focusImage: document.getElementById(DOM_IDS.FOCUS.IMAGE),
+    focusName: document.getElementById(DOM_IDS.FOCUS.NAME),
+    focusAtk: document.getElementById(DOM_IDS.FOCUS.ATK),
+    focusDef: document.getElementById(DOM_IDS.FOCUS.DEF),
     
     // Result overlay
-    resultTitle: document.getElementById('resultTitle'),
-    resultSub: document.getElementById('resultSub'),
-    resultPairs: document.getElementById('resultPairs'),
-    resultAttempts: document.getElementById('resultAttempts'),
-    resultScore: document.getElementById('resultScore'),
-    resultMaxStreak: document.getElementById('resultMaxStreak'),
-    btnPrimary: document.getElementById('btnPrimary'),
-    btnSecondary: document.getElementById('btnSecondary')
+    resultTitle: document.getElementById(DOM_IDS.RESULT.TITLE),
+    resultSub: document.getElementById(DOM_IDS.RESULT.SUBTITLE),
+    resultPairs: document.getElementById(DOM_IDS.RESULT.PAIRS),
+    resultAttempts: document.getElementById(DOM_IDS.RESULT.ATTEMPTS),
+    resultScore: document.getElementById(DOM_IDS.RESULT.SCORE),
+    resultMaxStreak: document.getElementById(DOM_IDS.RESULT.MAX_STREAK),
+    btnPrimary: document.getElementById(DOM_IDS.RESULT.BTN_PRIMARY),
+    btnSecondary: document.getElementById(DOM_IDS.RESULT.BTN_SECONDARY)
   };
 
   // Crear controlador e iniciar juego

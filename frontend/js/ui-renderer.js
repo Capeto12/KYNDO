@@ -8,6 +8,7 @@
  */
 
 import { CARD_STATES, RESULT_DELAY_MS } from './config.js';
+import { MESSAGES, STAT_LABELS } from './constants.js';
 
 /**
  * Clase que maneja la actualización del HUD
@@ -110,15 +111,15 @@ export class ResultOverlay {
     this.elements.maxStreak.textContent = String(gameState.maxStreakSeen);
 
     if (passed) {
-      this.elements.title.textContent = 'Nivel superado';
-      this.elements.subtitle.textContent = 'Eficiencia confirmada. El tablero sube de grado.';
-      this.elements.btnPrimary.textContent = 'Continuar';
-      this.elements.btnSecondary.textContent = 'Reintentar (opcional)';
+      this.elements.title.textContent = MESSAGES.RESULT_PASSED_TITLE;
+      this.elements.subtitle.textContent = MESSAGES.RESULT_PASSED_SUBTITLE;
+      this.elements.btnPrimary.textContent = MESSAGES.RESULT_PASSED_BTN_PRIMARY;
+      this.elements.btnSecondary.textContent = MESSAGES.RESULT_PASSED_BTN_SECONDARY;
     } else {
-      this.elements.title.textContent = 'Nivel completado, pero no superado';
-      this.elements.subtitle.textContent = 'Te pasaste del máximo de intentos. Para subir, debes completarlo dentro del límite.';
-      this.elements.btnPrimary.textContent = 'Reintentar';
-      this.elements.btnSecondary.textContent = 'Cerrar';
+      this.elements.title.textContent = MESSAGES.RESULT_FAILED_TITLE;
+      this.elements.subtitle.textContent = MESSAGES.RESULT_FAILED_SUBTITLE;
+      this.elements.btnPrimary.textContent = MESSAGES.RESULT_FAILED_BTN_PRIMARY;
+      this.elements.btnSecondary.textContent = MESSAGES.RESULT_FAILED_BTN_SECONDARY;
     }
 
     // Configurar callbacks de botones
