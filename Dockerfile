@@ -1,4 +1,3 @@
-# Imagen mínima para el backend
 # Imagen mínima para el backend - etapa de construcción
 FROM node:18-slim AS builder
 
@@ -11,6 +10,9 @@ RUN npm prune --production
 
 # Imagen final para producción
 FROM node:18-slim
+
+# Instalar curl para healthcheck
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 ENV NODE_ENV=production
