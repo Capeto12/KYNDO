@@ -8,11 +8,18 @@ services:
       - DATABASE_URL=file:./dev.db
       - ADMIN_KEY=${ADMIN_KEY}
       - UPLOADS_DIR=./uploads
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
   worker:
     build: .
     command: npm run worker
     depends_on:
-      - api
+      api:
+        condition: service_healthy
   # Redis: opcional si decides usar bull en producción
   # redis:
   #   image: "redis:6-alpine"
