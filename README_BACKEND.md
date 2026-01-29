@@ -23,7 +23,7 @@ Ejecutar local (rápido):
 
 Deploy a Railway (resumen):
 1. Conecta tu repositorio a Railway.
-2. En Railway, crea un Project y el servicio Web apuntando a la rama `feature/backend-2` (o `main` después del merge).
+2. En Railway, crea un Project y el servicio Web apuntando a la rama `main` (o a tu rama de trabajo).
 3. Configura variables de entorno desde `.env.example`.
 4. En Railway, en la consola del proyecto ejecuta:
    npx prisma generate
