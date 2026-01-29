@@ -1,6 +1,6 @@
 # Imagen mínima para el backend
 # Imagen mínima para el backend - etapa de construcción
-FROM node:18-alpine AS builder
+FROM node:18-slim AS builder
 
 WORKDIR /app
 COPY package*.json ./
@@ -10,7 +10,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Imagen final para producción
-FROM node:18-alpine
+FROM node:18-slim
 
 WORKDIR /app
 ENV NODE_ENV=production
