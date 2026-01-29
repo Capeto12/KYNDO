@@ -5,6 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --production
 COPY . .
+RUN npx prisma generate
 ENV NODE_ENV=production
 RUN npm run build
 EXPOSE 4000
