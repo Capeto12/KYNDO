@@ -6,7 +6,7 @@ services:
       - "4000:4000"
     environment:
       - DATABASE_URL=file:./dev.db
-      - ADMIN_KEY=CambiaMe123!
+      - ADMIN_KEY=${ADMIN_KEY}
       - UPLOADS_DIR=./uploads
   worker:
     build: .
