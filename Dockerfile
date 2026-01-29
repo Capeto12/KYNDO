@@ -18,4 +18,5 @@ COPY package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 EXPOSE 4000
+RUN mkdir -p /app/uploads
 CMD ["node","dist/index.js"]
