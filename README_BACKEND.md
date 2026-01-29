@@ -26,6 +26,7 @@ Deploy a Railway (resumen):
 2. En Railway, crea un Project y el servicio Web apuntando a la rama `main` (o a tu rama de trabajo).
 3. Configura variables de entorno desde `.env.example`.
 4. En Railway, en la consola del proyecto ejecuta:
+   npm install
    npx prisma generate
    npx prisma migrate deploy
    npx ts-node seeds/seed_dev.ts
