@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Kindo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="KYNDO - Juego cognitivo de memoria con sistema de progresión" />
+  <meta name="description" content="Kindo - Juego cognitivo de memoria con sistema de progresión" />
   
   <!-- Estilos -->
   <link rel="stylesheet" href="styles.css" />
@@ -241,13 +241,13 @@ document.addEventListener('DOMContentLoaded', () => {
       resultOverlay.classList.remove('celebration');
       if (passed) {
         // sube grado
+        const oldGrade = memoryGrade;
         const next = memoryGrade + 1;
-        const didAdvance = gradeConfig[next] && next > memoryGrade;
         memoryGrade = gradeConfig[next] ? next : memoryGrade; // si no existe, se queda
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ memoryGrade }));
         
-        // Show grade advancement animation
-        if (didAdvance) {
+        // Show grade advancement animation if grade actually changed
+        if (memoryGrade > oldGrade) {
           hudGrade.classList.add('grade-up');
           setTimeout(() => hudGrade.classList.remove('grade-up'), 1000);
         }

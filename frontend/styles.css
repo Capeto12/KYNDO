@@ -448,7 +448,7 @@ footer a:hover {
   font-size: 28px;
   font-weight: 800;
   margin-bottom: 12px;
-  color: #111;
+  color: #764ba2;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -495,6 +495,7 @@ footer a:hover {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .result-row::before {
@@ -507,7 +508,7 @@ footer a:hover {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
-  z-index: -1;
+  z-index: 0;
 }
 
 .result-row:hover {
@@ -528,16 +529,20 @@ footer a:hover {
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 600;
+  position: relative;
+  z-index: 1;
 }
 
 .result-row span {
   font-size: 24px;
   font-weight: 800;
-  color: #111;
+  color: #764ba2;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  position: relative;
+  z-index: 1;
 }
 
 /* =========================
