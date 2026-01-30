@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>KYNDO — Memory Game</title>
+  <title>Kindo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="KYNDO - Juego cognitivo de memoria con sistema de progresión" />
   
@@ -13,7 +13,7 @@
 <body>
 
 <header>
-  <h1>KYNDO Memory</h1>
+  <h1>Kindo</h1>
   <div id="loading">
     Cargando contenido... ⏳
   </div>
@@ -216,12 +216,14 @@ document.addEventListener('DOMContentLoaded', () => {
     resultMaxStreak.textContent = maxStreakText;
 
     if (passed) {
-      resultTitle.textContent = 'Nivel superado';
-      resultSub.textContent = 'Eficiencia confirmada. El tablero sube de grado.';
-      btnPrimary.textContent = 'Continuar';
+      resultTitle.textContent = '🎉 ¡Nivel Superado! 🎉';
+      resultSub.textContent = '¡Excelente trabajo! Has demostrado gran habilidad. El tablero avanza al siguiente grado.';
+      btnPrimary.textContent = '➜ Continuar al Siguiente Nivel';
       btnPrimary.style.display = '';
       btnSecondary.textContent = 'Reintentar (opcional)';
       btnSecondary.style.display = '';
+      // Add celebration class for extra effects
+      resultOverlay.classList.add('celebration');
     } else {
       resultTitle.textContent = 'Nivel completado, pero no superado';
       resultSub.textContent = 'Te pasaste del máximo de intentos. Para subir, debes completarlo dentro del límite.';
@@ -229,17 +231,26 @@ document.addEventListener('DOMContentLoaded', () => {
       btnPrimary.style.display = '';
       btnSecondary.textContent = 'Cerrar';
       btnSecondary.style.display = '';
+      resultOverlay.classList.remove('celebration');
     }
 
     resultOverlay.classList.add('active');
 
     btnPrimary.onclick = () => {
       resultOverlay.classList.remove('active');
+      resultOverlay.classList.remove('celebration');
       if (passed) {
         // sube grado
         const next = memoryGrade + 1;
+        const didAdvance = gradeConfig[next] && next > memoryGrade;
         memoryGrade = gradeConfig[next] ? next : memoryGrade; // si no existe, se queda
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ memoryGrade }));
+        
+        // Show grade advancement animation
+        if (didAdvance) {
+          hudGrade.classList.add('grade-up');
+          setTimeout(() => hudGrade.classList.remove('grade-up'), 1000);
+        }
       }
       startRun(); // reinicia con grado actual (o incrementado)
     };
