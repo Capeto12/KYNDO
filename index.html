@@ -2,21 +2,193 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Kindo</title>
+  <title>Kindo - Menú Principal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    main {
+      background: white;
+      border-radius: 16px;
+      padding: 40px 32px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    h1 {
+      margin: 0 0 12px;
+      font-size: 48px;
+      font-weight: 800;
+      color: #4a4a4a;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 32px;
+      font-size: 16px;
+    }
+    
+    .menu-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+      border-radius: 12px;
+      text-decoration: none;
+      color: #333;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .menu-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .menu-icon {
+      font-size: 32px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .menu-item:hover .menu-icon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .menu-content {
+      flex: 1;
+    }
+    
+    .menu-title {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+    
+    .menu-description {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+    
+    .divider {
+      height: 1px;
+      background: rgba(0, 0, 0, 0.1);
+      margin: 24px 0;
+    }
+    
+    .secondary-link {
+      text-align: center;
+      padding: 12px;
+    }
+    
+    .secondary-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    
+    .secondary-link a:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 36px;
+      }
+      
+      main {
+        padding: 28px 20px;
+      }
+      
+      .menu-icon {
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+      }
+      
+      .menu-title {
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
   <main>
     <h1>Kindo</h1>
-    <p>Juego cognitivo de cartas</p>
+    <p class="subtitle">Juego cognitivo de cartas</p>
 
-    <p>
-      <a href="./frontend/">Entrar al prototipo</a>
-    </p>
+    <div class="menu-options">
+      <a href="./frontend/" class="menu-item">
+        <div class="menu-icon">🧠</div>
+        <div class="menu-content">
+          <div class="menu-title">1. Jugar Pares</div>
+          <div class="menu-description">Modo clásico de memoria</div>
+        </div>
+      </a>
+      
+      <a href="#" class="menu-item" onclick="alert('Próximamente disponible'); return false;">
+        <div class="menu-icon">⚔️</div>
+        <div class="menu-content">
+          <div class="menu-title">2. Jugar Batalla / Kombate</div>
+          <div class="menu-description">Compite contra otros jugadores</div>
+        </div>
+      </a>
+      
+      <a href="#" class="menu-item" onclick="alert('Próximamente disponible'); return false;">
+        <div class="menu-icon">📊</div>
+        <div class="menu-content">
+          <div class="menu-title">3. Ver Masó Personal</div>
+          <div class="menu-description">Tus estadísticas y progreso</div>
+        </div>
+      </a>
+      
+      <a href="#" class="menu-item" onclick="alert('Próximamente disponible'); return false;">
+        <div class="menu-icon">⚙️</div>
+        <div class="menu-content">
+          <div class="menu-title">Personalizar Usuario</div>
+          <div class="menu-description">Configura tu perfil y preferencias</div>
+        </div>
+      </a>
+    </div>
     
-    <p>
+    <div class="divider"></div>
+    
+    <div class="secondary-link">
       <a href="./frontend/search.html">🔍 Buscador de Cartas</a>
-    </p>
+    </div>
   </main>
 </body>
 </html>
