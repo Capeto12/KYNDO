@@ -6,6 +6,18 @@
 
 ---
 
+## 📌 **¿Backend ya funcionando? ¿Dónde pongo DB e imágenes?**
+
+**✅ SÍ** - El backend está completamente funcional. Lee las guías:
+
+| Guía | Descripción |
+|------|-------------|
+| 🎯 [BACKEND_FUNCIONANDO.md](BACKEND_FUNCIONANDO.md) | **Respuesta directa a tu pregunta** |
+| 📍 [DONDE_PONER_DB_E_IMAGENES.md](DONDE_PONER_DB_E_IMAGENES.md) | **Guía completa en español** |
+| 📊 [DIAGRAMA_ESTRUCTURA.md](DIAGRAMA_ESTRUCTURA.md) | **Diagramas visuales** |
+
+---
+
 ## 🎯 **¿Qué es KYNDO?**
 
 Sistema de cartas enciclopédicas + juegos combinados con:
