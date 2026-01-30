@@ -122,6 +122,7 @@ class GameState {
     this.attempts = 0;
     this.streak = 0;
     this.maxStreakSeen = 0;
+    this.seriousErrors = 0;
     this.revealedCards = [];
     this.pendingLock = false;
     this.missedPairs = new Set();
@@ -133,6 +134,7 @@ class GameState {
     this.attempts = 0;
     this.streak = 0;
     this.maxStreakSeen = 0;
+    this.seriousErrors = 0;
     this.revealedCards = [];
     this.pendingLock = false;
     this.missedPairs.clear();
@@ -264,6 +266,7 @@ class UIManager {
     this.hudPairs = document.getElementById('hud-pairs');
     this.hudAttempts = document.getElementById('hud-attempts');
     this.hudMaxAttempts = document.getElementById('hud-maxAttempts');
+    this.hudErrors = document.getElementById('hud-errors');
     this.hudStreak = document.getElementById('hud-streak');
     this.hudScore = document.getElementById('hud-score');
     this.hudGrade = document.getElementById('hud-grade');
@@ -310,6 +313,7 @@ class UIManager {
     this.hudPairs.textContent = String(state.totalPairs);
     this.hudAttempts.textContent = String(state.attempts);
     this.hudMaxAttempts.textContent = String(state.maxAttempts);
+    this.hudErrors.textContent = String(state.seriousErrors);
     this.hudStreak.textContent = String(state.streak);
     this.hudScore.textContent = String(state.score);
     this.hudGrade.textContent = String(state.memoryGrade);
@@ -642,6 +646,7 @@ class MemoryGame {
     if (this.state.missedPairs.has(key)) {
       this.state.attempts += CONFIG.REPEAT_MISS_EXTRA_ATTEMPTS;
       this.state.score = clampNonNegative(this.state.score - CONFIG.REPEAT_MISS_POINT_PENALTY);
+      this.state.seriousErrors += 1; // Increment serious errors counter
     } else {
       this.state.missedPairs.add(key);
     }
