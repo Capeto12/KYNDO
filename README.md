@@ -6,6 +6,18 @@
 
 ---
 
+## 📌 **¿Backend ya funcionando? ¿Dónde pongo DB e imágenes?**
+
+**✅ SÍ** - El backend está completamente funcional. Lee las guías:
+
+| Guía | Descripción |
+|------|-------------|
+| 🎯 [BACKEND_FUNCIONANDO.md](BACKEND_FUNCIONANDO.md) | **Respuesta directa a tu pregunta** |
+| 📍 [DONDE_PONER_DB_E_IMAGENES.md](DONDE_PONER_DB_E_IMAGENES.md) | **Guía completa en español** |
+| 📊 [DIAGRAMA_ESTRUCTURA.md](DIAGRAMA_ESTRUCTURA.md) | **Diagramas visuales** |
+
+---
+
 ## 🎯 **¿Qué es KYNDO?**
 
 Sistema de cartas enciclopédicas + juegos combinados con:
@@ -55,6 +67,15 @@ open frontend/memory/index.html
 
 **No requiere instalación, compilación ni dependencias.**
 
+### **Iniciar el Backend:**
+```bash
+cd backend
+./iniciar-backend.sh
+```
+
+> **📍 ¿Dónde coloco las bases de datos y las imágenes?**  
+> Ver [**Guía completa aquí**](DONDE_PONER_DB_E_IMAGENES.md) 📖
+
 ---
 
 ## 🎮 **Estado actual: Memory Nivel 1 (MVP)**
@@ -97,6 +118,8 @@ Ver [`/docs/README.md`](docs/README.md) para el índice completo.
 - [**Guía de Creación de Contenido**](docs/CONTENT_CREATION_GUIDE.md) — **Pipeline completo con servicios IA y Figma**
 
 #### **Base de datos y backend:**
+- [**📍 ¿Dónde pongo DB e Imágenes?**](DONDE_PONER_DB_E_IMAGENES.md) — **Guía completa en español**
+- [**📊 Diagrama de Estructura**](DIAGRAMA_ESTRUCTURA.md) — **Visualización de arquitectura**
 - [Esquema de BD](docs/Esquema-BD.md) — Tablas, relaciones, constraints
 - [Checklist Endpoints](docs/Checklist-Endpoints.md) — API MVP
 - [Checklist Implementación](docs/Checklist-Implementacion.md) — Validación por tabla
