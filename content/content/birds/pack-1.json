@@ -2,7 +2,7 @@
   "packId": "birds",
   "title": "Aves de Colombia",
   "version": 1,
-  "count": 10,
+  "count": 40,
   "assets": [
     {
       "id": "guacamaya-roja",
@@ -53,6 +53,156 @@
       "id": "halcon",
       "title": "Halcón",
       "image_url": "content/content/birds/content/birds/img/halcon.webp"
+    },
+    {
+      "id": "aguila-harpia",
+      "title": "Águila Harpía",
+      "image_url": "content/content/birds/content/birds/img/aguila-harpia.webp"
+    },
+    {
+      "id": "quetzal",
+      "title": "Quetzal",
+      "image_url": "content/content/birds/content/birds/img/quetzal.webp"
+    },
+    {
+      "id": "pinguino-humboldt",
+      "title": "Pingüino de Humboldt",
+      "image_url": "content/content/birds/content/birds/img/pinguino-humboldt.webp"
+    },
+    {
+      "id": "pajaro-campana",
+      "title": "Pájaro Campana",
+      "image_url": "content/content/birds/content/birds/img/pajaro-campana.webp"
+    },
+    {
+      "id": "gallito-roca",
+      "title": "Gallito de las Rocas",
+      "image_url": "content/content/birds/content/birds/img/gallito-roca.webp"
+    },
+    {
+      "id": "loro-orejiamarillo",
+      "title": "Loro Orejiamarillo",
+      "image_url": "content/content/birds/content/birds/img/loro-orejiamarillo.webp"
+    },
+    {
+      "id": "hoatzin",
+      "title": "Hoatzín",
+      "image_url": "content/content/birds/content/birds/img/hoatzin.webp"
+    },
+    {
+      "id": "pato-crestudo",
+      "title": "Pato Crestudo",
+      "image_url": "content/content/birds/content/birds/img/pato-crestudo.webp"
+    },
+    {
+      "id": "tangara-multicolor",
+      "title": "Tangara Multicolor",
+      "image_url": "content/content/birds/content/birds/img/tangara-multicolor.webp"
+    },
+    {
+      "id": "carpintero-real",
+      "title": "Carpintero Real",
+      "image_url": "content/content/birds/content/birds/img/carpintero-real.webp"
+    },
+    {
+      "id": "espátula-rosada",
+      "title": "Espátula Rosada",
+      "image_url": "content/content/birds/content/birds/img/espatula-rosada.webp"
+    },
+    {
+      "id": "ibis-escarlata",
+      "title": "Ibis Escarlata",
+      "image_url": "content/content/birds/content/birds/img/ibis-escarlata.webp"
+    },
+    {
+      "id": "ciguena-jabirú",
+      "title": "Cigüeña Jabirú",
+      "image_url": "content/content/birds/content/birds/img/ciguena-jabiru.webp"
+    },
+    {
+      "id": "pelicano-pardo",
+      "title": "Pelícano Pardo",
+      "image_url": "content/content/birds/content/birds/img/pelicano-pardo.webp"
+    },
+    {
+      "id": "cormorán",
+      "title": "Cormorán",
+      "image_url": "content/content/birds/content/birds/img/cormoran.webp"
+    },
+    {
+      "id": "fregata-magnificente",
+      "title": "Fragata Magnificente",
+      "image_url": "content/content/birds/content/birds/img/fregata-magnificente.webp"
+    },
+    {
+      "id": "piquero-patas-azules",
+      "title": "Piquero de Patas Azules",
+      "image_url": "content/content/birds/content/birds/img/piquero-patas-azules.webp"
+    },
+    {
+      "id": "limpkin",
+      "title": "Carrao",
+      "image_url": "content/content/birds/content/birds/img/limpkin.webp"
+    },
+    {
+      "id": "paujil",
+      "title": "Paujil",
+      "image_url": "content/content/birds/content/birds/img/paujil.webp"
+    },
+    {
+      "id": "perdiz-crestada",
+      "title": "Perdiz Crestada",
+      "image_url": "content/content/birds/content/birds/img/perdiz-crestada.webp"
+    },
+    {
+      "id": "paloma-coronita",
+      "title": "Paloma Coronita",
+      "image_url": "content/content/birds/content/birds/img/paloma-coronita.webp"
+    },
+    {
+      "id": "trogon-enmascarado",
+      "title": "Trogón Enmascarado",
+      "image_url": "content/content/birds/content/birds/img/trogon-enmascarado.webp"
+    },
+    {
+      "id": "barranquero",
+      "title": "Barranquero",
+      "image_url": "content/content/birds/content/birds/img/barranquero.webp"
+    },
+    {
+      "id": "amazilia",
+      "title": "Amazilia",
+      "image_url": "content/content/birds/content/birds/img/amazilia.webp"
+    },
+    {
+      "id": "piranga-roja",
+      "title": "Piranga Roja",
+      "image_url": "content/content/birds/content/birds/img/piranga-roja.webp"
+    },
+    {
+      "id": "oropéndola",
+      "title": "Oropéndola",
+      "image_url": "content/content/birds/content/birds/img/oropendola.webp"
+    },
+    {
+      "id": "siete-colores",
+      "title": "Siete Colores",
+      "image_url": "content/content/birds/content/birds/img/siete-colores.webp"
+    },
+    {
+      "id": "atrapamoscas",
+      "title": "Atrapamoscas",
+      "image_url": "content/content/birds/content/birds/img/atrapamoscas.webp"
+    },
+    {
+      "id": "golondrina",
+      "title": "Golondrina",
+      "image_url": "content/content/birds/content/birds/img/golondrina.webp"
+    },
+    {
+      "id": "canario-coronado",
+      "title": "Canario Coronado",
+      "image_url": "content/content/birds/content/birds/img/canario-coronado.webp"
     }
   ],
   "nextPage": null
