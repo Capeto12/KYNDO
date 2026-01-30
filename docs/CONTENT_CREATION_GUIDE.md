@@ -29,8 +29,9 @@ Esta guía documenta **el proceso completo de creación de contenido** para KYND
 
 **Contenido:**
 - ✅ Estructura JSON para packs de cartas (`pack-1.json`)
-- ✅ Catálogo básico con 10 aves (Guacamaya Roja, Cóndor Andino, Tucán, etc.)
+- ✅ Catálogo expandido con 40 aves únicas (Guacamaya Roja, Cóndor Andino, Tucán, Quetzal, Águila Harpía, Loro Orejiamarillo, etc.)
 - ✅ Estructura de carpetas para contenido (`content/content/birds/`)
+- ✅ Suficientes aves para todos los grados del juego (1-5)
 
 **Documentación:**
 - ✅ Manual Maestro (principios no negociables)
@@ -52,8 +53,8 @@ Esta guía documenta **el proceso completo de creación de contenido** para KYND
 - ❌ Sistema de progreso persistente en servidor
 
 **Contenido:**
-- ⚠️ **Faltan 10-40 objetos más** para completar MVP (objetivo: 20-50 aves)
-- ⚠️ **Mínimo 2 variantes visuales por objeto** (regla cognitiva)
+- ✅ **40 aves únicas disponibles** (suficiente para todos los grados)
+- ⚠️ **Mínimo 2 variantes visuales por objeto** (regla cognitiva - PRIORIDAD)
 - ⚠️ Imágenes optimizadas a WebP
 - ⚠️ Marco SVG base para cartas (actualmente solo placeholder)
 - ⚠️ Factores de Ataque/Defensa asignados a todos los objetos
@@ -1269,11 +1270,11 @@ Razón: PNG ocupa mucho espacio en Git. Solo versionar WebP finales.
 
 **Prioridad ALTA:**
 
-1. **Generar 20 objetos completos** (actualmente: 10)
-   - [ ] Investigar 10 aves adicionales
-   - [ ] Generar 20 imágenes IA (2 por objeto)
+1. **✅ 40 objetos únicos completos** (actualmente: 40)
+   - [x] Investigar aves adicionales de América Latina
+   - [ ] Generar 80 imágenes IA (2 variantes por ave para Memory Nivel 2-3)
    - [ ] Optimizar a WebP
-   - [ ] Actualizar `pack-1.json`
+   - [x] Actualizar `pack-1.json`
 
 2. **Diseñar marco SVG base**
    - [ ] Crear diseño en Figma
