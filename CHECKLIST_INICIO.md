@@ -5,7 +5,7 @@ Levantar el backend de KYNDO y verificar que la base de datos y las imágenes es
 
 ---
 
-## 📋 Pre-requisitos
+## 📋 Prerrequisitos
 
 Asegúrate de tener instalado:
 

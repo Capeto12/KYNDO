@@ -67,7 +67,7 @@ npx prisma studio
 
 #### Opción 2: Cliente PostgreSQL
 ```bash
-psql postgresql://kyndo:kyndo_dev_password@localhost:5432/kyndo
+psql "postgresql://kyndo:kyndo_dev_password@localhost:5432/kyndo?schema=public"
 ```
 
 #### Opción 3: Herramientas GUI
@@ -82,6 +82,7 @@ Port: 5432
 Database: kyndo
 User: kyndo
 Password: kyndo_dev_password
+Schema: public
 ```
 
 ---
@@ -243,6 +244,12 @@ Edita `content/birds/pack-1.json` o `backend/seeds/pack-1.json`:
 }
 ```
 
+**Importante**: Verifica que el JSON sea válido antes de continuar:
+```bash
+# Validar JSON
+cat backend/seeds/pack-1.json | jq . > /dev/null && echo "✅ JSON válido" || echo "❌ JSON inválido"
+```
+
 ### 3. Recargar la base de datos
 
 ```bash
@@ -255,11 +262,17 @@ Esto insertará la nueva carta en PostgreSQL.
 ### 4. Verificar
 
 ```bash
-# Ver en el navegador
+# Con curl (todas las plataformas)
+curl http://localhost:3000/api/cards/tucan-toco/presentation | jq .
+
+# O abrir en el navegador (macOS)
 open http://localhost:3000/api/cards/tucan-toco/presentation
 
-# O con curl
-curl http://localhost:3000/api/cards/tucan-toco/presentation | jq .
+# O abrir en el navegador (Linux)
+xdg-open http://localhost:3000/api/cards/tucan-toco/presentation
+
+# O abrir en el navegador (Windows)
+start http://localhost:3000/api/cards/tucan-toco/presentation
 ```
 
 ---
@@ -379,7 +392,9 @@ ls -lh content/birds/img/
 du -sh content/birds/img/*
 
 # Convertir JPG a WebP (requiere cwebp)
+shopt -s nullglob  # Evita errores si no hay archivos .jpg
 for img in content/birds/img/*.jpg; do
+  [ -f "$img" ] || continue
   cwebp -q 90 "$img" -o "${img%.jpg}.webp"
 done
 
@@ -411,7 +426,7 @@ Los datos están en el volumen Docker `postgres_data`. Para verlos:
 ```bash
 npx prisma studio
 # O
-psql postgresql://kyndo:kyndo_dev_password@localhost:5432/kyndo
+psql "postgresql://kyndo:kyndo_dev_password@localhost:5432/kyndo?schema=public"
 \dt  -- Listar tablas
 SELECT * FROM cards;
 ```

@@ -183,7 +183,7 @@ curl http://localhost:3000/api/cards/tucan-toco/presentation
 npx prisma studio
 
 # Opción 2: Cliente PostgreSQL
-psql postgresql://kyndo:kyndo_dev_password@localhost:5432/kyndo
+psql "postgresql://kyndo:kyndo_dev_password@localhost:5432/kyndo?schema=public"
 
 # Opción 3: curl a la API
 curl http://localhost:3000/api/cards/guacamaya-roja/presentation | jq .
