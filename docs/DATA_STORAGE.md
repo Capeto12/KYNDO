@@ -125,7 +125,7 @@ const progress = JSON.parse(saved);
 ```
 
 ### 2. Durante el Juego
-- Las cartas se generan con IDs (0-9 para 10 aves)
+- Las cartas se generan con IDs (0-39 para 40 aves, ajustable dinámicamente)
 - Se mezclan aleatoriamente (Fisher-Yates shuffle)
 - El estado del juego se mantiene en memoria (clase `GameState`)
 - No se comunica con ningún servidor

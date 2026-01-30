@@ -42,7 +42,7 @@ Esta guía nueva incluye:
 
 **Contenido:**
 - ✅ Estructura JSON de packs
-- ✅ 10 aves base (Guacamaya, Cóndor, Tucán, etc.)
+- ✅ 40 aves base (Guacamaya, Cóndor, Tucán, Quetzal, Águila Harpía, etc.)
 - ✅ Carpeta de contenido organizada
 
 **Documentación:**
@@ -58,9 +58,9 @@ Esta guía nueva incluye:
 
 ### ❌ **Lo que falta (76% del MVP)**
 
-**Contenido (PRIORIDAD CRÍTICA):**
-- ❌ Generar 10-40 aves más (objetivo: 20-50 aves para MVP)
-- ❌ Crear mínimo 2 variantes visuales por ave
+**Contenido:**
+- ✅ Generar más aves (40 aves disponibles, suficiente para todos los grados)
+- ❌ Crear mínimo 2 variantes visuales por ave (PRIORIDAD CRÍTICA)
 - ❌ Diseñar marco SVG base en Figma
 - ❌ Optimizar todas las imágenes a WebP
 - ❌ Asignar factores Ataque/Defensa a todos los objetos
@@ -306,7 +306,7 @@ El juego funciona técnicamente, pero **falta el contenido visual**.
 
 **Sin contenido = sin juego jugable a escala MVP.**
 
-**Razón:** Memory con 10 aves solo llega a Grado 1-2. Necesitas 20-50 para cubrir Grados 1-5.
+**Razón:** Memory requiere suficientes aves únicas para todos los grados. Con 40 aves ahora disponibles, se cubren todos los Grados 1-5 (hasta 36 pares únicos).
 
 ### **Usa la guía nueva:**
 
@@ -332,10 +332,10 @@ La guía incluye scripts de Node.js para:
 
 ### **Itera rápido:**
 
-1. Genera 5-10 aves primero (prueba)
+1. ✅ Completado: 40 aves únicas disponibles
 2. Valida en app
 3. Ajusta pipeline si es necesario
-4. Escala a 20 aves
+4. Escala contenido visual (variantes)
 5. Completa backend mientras tanto
 
 ---
@@ -370,7 +370,7 @@ La guía incluye scripts de Node.js para:
 
 **A:** SÍ. Abre `frontend/index.html` en navegador.
 
-Funciona con 10 aves (Grados 1-2). Para Grados 3-5 necesitas más contenido.
+Funciona con 40 aves únicas (todos los Grados 1-5). Listo para escalar.
 
 ### **Q: ¿Cuánto cuesta generar las imágenes?**
 

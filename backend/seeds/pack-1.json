@@ -2,7 +2,7 @@
   "packId": "birds",
   "title": "Aves Ejemplo",
   "version": 1,
-  "count": 5,
+  "count": 40,
   "cards": [
     {
       "cardId": "guacamaya-roja",
@@ -72,6 +72,496 @@
         "habitat": "Various habitats",
         "size": "Medium to large",
         "description": "Nocturnal bird of prey with excellent vision"
+      }
+    },
+    {
+      "cardId": "garza-blanca",
+      "title": "Garza Blanca",
+      "description": "Elegant white wading bird",
+      "imageUrl": "content/birds/img/garza-blanca.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Ardea alba",
+        "habitat": "Wetlands",
+        "size": "Large",
+        "description": "Elegant white wading bird"
+      }
+    },
+    {
+      "cardId": "flamenco",
+      "title": "Flamenco",
+      "description": "Pink bird known for standing on one leg",
+      "imageUrl": "content/birds/img/flamenco.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Phoenicopterus",
+        "habitat": "Salt lakes",
+        "size": "Large",
+        "description": "Pink bird known for standing on one leg"
+      }
+    },
+    {
+      "cardId": "picozapato",
+      "title": "Picozapato",
+      "description": "Prehistoric-looking bird with unique bill",
+      "imageUrl": "content/birds/img/picozapato.webp",
+      "rarity": "legendary",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Balaeniceps rex",
+        "habitat": "Swamps",
+        "size": "Very large",
+        "description": "Prehistoric-looking bird with unique bill"
+      }
+    },
+    {
+      "cardId": "martin-pescador",
+      "title": "Martín Pescador",
+      "description": "Colorful diving bird that catches fish",
+      "imageUrl": "content/birds/img/martin-pescador.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Alcedo atthis",
+        "habitat": "Rivers and streams",
+        "size": "Small",
+        "description": "Colorful diving bird that catches fish"
+      }
+    },
+    {
+      "cardId": "halcon",
+      "title": "Halcón",
+      "description": "Fast bird of prey",
+      "imageUrl": "content/birds/img/halcon.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Falco",
+        "habitat": "Open areas",
+        "size": "Medium",
+        "description": "Fast bird of prey"
+      }
+    },
+    {
+      "cardId": "aguila-harpia",
+      "title": "Águila Harpía",
+      "description": "One of the largest and most powerful eagles",
+      "imageUrl": "content/birds/img/aguila-harpia.webp",
+      "rarity": "legendary",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Harpia harpyja",
+        "habitat": "Rainforest canopy",
+        "size": "Very large",
+        "description": "One of the largest and most powerful eagles"
+      }
+    },
+    {
+      "cardId": "quetzal",
+      "title": "Quetzal",
+      "description": "Sacred bird with iridescent green plumage",
+      "imageUrl": "content/birds/img/quetzal.webp",
+      "rarity": "legendary",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Pharomachrus mocinno",
+        "habitat": "Cloud forests",
+        "size": "Medium",
+        "description": "Sacred bird with iridescent green plumage"
+      }
+    },
+    {
+      "cardId": "pinguino-humboldt",
+      "title": "Pingüino de Humboldt",
+      "description": "South American penguin species",
+      "imageUrl": "content/birds/img/pinguino-humboldt.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Spheniscus humboldti",
+        "habitat": "Coastal areas",
+        "size": "Medium",
+        "description": "South American penguin species"
+      }
+    },
+    {
+      "cardId": "pajaro-campana",
+      "title": "Pájaro Campana",
+      "description": "Bird with distinctive bell-like call",
+      "imageUrl": "content/birds/img/pajaro-campana.webp",
+      "rarity": "epic",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Procnias tricarunculatus",
+        "habitat": "Mountain forests",
+        "size": "Medium",
+        "description": "Bird with distinctive bell-like call"
+      }
+    },
+    {
+      "cardId": "gallito-roca",
+      "title": "Gallito de las Rocas",
+      "description": "Peru's national bird with bright orange plumage",
+      "imageUrl": "content/birds/img/gallito-roca.webp",
+      "rarity": "epic",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Rupicola peruvianus",
+        "habitat": "Cloud forests",
+        "size": "Medium",
+        "description": "Peru's national bird with bright orange plumage"
+      }
+    },
+    {
+      "cardId": "loro-orejiamarillo",
+      "title": "Loro Orejiamarillo",
+      "description": "Endangered parrot endemic to Colombia",
+      "imageUrl": "content/birds/img/loro-orejiamarillo.webp",
+      "rarity": "legendary",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Ognorhynchus icterotis",
+        "habitat": "Wax palm forests",
+        "size": "Medium",
+        "description": "Endangered parrot endemic to Colombia"
+      }
+    },
+    {
+      "cardId": "hoatzin",
+      "title": "Hoatzín",
+      "description": "Prehistoric bird with claws on wings as chicks",
+      "imageUrl": "content/birds/img/hoatzin.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Opisthocomus hoazin",
+        "habitat": "Amazon swamps",
+        "size": "Medium",
+        "description": "Prehistoric bird with claws on wings as chicks"
+      }
+    },
+    {
+      "cardId": "pato-crestudo",
+      "title": "Pato Crestudo",
+      "description": "Duck with distinctive head crest",
+      "imageUrl": "content/birds/img/pato-crestudo.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Sarkidiornis melanotos",
+        "habitat": "Wetlands",
+        "size": "Medium",
+        "description": "Duck with distinctive head crest"
+      }
+    },
+    {
+      "cardId": "tangara-multicolor",
+      "title": "Tangara Multicolor",
+      "description": "Small colorful songbird",
+      "imageUrl": "content/birds/img/tangara-multicolor.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Chlorochrysa nitidissima",
+        "habitat": "Mountain forests",
+        "size": "Small",
+        "description": "Small colorful songbird"
+      }
+    },
+    {
+      "cardId": "carpintero-real",
+      "title": "Carpintero Real",
+      "description": "Large woodpecker with distinctive crest",
+      "imageUrl": "content/birds/img/carpintero-real.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Campephilus principalis",
+        "habitat": "Old-growth forests",
+        "size": "Large",
+        "description": "Large woodpecker with distinctive crest"
+      }
+    },
+    {
+      "cardId": "espatula-rosada",
+      "title": "Espátula Rosada",
+      "description": "Pink wading bird with spoon-shaped bill",
+      "imageUrl": "content/birds/img/espatula-rosada.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Platalea ajaja",
+        "habitat": "Coastal wetlands",
+        "size": "Large",
+        "description": "Pink wading bird with spoon-shaped bill"
+      }
+    },
+    {
+      "cardId": "ibis-escarlata",
+      "title": "Ibis Escarlata",
+      "description": "Bright red wading bird",
+      "imageUrl": "content/birds/img/ibis-escarlata.webp",
+      "rarity": "epic",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Eudocimus ruber",
+        "habitat": "Mangroves",
+        "size": "Medium",
+        "description": "Bright red wading bird"
+      }
+    },
+    {
+      "cardId": "ciguena-jabiru",
+      "title": "Cigüeña Jabirú",
+      "description": "Tallest flying bird in the Americas",
+      "imageUrl": "content/birds/img/ciguena-jabiru.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Jabiru mycteria",
+        "habitat": "Wetlands",
+        "size": "Very large",
+        "description": "Tallest flying bird in the Americas"
+      }
+    },
+    {
+      "cardId": "pelicano-pardo",
+      "title": "Pelícano Pardo",
+      "description": "Large seabird with expandable throat pouch",
+      "imageUrl": "content/birds/img/pelicano-pardo.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Pelecanus occidentalis",
+        "habitat": "Coastal areas",
+        "size": "Large",
+        "description": "Large seabird with expandable throat pouch"
+      }
+    },
+    {
+      "cardId": "cormoran",
+      "title": "Cormorán",
+      "description": "Diving bird that swims underwater",
+      "imageUrl": "content/birds/img/cormoran.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Phalacrocorax",
+        "habitat": "Coastal and inland waters",
+        "size": "Large",
+        "description": "Diving bird that swims underwater"
+      }
+    },
+    {
+      "cardId": "fragata-magnificente",
+      "title": "Fragata Magnificente",
+      "description": "Seabird with forked tail and red throat pouch",
+      "imageUrl": "content/birds/img/fragata-magnificente.webp",
+      "rarity": "epic",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Fregata magnificens",
+        "habitat": "Tropical coasts",
+        "size": "Large",
+        "description": "Seabird with forked tail and red throat pouch"
+      }
+    },
+    {
+      "cardId": "piquero-patas-azules",
+      "title": "Piquero de Patas Azules",
+      "description": "Famous for its bright blue feet",
+      "imageUrl": "content/birds/img/piquero-patas-azules.webp",
+      "rarity": "epic",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Sula nebouxii",
+        "habitat": "Pacific islands",
+        "size": "Large",
+        "description": "Famous for its bright blue feet"
+      }
+    },
+    {
+      "cardId": "limpkin",
+      "title": "Carrao",
+      "description": "Wading bird that eats apple snails",
+      "imageUrl": "content/birds/img/limpkin.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Aramus guarauna",
+        "habitat": "Freshwater wetlands",
+        "size": "Medium",
+        "description": "Wading bird that eats apple snails"
+      }
+    },
+    {
+      "cardId": "paujil",
+      "title": "Paujil",
+      "description": "Large forest bird with curly crest",
+      "imageUrl": "content/birds/img/paujil.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Crax rubra",
+        "habitat": "Tropical forests",
+        "size": "Large",
+        "description": "Large forest bird with curly crest"
+      }
+    },
+    {
+      "cardId": "perdiz-crestada",
+      "title": "Perdiz Crestada",
+      "description": "Ground-dwelling bird with elegant crest",
+      "imageUrl": "content/birds/img/perdiz-crestada.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Colinus cristatus",
+        "habitat": "Grasslands",
+        "size": "Small",
+        "description": "Ground-dwelling bird with elegant crest"
+      }
+    },
+    {
+      "cardId": "paloma-coronita",
+      "title": "Paloma Coronita",
+      "description": "Dove with white-tipped crest",
+      "imageUrl": "content/birds/img/paloma-coronita.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Patagioenas fasciata",
+        "habitat": "Mountain forests",
+        "size": "Medium",
+        "description": "Dove with white-tipped crest"
+      }
+    },
+    {
+      "cardId": "trogon-enmascarado",
+      "title": "Trogón Enmascarado",
+      "description": "Colorful forest bird with distinctive mask",
+      "imageUrl": "content/birds/img/trogon-enmascarado.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Trogon personatus",
+        "habitat": "Cloud forests",
+        "size": "Medium",
+        "description": "Colorful forest bird with distinctive mask"
+      }
+    },
+    {
+      "cardId": "barranquero",
+      "title": "Barranquero",
+      "description": "Colorful motmot with racket-shaped tail",
+      "imageUrl": "content/birds/img/barranquero.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Momotus momota",
+        "habitat": "Forest edges",
+        "size": "Medium",
+        "description": "Colorful motmot with racket-shaped tail"
+      }
+    },
+    {
+      "cardId": "amazilia",
+      "title": "Amazilia",
+      "description": "Small hummingbird with green and bronze colors",
+      "imageUrl": "content/birds/img/amazilia.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Amazilia amazilia",
+        "habitat": "Gardens and scrublands",
+        "size": "Tiny",
+        "description": "Small hummingbird with green and bronze colors"
+      }
+    },
+    {
+      "cardId": "piranga-roja",
+      "title": "Piranga Roja",
+      "description": "Bright red tanager",
+      "imageUrl": "content/birds/img/piranga-roja.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Piranga rubra",
+        "habitat": "Open woodlands",
+        "size": "Small",
+        "description": "Bright red tanager"
+      }
+    },
+    {
+      "cardId": "oropendola",
+      "title": "Oropéndola",
+      "description": "Large bird that weaves hanging nests",
+      "imageUrl": "content/birds/img/oropendola.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Psarocolius",
+        "habitat": "Tropical forests",
+        "size": "Large",
+        "description": "Large bird that weaves hanging nests"
+      }
+    },
+    {
+      "cardId": "siete-colores",
+      "title": "Siete Colores",
+      "description": "Small tanager with multiple bright colors",
+      "imageUrl": "content/birds/img/siete-colores.webp",
+      "rarity": "rare",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Tangara chilensis",
+        "habitat": "Forest canopy",
+        "size": "Small",
+        "description": "Small tanager with multiple bright colors"
+      }
+    },
+    {
+      "cardId": "atrapamoscas",
+      "title": "Atrapamoscas",
+      "description": "Small bird that catches insects in flight",
+      "imageUrl": "content/birds/img/atrapamoscas.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Tyrannus",
+        "habitat": "Open areas",
+        "size": "Small",
+        "description": "Small bird that catches insects in flight"
+      }
+    },
+    {
+      "cardId": "golondrina",
+      "title": "Golondrina",
+      "description": "Agile bird known for acrobatic flight",
+      "imageUrl": "content/birds/img/golondrina.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Hirundo rustica",
+        "habitat": "Open areas near water",
+        "size": "Small",
+        "description": "Agile bird known for acrobatic flight"
+      }
+    },
+    {
+      "cardId": "canario-coronado",
+      "title": "Canario Coronado",
+      "description": "Yellow finch with black crown",
+      "imageUrl": "content/birds/img/canario-coronado.webp",
+      "rarity": "common",
+      "packId": "birds",
+      "metadata": {
+        "scientificName": "Sicalis flaveola",
+        "habitat": "Open grasslands",
+        "size": "Small",
+        "description": "Yellow finch with black crown"
       }
     }
   ]
