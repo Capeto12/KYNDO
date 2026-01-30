@@ -14,6 +14,7 @@ model Card {
   id            String   @id @default(cuid())
   cardId        String   @unique // e.g., "guacamaya-roja"
   title         String
+  description   String?  // For search support
   imageUrl      String?
   thumbnailPath String?
   rarity        String   @default("common") // common, rare, epic, legendary
@@ -27,6 +28,7 @@ model Card {
 
   @@index([packId])
   @@index([rarity])
+  @@index([title]) // Index for search performance
   @@map("cards")
 }
 

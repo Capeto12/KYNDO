@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import adminCardsRouter from './routes/adminCards';
+import searchRouter from './routes/search';
 import { getCardPresentation } from './controllers/cardsController';
 import { getQueueStats } from './queue';
 
@@ -41,6 +42,7 @@ app.get('/api/admin/queue/stats', async (_req: Request, res: Response) => {
 
 // Public API routes
 app.get('/api/cards/:id/presentation', getCardPresentation);
+app.use('/api/search', searchRouter);
 
 // Admin API routes
 app.use('/api/admin', adminCardsRouter);

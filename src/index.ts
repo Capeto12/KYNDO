@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import adminCardsRouter from "./routes/adminCards";
+import searchRouter from "./routes/search";
 import prisma from "./prismaClient";
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.get("/api/cards/:id/presentation", async (req, res) => {
 });
 
 app.use("/api/admin/cards", adminCardsRouter);
+app.use("/api/search", searchRouter);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
