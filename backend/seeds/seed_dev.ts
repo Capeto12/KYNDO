@@ -8,6 +8,7 @@ dotenv.config();
 interface SeedCard {
   cardId: string;
   title: string;
+  description?: string;
   imageUrl?: string;
   rarity: string;
   packId: string;
@@ -58,6 +59,7 @@ async function seedDatabase() {
         data: {
           cardId: cardData.cardId,
           title: cardData.title,
+          description: cardData.description,
           imageUrl: cardData.imageUrl,
           rarity: cardData.rarity,
           packId: cardData.packId,

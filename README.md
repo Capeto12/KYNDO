@@ -163,7 +163,8 @@ Ver [`/docs/README.md`](docs/README.md) para el índice completo.
 - [x] Sistema de error handling robusto
 - [x] Monitoreo de performance (FPS, memoria, timings)
 - [x] Documentación completa de arquitectura
-- [ ] Integración con backend (preparado, pendiente implementación)
+- [x] **Buscador de cartas con backend integrado** (API + UI)
+- [ ] Integración completa con backend para partidas
 
 **📦 Ver [CHANGELOG.md](CHANGELOG.md) para detalles completos de mejoras**
 

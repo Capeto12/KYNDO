@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>KYNDO — Buscador de Cartas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Busca y explora cartas del juego KYNDO" />
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      color: white;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .search-box {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .search-input-wrapper {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    #searchInput {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    #searchInput:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    #searchButton {
+      padding: 12px 30px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    #searchButton:hover {
+      background: #5568d3;
+    }
+
+    #searchButton:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .search-info {
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+    }
+
+    .results-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      min-height: 200px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .results-header {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .results-count {
+      font-size: 18px;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .card-item {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 15px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .card-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      border-color: #667eea;
+    }
+
+    .card-thumbnail {
+      width: 100%;
+      height: 150px;
+      background: #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      overflow: hidden;
+    }
+
+    .card-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .card-description {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .card-rarity {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .rarity-common {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .rarity-rare {
+      background: #bbdefb;
+      color: #1976d2;
+    }
+
+    .rarity-epic {
+      background: #e1bee7;
+      color: #7b1fa2;
+    }
+
+    .rarity-legendary {
+      background: #ffecb3;
+      color: #f57c00;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .error {
+      background: #ffebee;
+      color: #c62828;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      display: inline-block;
+      transition: background 0.3s;
+    }
+
+    footer a:hover {
+      background: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>🔍 Buscador de Cartas</h1>
+      <p>Explora el catálogo de cartas de KYNDO</p>
+    </header>
+
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Busca cartas por nombre o descripción..." 
+          autocomplete="off"
+        />
+        <button id="searchButton">Buscar</button>
+      </div>
+      <div class="search-info">
+        Presiona Enter o haz clic en Buscar para encontrar cartas
+      </div>
+    </div>
+
+    <div class="results-container">
+      <div id="resultsContent">
+        <div class="empty-state">
+          <div class="empty-state-icon">🎴</div>
+          <p>Escribe algo en el buscador para encontrar cartas</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <a href="../">← Volver al Home</a>
+    </footer>
+  </div>
+
+  <script>
+    // Configuration
+    const API_BASE_URL = 'http://localhost:3000'; // Backend URL
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const resultsContent = document.getElementById('resultsContent');
+
+    // Search function
+    async function performSearch(query) {
+      if (!query || query.trim() === '') {
+        showEmptyState();
+        return;
+      }
+
+      showLoading();
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(query)}&limit=50`);
+        
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        displayResults(data);
+      } catch (error) {
+        console.error('Search error:', error);
+        showError(error.message || 'Error al realizar la búsqueda. Verifica que el backend esté corriendo.');
+      }
+    }
+
+    // Display results
+    function displayResults(data) {
+      const { query, count, results } = data;
+
+      if (count === 0) {
+        resultsContent.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">😕</div>
+            <p>No se encontraron cartas para "${query}"</p>
+            <p style="font-size: 14px; margin-top: 10px;">Intenta con otros términos de búsqueda</p>
+          </div>
+        `;
+        return;
+      }
+
+      const cardsHTML = results.map(card => {
+        const rarityClass = `rarity-${card.rarity || 'common'}`;
+        const thumbnail = card.thumbnailPath || card.imageUrl || '';
+        
+        return `
+          <div class="card-item" onclick="viewCard('${card.id}')">
+            <div class="card-thumbnail">
+              ${thumbnail ? `<img src="${thumbnail}" alt="${card.title}" />` : '🎴'}
+            </div>
+            <div class="card-title">${escapeHtml(card.title)}</div>
+            ${card.description ? `<div class="card-description">${escapeHtml(card.description)}</div>` : ''}
+            <span class="card-rarity ${rarityClass}">${card.rarity || 'common'}</span>
+          </div>
+        `;
+      }).join('');
+
+      resultsContent.innerHTML = `
+        <div class="results-header">
+          <div class="results-count">
+            ${count} carta${count !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''} para "${escapeHtml(query)}"
+          </div>
+        </div>
+        <div class="cards-grid">
+          ${cardsHTML}
+        </div>
+      `;
+    }
+
+    // Show loading state
+    function showLoading() {
+      resultsContent.innerHTML = `
+        <div class="loading">
+          <div style="font-size: 32px; margin-bottom: 10px;">⏳</div>
+          <p>Buscando...</p>
+        </div>
+      `;
+    }
+
+    // Show error
+    function showError(message) {
+      resultsContent.innerHTML = `
+        <div class="error">
+          <strong>❌ Error</strong><br>
+          ${escapeHtml(message)}
+        </div>
+      `;
+    }
+
+    // Show empty state
+    function showEmptyState() {
+      resultsContent.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🎴</div>
+          <p>Escribe algo en el buscador para encontrar cartas</p>
+        </div>
+      `;
+    }
+
+    // View card details (placeholder)
+    function viewCard(cardId) {
+      alert(`Ver detalles de la carta: ${cardId}\n\n(Esta funcionalidad se implementará próximamente)`);
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Event listeners
+    searchButton.addEventListener('click', () => {
+      performSearch(searchInput.value);
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        performSearch(searchInput.value);
+      }
+    });
+
+    // Focus on input when page loads
+    searchInput.focus();
+  </script>
+</body>
+</html>
