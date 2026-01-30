@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Script para iniciar el backend de KYNDO
 # =========================================
@@ -35,6 +36,10 @@ echo ""
 # 2. Verificar archivo .env
 echo "🔍 Verificando configuración..."
 if [ ! -f ".env" ]; then
+    if [ ! -f ".env.example" ]; then
+        echo "❌ Error: .env.example no encontrado"
+        exit 1
+    fi
     echo "⚠️  Archivo .env no encontrado. Creando desde .env.example..."
     cp .env.example .env
     echo "✅ Archivo .env creado. Revisa la configuración si es necesario."
@@ -91,25 +96,18 @@ fi
 echo "✅ Cliente Prisma generado"
 echo ""
 
-# 6. Verificar si la base de datos necesita migraciones
-echo "🗄️  Verificando migraciones de base de datos..."
-if ! npm run prisma:migrate > /dev/null 2>&1; then
-    echo "⚠️  Ejecutando migraciones de base de datos..."
-    npm run prisma:migrate
-fi
+# 6. Ejecutar migraciones de base de datos
+echo "🗄️  Ejecutando migraciones de base de datos..."
+npm run prisma:migrate
 echo "✅ Base de datos sincronizada"
 echo ""
 
 # 7. Verificar si hay datos en la base de datos
 echo "🌱 Verificando datos en la base de datos..."
-CARD_COUNT=$(docker exec backend-postgres-1 psql -U kyndo -d kyndo -t -c "SELECT COUNT(*) FROM cards;" 2>/dev/null | tr -d ' ')
+CARD_COUNT=$(docker compose exec -T postgres psql -U kyndo -d kyndo -t -c "SELECT COUNT(*) FROM cards;" 2>/dev/null | tr -d ' ' || echo "0")
 if [ "$CARD_COUNT" = "0" ] || [ -z "$CARD_COUNT" ]; then
     echo "📦 Base de datos vacía. Cargando datos de ejemplo..."
     npm run seed
-    if [ $? -ne 0 ]; then
-        echo "❌ Error al cargar datos de ejemplo"
-        exit 1
-    fi
     echo "✅ Datos de ejemplo cargados"
 else
     echo "✅ La base de datos ya tiene $CARD_COUNT cartas"

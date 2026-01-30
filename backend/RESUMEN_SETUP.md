@@ -230,7 +230,7 @@ npm run seed
    - Para procesamiento de thumbnails y tareas asíncronas
 
 5. **Deploy a Producción**
-   - Ver [README_BACKEND.md](backend/README_BACKEND.md) para Railway, Heroku, etc.
+   - Ver [README_BACKEND.md](./README_BACKEND.md) para Railway, Heroku, etc.
 
 ## ❓ Solución de Problemas
 
@@ -271,10 +271,10 @@ docker compose down -v
 
 ## 📚 Documentación Completa
 
-- [COMO_INICIAR.md](backend/COMO_INICIAR.md) - Guía completa en español
-- [README_BACKEND.md](backend/README_BACKEND.md) - Documentación técnica
-- [QUICKSTART.md](backend/QUICKSTART.md) - Inicio rápido
-- [README_MIGRATIONS.md](backend/README_MIGRATIONS.md) - Flujo de migraciones
+- [COMO_INICIAR.md](./COMO_INICIAR.md) - Guía completa en español
+- [README_BACKEND.md](./README_BACKEND.md) - Documentación técnica
+- [QUICKSTART.md](./QUICKSTART.md) - Inicio rápido
+- [README_MIGRATIONS.md](./README_MIGRATIONS.md) - Flujo de migraciones
 
 ## 💡 Tips
 
