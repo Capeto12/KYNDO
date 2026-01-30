@@ -100,6 +100,13 @@ footer a:hover {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   position: relative;
   min-height: 50px;
+  font-size: clamp(8px, 2.5vw, 14px);
+  text-align: center;
+  padding: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .card:hover {
