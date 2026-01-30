@@ -355,10 +355,10 @@
       }
     },
     {
-      "cardId": "fregata-magnificente",
+      "cardId": "fragata-magnificente",
       "title": "Fragata Magnificente",
       "description": "Seabird with forked tail and red throat pouch",
-      "imageUrl": "content/birds/img/fregata-magnificente.webp",
+      "imageUrl": "content/birds/img/fragata-magnificente.webp",
       "rarity": "epic",
       "packId": "birds",
       "metadata": {

@@ -105,7 +105,7 @@
       "image_url": "content/content/birds/content/birds/img/carpintero-real.webp"
     },
     {
-      "id": "espátula-rosada",
+      "id": "espatula-rosada",
       "title": "Espátula Rosada",
       "image_url": "content/content/birds/content/birds/img/espatula-rosada.webp"
     },
@@ -115,7 +115,7 @@
       "image_url": "content/content/birds/content/birds/img/ibis-escarlata.webp"
     },
     {
-      "id": "ciguena-jabirú",
+      "id": "ciguena-jabiru",
       "title": "Cigüeña Jabirú",
       "image_url": "content/content/birds/content/birds/img/ciguena-jabiru.webp"
     },
@@ -125,14 +125,14 @@
       "image_url": "content/content/birds/content/birds/img/pelicano-pardo.webp"
     },
     {
-      "id": "cormorán",
+      "id": "cormoran",
       "title": "Cormorán",
       "image_url": "content/content/birds/content/birds/img/cormoran.webp"
     },
     {
-      "id": "fregata-magnificente",
+      "id": "fragata-magnificente",
       "title": "Fragata Magnificente",
-      "image_url": "content/content/birds/content/birds/img/fregata-magnificente.webp"
+      "image_url": "content/content/birds/content/birds/img/fragata-magnificente.webp"
     },
     {
       "id": "piquero-patas-azules",
@@ -180,7 +180,7 @@
       "image_url": "content/content/birds/content/birds/img/piranga-roja.webp"
     },
     {
-      "id": "oropéndola",
+      "id": "oropendola",
       "title": "Oropéndola",
       "image_url": "content/content/birds/content/birds/img/oropendola.webp"
     },
