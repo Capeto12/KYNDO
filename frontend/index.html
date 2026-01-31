@@ -13,6 +13,16 @@
 <body>
 
 <header>
+  <div id="user-info">
+    <div class="player-info" id="current-player">
+      <div class="player-avatar">👤</div>
+      <div class="player-name">Jugador</div>
+    </div>
+    <div class="player-info" id="opponent-player" style="display: none;">
+      <div class="player-avatar">👤</div>
+      <div class="player-name">Oponente</div>
+    </div>
+  </div>
   <h1>Kindo</h1>
   <div id="loading">
     Cargando contenido... ⏳
@@ -20,6 +30,7 @@
   <div id="hud">
     <span>🧠 <span id="hud-matches">0</span>/<span id="hud-pairs">0</span></span>
     <span>🔁 <span id="hud-attempts">0</span>/<span id="hud-maxAttempts">0</span></span>
+    <span>❌ <span id="hud-errors">0</span></span>
     <span>🔥 <span id="hud-streak">0</span></span>
     <span>⭐ <span id="hud-score">0</span></span>
   </div>
@@ -109,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const hudPairs = document.getElementById('hud-pairs');
   const hudAttempts = document.getElementById('hud-attempts');
   const hudMaxAttempts = document.getElementById('hud-maxAttempts');
+  const hudErrors = document.getElementById('hud-errors');
   const hudStreak = document.getElementById('hud-streak');
   const hudScore = document.getElementById('hud-score');
   const hudGrade = document.getElementById('hud-grade');
@@ -140,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let streak = 0;
   let maxStreakSeen = 0;
+  let seriousErrors = 0; // Track serious errors (repeat pair openings)
 
   let revealedCards = []; // max 2
   let pendingLock = false; // evita clicks raros mientras overlay está activo
@@ -158,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     hudPairs.textContent = String(totalPairs);
     hudAttempts.textContent = String(attempts);
     hudMaxAttempts.textContent = String(maxAttempts);
+    hudErrors.textContent = String(seriousErrors);
     hudStreak.textContent = String(streak);
     hudScore.textContent = String(score);
     hudGrade.textContent = String(memoryGrade);
@@ -342,6 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (missedPairs.has(key)) {
       attempts += REPEAT_MISS_EXTRA_ATTEMPTS; // +1 intento extra
       score = clampNonNegative(score - REPEAT_MISS_POINT_PENALTY); // -2 pts
+      seriousErrors += 1; // Increment serious errors counter
     } else {
       missedPairs.add(key);
     }
@@ -372,6 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
     attempts = 0;
     streak = 0;
     maxStreakSeen = 0;
+    seriousErrors = 0;
 
     totalCards = gradeConfig[memoryGrade];
     totalPairs = totalCards / 2;
