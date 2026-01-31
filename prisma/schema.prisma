@@ -7,9 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/*
-  Minimal schema focused on cards and presentation rules.
-*/
+// Minimal schema focused on cards and presentation rules.
 
 model Card {
   id            String   @id @default(uuid())
