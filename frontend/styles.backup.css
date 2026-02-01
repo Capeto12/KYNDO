@@ -9,46 +9,22 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
 
-:root {
-  --bg-1: #0f172a;
-  --bg-2: #0b1021;
-  --surface: rgba(255, 255, 255, 0.08);
-  --surface-strong: rgba(255, 255, 255, 0.16);
-  --surface-border: rgba(255, 255, 255, 0.18);
-  --text-strong: #f8fafc;
-  --text-muted: rgba(248, 250, 252, 0.7);
-  --accent: #8b5cf6;
-  --accent-2: #22d3ee;
-  --warning: #f59e0b;
-  --success: #10b981;
-  --shadow-1: 0 10px 30px rgba(2, 6, 23, 0.35);
-  --shadow-2: 0 20px 60px rgba(2, 6, 23, 0.45);
-}
-
 body {
   margin: 0;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  background:
-    radial-gradient(800px circle at 10% 10%, rgba(139, 92, 246, 0.35), transparent 45%),
-    radial-gradient(700px circle at 90% 20%, rgba(34, 211, 238, 0.28), transparent 40%),
-    linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
-  color: var(--text-strong);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #111;
   min-height: 100vh;
-  padding: 16px;
-  box-sizing: border-box;
 }
 
 /* Header y Footer */
 header {
-  padding: 22px 18px 18px;
+  padding: 20px 12px 16px;
   text-align: center;
   border-bottom: none;
-  background: var(--surface);
-  box-shadow: var(--shadow-1);
-  border: 1px solid var(--surface-border);
-  backdrop-filter: blur(16px);
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: relative;
-  border-radius: 20px;
 }
 
 /* User Info at top of header */
@@ -56,7 +32,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 6px 14px;
+  padding: 0 16px 12px;
   gap: 12px;
 }
 
@@ -64,15 +40,14 @@ header {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.03);
+  padding: 6px 12px;
+  border-radius: 20px;
   transition: all 0.3s ease;
 }
 
 .player-info:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
@@ -80,31 +55,27 @@ header {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .player-name {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-strong);
+  color: #4a4a4a;
 }
 
 header h1 {
   margin: 0 0 12px;
   font-size: 42px;
   font-weight: 800;
-  color: var(--text-strong);
-  text-shadow: 0 8px 20px rgba(15, 23, 42, 0.4);
+  color: #4a4a4a;
+  text-shadow: none;
   letter-spacing: 2px;
-  background: linear-gradient(135deg, #fff 0%, #c7d2fe 50%, #22d3ee 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 
@@ -112,31 +83,26 @@ header h1 {
 footer {
   padding: 12px;
   text-align: center;
-  margin-top: 18px;
-  color: var(--text-muted);
+  margin-top: 20px;
 }
 
 footer a {
-  color: var(--text-strong);
+  color: #111;
   text-decoration: none;
   padding: 8px 16px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.08);
-  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  border-radius: 8px;
+  transition: background-color 0.2s;
 }
 
 footer a:hover {
-  background-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-1);
+  background-color: #f0f0f0;
 }
 
 /* HUD (Heads-Up Display) */
 #loading {
   display: none;
   font-size: 14px;
-  color: var(--text-strong);
+  color: #fff;
   padding: 8px;
 }
 
@@ -148,13 +114,8 @@ footer a:hover {
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  color: var(--text-strong);
+  color: #4a4a4a;
   text-shadow: none;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  padding: 10px 16px;
-  backdrop-filter: blur(12px);
 }
 
 #hud span {
@@ -162,9 +123,6 @@ footer a:hover {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
 }
 
 #hud span:hover {
@@ -174,28 +132,27 @@ footer a:hover {
 #hud-score {
   font-size: 20px;
   font-weight: 800;
-  color: var(--warning);
-  text-shadow: 0 6px 16px rgba(245, 158, 11, 0.45);
+  color: #ff9800;
+  text-shadow: none;
 }
 
 .grade-info {
   font-size: 14px;
   font-weight: 700;
   margin-top: 8px;
-  color: var(--text-strong);
-  background: rgba(255, 255, 255, 0.08);
-  padding: 8px 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #4a4a4a;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 6px 16px;
+  border-radius: 20px;
   display: inline-block;
   backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 #hud-grade {
   font-size: 16px;
   font-weight: 800;
-  color: var(--accent-2);
+  color: #ff9800;
   animation: gradeHighlight 1s ease-in-out infinite alternate;
   transition: all 0.3s ease;
 }
@@ -210,28 +167,28 @@ footer a:hover {
   }
   25% {
     transform: scale(1.5) rotate(-10deg);
-    color: #fb7185;
+    color: #ff6b6b;
   }
   50% {
     transform: scale(1.8) rotate(10deg);
-    color: var(--accent-2);
+    color: #4ecdc4;
   }
   75% {
     transform: scale(1.5) rotate(-5deg);
-    color: #a7f3d0;
+    color: #95e1d3;
   }
   100% {
     transform: scale(1);
-    color: var(--accent);
+    color: #ff9800;
   }
 }
 
 @keyframes gradeHighlight {
   from {
-    color: var(--accent);
+    color: #ff9800;
   }
   to {
-    color: var(--accent-2);
+    color: #ffb84d;
   }
 }
 
@@ -241,15 +198,10 @@ footer a:hover {
 
 #board {
   display: grid;
-  gap: 10px;
-  padding: 12px;
-  max-width: 1100px;
-  margin: 12px auto 0;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  box-shadow: var(--shadow-1);
-  backdrop-filter: blur(14px);
+  gap: 7px;
+  padding: 8px;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 /* =========================
@@ -258,16 +210,16 @@ footer a:hover {
 
 .card {
   aspect-ratio: 1 / 1;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
-  border-radius: 12px;
+  background: #bdbdbd;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   user-select: none;
   cursor: pointer;
   font-weight: bold;
-  color: var(--text-strong);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  color: rgba(0, 0, 0, 0.75);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
   position: relative;
   min-height: 30px;
   font-size: clamp(8px, 2.5vw, 14px);
@@ -277,48 +229,45 @@ footer a:hover {
   overflow: hidden;
   overflow-wrap: break-word;
   hyphens: auto;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 10px 20px rgba(2, 6, 23, 0.25);
 }
 
 .card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 16px 30px rgba(2, 6, 23, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .card:active {
-  transform: translateY(-1px) scale(0.99);
-  box-shadow: 0 10px 18px rgba(2, 6, 23, 0.3);
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Estados de carta */
 .card.hidden {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+  background: #bdbdbd;
 }
 
 .card.hidden::after {
   content: "K";
   font-size: 14px;
-  color: rgba(248, 250, 252, 0.5);
+  color: rgba(0, 0, 0, 0.3);
   font-weight: bold;
 }
 
 .card.revealed {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.12));
-  border: 1px solid rgba(34, 211, 238, 0.6);
+  background: #ffffff;
+  border: 1px solid #999;
   animation: cardReveal 0.2s ease;
-  box-shadow: 0 14px 30px rgba(34, 211, 238, 0.25);
 }
 
 .card.pending {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
-  border: 1px dashed rgba(255, 255, 255, 0.4);
+  background: #e8e8e8;
+  border: 1px dashed #aaa;
 }
 
 .card.matched {
-  background: linear-gradient(145deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.08));
-  border: 2px solid rgba(16, 185, 129, 0.6);
-  opacity: 0.7;
+  background: #f1f1f1;
+  border: 2px solid #aaa;
+  opacity: 0.65;
   pointer-events: none;
   transform: scale(0.96);
   transition: transform 120ms ease, opacity 0.3s ease;
@@ -357,12 +306,12 @@ footer a:hover {
 #overlay {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 100;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(2px);
   animation: overlayFadeIn 0.2s ease;
 }
 
@@ -384,14 +333,13 @@ footer a:hover {
   max-width: 350px;
   max-height: 88vh;
   aspect-ratio: 2 / 3;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: #fff;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: var(--shadow-2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   animation: cardZoomIn 0.25s ease;
 }
 
@@ -415,13 +363,13 @@ footer a:hover {
 
 .card-image {
   flex: 3;
-  background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+  background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 48px;
   font-weight: bold;
-  color: #0f172a;
+  color: #333;
   position: relative;
   overflow: hidden;
 }
@@ -434,13 +382,13 @@ footer a:hover {
 
 .card-name {
   flex: 1;
-  border-top: 1px solid rgba(15, 23, 42, 0.12);
+  border-top: 1px solid #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: clamp(10px, 3vw, 14px);
-  background: #f8fafc;
+  background: #fafafa;
   padding: 4px 8px;
   overflow: hidden;
   overflow-wrap: break-word;
@@ -450,18 +398,18 @@ footer a:hover {
 
 .card-stats {
   flex: 1;
-  border-top: 1px solid rgba(15, 23, 42, 0.12);
+  border-top: 1px solid #ccc;
   display: flex;
   justify-content: space-around;
   align-items: center;
   font-size: 14px;
-  background: #f1f5f9;
+  background: #fff;
   font-weight: 600;
 }
 
 .card-stats span {
   padding: 4px 8px;
-  background: #e2e8f0;
+  background: #f0f0f0;
   border-radius: 4px;
 }
 
@@ -472,13 +420,13 @@ footer a:hover {
 #resultOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.72);
+  background: rgba(0, 0, 0, 0.65);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 200;
   padding: 16px;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(3px);
   animation: overlayFadeIn 0.3s ease;
 }
 
@@ -511,11 +459,10 @@ footer a:hover {
 
 .result-card {
   width: min(520px, 92vw);
-  background: rgba(255, 255, 255, 0.96);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: #fff;
+  border-radius: 12px;
   padding: 24px 20px 16px;
-  box-shadow: var(--shadow-2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.30);
   text-align: center;
   animation: resultSlideIn 0.3s ease;
 }
@@ -535,8 +482,8 @@ footer a:hover {
   font-size: 28px;
   font-weight: 800;
   margin-bottom: 12px;
-  color: #0f172a;
-  background: linear-gradient(135deg, #7c3aed 0%, #22d3ee 100%);
+  color: #764ba2;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -563,7 +510,6 @@ footer a:hover {
   margin-bottom: 20px;
   line-height: 1.6;
   font-weight: 500;
-  color: #1e293b;
 }
 
 .result-grid {
@@ -579,7 +525,7 @@ footer a:hover {
   border: 2px solid transparent;
   border-radius: 12px;
   padding: 14px;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -593,7 +539,7 @@ footer a:hover {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #7c3aed 0%, #22d3ee 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 0;
@@ -601,8 +547,8 @@ footer a:hover {
 
 .result-row:hover {
   transform: translateY(-2px);
-  border-color: #7c3aed;
-  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.25);
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .result-row:hover::before {
@@ -624,8 +570,8 @@ footer a:hover {
 .result-row span {
   font-size: 24px;
   font-weight: 800;
-  color: #7c3aed;
-  background: linear-gradient(135deg, #7c3aed 0%, #22d3ee 100%);
+  color: #764ba2;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -639,19 +585,19 @@ footer a:hover {
 
 .btn {
   border: 0;
-  border-radius: 999px;
+  border-radius: 10px;
   padding: 12px 16px;
   font-weight: bold;
   cursor: pointer;
   width: 100%;
   margin-top: 8px;
   font-size: 14px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.35);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .btn:active {
@@ -659,27 +605,26 @@ footer a:hover {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #7c3aed 0%, #22d3ee 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  box-shadow: 0 12px 24px rgba(124, 58, 237, 0.35);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #6d28d9 0%, #0ea5e9 100%);
-  box-shadow: 0 16px 30px rgba(124, 58, 237, 0.45);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
 
 .btn-ghost {
-  background: rgba(15, 23, 42, 0.08);
-  color: #0f172a;
-  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #efefef;
+  color: #111;
 }
 
 .btn-ghost:hover {
-  background: rgba(15, 23, 42, 0.16);
+  background: #e0e0e0;
 }
 
 /* =========================
@@ -696,9 +641,9 @@ footer a:hover {
   }
 
   #board {
-    padding: 18px;
-    gap: 12px;
-    max-width: 1100px;
+    padding: 16px;
+    gap: 10px;
+    max-width: 900px;
   }
 
   .card {
