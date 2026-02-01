@@ -89,3 +89,94 @@ export const CARD_STATES = {
   PENDING: 'pending',
   MATCHED: 'matched'
 };
+
+// =========================
+// CONFIGURACIÓN DE BATTLE
+// =========================
+
+/**
+ * Battle Mode (Kombate) - Configuración del sistema A/D
+ * Ver docs/Manual-Maestro.md § 5 para la teoría completa
+ */
+
+/**
+ * Pesos para cálculo de Ataque
+ * Suma total: ~2.5 (normalizado después a 0-99)
+ */
+export const BATTLE_CONFIG = {
+  // Pesos de factores de ataque (P, S, W, H, A)
+  ATTACK_WEIGHTS: {
+    P: 0.5,  // Predación
+    S: 0.4,  // Velocidad
+    W: 0.5,  // Weapons (anatomía ofensiva)
+    H: 0.3,  // Hunt strategy
+    A: 0.2   // Agresividad
+  },
+
+  // Pesos de factores de defensa (AD, C, E, SD, R)
+  DEFENSE_WEIGHTS: {
+    AD: 0.4, // Adaptabilidad
+    C: 0.3,  // Camuflaje
+    E: 0.4,  // Evasión
+    SD: 0.2, // Social defense
+    R: 0.6   // Robustez
+  },
+
+  // Salud inicial de cada jugador (batalla termina cuando llega a 0)
+  STARTING_HEALTH: 100,
+
+  // Bonos por entorno (% adicional a defensa)
+  ENVIRONMENT_BONUSES: {
+    neutral: 0,
+    water: 15,      // Ventaja para aves acuáticas
+    forest: 10,     // Ventaja para aves forestales
+    mountain: 12,   // Ventaja para aves de montaña
+    sky: 8          // Ventaja para aves voladoras
+  },
+
+  // Multiplicadores de rareza (aplican a todos los factores)
+  RARITY_MULTIPLIERS: {
+    common: 1.0,
+    uncommon: 1.1,
+    rare: 1.2,
+    epic: 1.3,
+    legendary: 1.5
+  },
+
+  // Configuración de ligas (futuro)
+  LEAGUES: {
+    bronze: { minMMR: 0, maxMMR: 999, reward: 10 },
+    silver: { minMMR: 1000, maxMMR: 1999, reward: 25 },
+    gold: { minMMR: 2000, maxMMR: 2999, reward: 50 },
+    platinum: { minMMR: 3000, maxMMR: 4999, reward: 100 },
+    diamond: { minMMR: 5000, maxMMR: Infinity, reward: 200 }
+  },
+
+  // Configuración de matchmaking
+  MATCHMAKING: {
+    MMR_CHANGE_WIN: 25,
+    MMR_CHANGE_LOSS: -15,
+    MMR_CHANGE_DRAW: 0,
+    K_FACTOR: 32 // Elo coefficient for rating changes
+  },
+
+  // Tutorial/Demo
+  DEMO_MODE_ENABLED: true,
+  DEMO_DECK_SIZE: 3
+};
+
+/**
+ * Equivalencias de factores A/D (para UI)
+ */
+export const FACTOR_NAMES = {
+  P: 'Predación',
+  S: 'Velocidad',
+  W: 'Anatomía',
+  H: 'Estrategia',
+  A: 'Agresividad',
+  AD: 'Adaptabilidad',
+  C: 'Camuflaje',
+  E: 'Evasión',
+  SD: 'Defensa Social',
+  R: 'Robustez'
+};

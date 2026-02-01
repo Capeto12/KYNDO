@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KYNDO - Batalla de Mazos</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .demo-controls {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .demo-controls button {
+      padding: 12px 24px;
+      margin: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transition: all 200ms ease;
+    }
+
+    .demo-controls button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    .back-link {
+      margin-bottom: 16px;
+    }
+
+    .back-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚔️ KYNDO - Batalla de Mazos</h1>
+    <p style="margin: 8px 0; font-size: 14px; color: rgba(15, 23, 42, 0.7);">
+      Compara tus cartas contra un oponente usando Ataque vs Defensa
+    </p>
+  </header>
+
+  <main style="max-width: 1000px; margin: 0 auto; padding: 16px;">
+    <div class="back-link">
+      <a href="index.html">← Volver al menú</a>
+    </div>
+
+    <div class="demo-controls">
+      <h3 style="margin: 0 0 12px 0; color: #0f172a;">Elige un modo</h3>
+      <button id="startDemoBtn">🎮 Demo</button>
+      <button id="startTutorialBtn">📖 Tutorial</button>
+    </div>
+
+    <div id="battleContainer"></div>
+  </main>
+
+  <footer>
+    <p>KYNDO - Cognitive Card Game Engine v1.0</p>
+  </footer>
+
+  <script type="module">
+    import { DemoBattleController, TutorialBattleController } from './js/battle-controller.js';
+
+    const battleContainer = document.getElementById('battleContainer');
+    const startDemoBtn = document.getElementById('startDemoBtn');
+    const startTutorialBtn = document.getElementById('startTutorialBtn');
+
+    let currentController = null;
+
+    startDemoBtn.addEventListener('click', async () => {
+      // Clear previous battle
+      if (currentController) {
+        currentController.reset();
+      }
+
+      // Start new demo
+      currentController = new DemoBattleController();
+      const battleUI = await currentController.startDemo();
+      battleContainer.innerHTML = '';
+      battleContainer.appendChild(battleUI);
+    });
+
+    startTutorialBtn.addEventListener('click', async () => {
+      // Clear previous battle
+      if (currentController) {
+        currentController.reset();
+      }
+
+      // Start tutorial
+      currentController = new TutorialBattleController();
+      const tutorialUI = await currentController.startTutorial();
+      battleContainer.innerHTML = '';
+      battleContainer.appendChild(tutorialUI);
+
+      // Show first tutorial message
+      const msg = currentController.showTutorialMessage();
+      if (msg) {
+        alert(`${msg.title}\n\n${msg.content}`);
+      }
+    });
+
+    console.log('Battle Demo loaded. Click buttons to start.');
+  </script>
+</body>
+</html>
