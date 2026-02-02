@@ -276,7 +276,10 @@ desert: 20,  // New environment
 ### Adjust Rarity Scaling
 ```javascript
 // In config.js, RARITY_MULTIPLIERS:
-rara: 1.3        // was 1.25 - slight buff
+excepcional: 1.5,  // Morado   #7B3EFF
+rara: 1.25,        // Rojo     #FF2E2E
+frecuente: 1.1,    // Azul     #2E8BFF
+abundante: 1.0     // Verde    #2ECC71
 ```
 
 ---

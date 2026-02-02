@@ -150,7 +150,7 @@ const card = new BattleCard({
   cardId: 'guacamaya-roja',
   name: 'Guacamaya Roja',
   image: 'content/birds/guacamaya-roja-1.webp',
-  rarity: 'common',
+  rarity: 'abundante',
   attackFactors: { P: 4, S: 7, W: 6, H: 5, A: 5 },
   defenseFactors: { AD: 6, C: 4, E: 7, SD: 5, R: 5 }
 });
