@@ -441,14 +441,14 @@ footer {
    ========================= */
 
 .battle-container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 16px;
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
+  background: #f7f7fa;
+  border: 1px solid #e5e7eb;
   border-radius: 18px;
-  box-shadow: var(--shadow-1);
-  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  color: #0f172a;
 }
 
 .battle-grid {
@@ -458,8 +458,8 @@ footer {
 }
 
 .deck-panel {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px dashed var(--surface-border);
+  background: #ffffff;
+  border: 1px dashed #d9dce3;
   border-radius: 12px;
   padding: 12px;
 }
@@ -474,13 +474,13 @@ footer {
 
 .deck-panel-header h4 {
   margin: 0;
-  color: #ff9800;
+  color: #111827;
 }
 
 .deck-panel-header p {
   margin: 2px 0 0 0;
   font-size: 12px;
-  color: var(--text-muted);
+  color: #6b7280;
 }
 
 .deck-list {
@@ -498,8 +498,8 @@ footer {
   gap: 10px;
   align-items: center;
   padding: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
   cursor: grab;
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
@@ -507,7 +507,7 @@ footer {
 
 .deck-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: #cbd5e1;
 }
 
 .deck-card.dragging {
@@ -521,8 +521,8 @@ footer {
 }
 
 .deck-card.current {
-  border-color: #ff9800;
-  box-shadow: 0 0 0 1px rgba(255, 152, 0, 0.4);
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.35);
 }
 
 .deck-card-thumb {
@@ -532,7 +532,7 @@ footer {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #e5e7eb;
 }
 
 .deck-card-info {
@@ -544,7 +544,7 @@ footer {
 .deck-card-name {
   font-weight: 700;
   font-size: 13px;
-  color: var(--text-strong);
+  color: #0f172a;
 }
 
 .deck-card-meta {
@@ -571,10 +571,10 @@ footer {
 
 .power-pill {
   padding: 3px 8px;
-  background: rgba(255, 255, 255, 0.08);
+  background: #eef2f7;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--text-muted);
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
 }
 
 /* Battle Header */
@@ -585,7 +585,7 @@ footer {
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 2px solid var(--surface-border);
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .battle-player-info,
@@ -597,12 +597,12 @@ footer {
 .battle-opponent-info h3 {
   margin: 0;
   font-size: 16px;
-  color: var(--text-strong);
+  color: #0f172a;
 }
 
 .deck-count {
   font-size: 12px;
-  color: var(--text-muted);
+  color: #6b7280;
   margin-top: 4px;
 }
 
@@ -610,7 +610,7 @@ footer {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-  color: #ff9800;
+  color: #0f172a;
 }
 
 /* Health Bars */
@@ -621,9 +621,9 @@ footer {
   align-items: center;
   margin-bottom: 24px;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.06);
+  background: #ffffff;
   border-radius: 12px;
-  border: 1px solid var(--surface-border);
+  border: 1px solid #e5e7eb;
 }
 
 .health-bar-container {
@@ -635,17 +635,17 @@ footer {
 .health-label {
   font-size: 12px;
   font-weight: bold;
-  color: var(--text-muted);
+  color: #6b7280;
   text-transform: uppercase;
 }
 
 .health-bar {
   width: 100%;
   height: 24px;
-  background: rgba(15, 23, 42, 0.1);
+  background: #e5e7eb;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid rgba(15, 23, 42, 0.2);
+  border: 1px solid #d1d5db;
 }
 
 .health-fill {
@@ -672,13 +672,13 @@ footer {
   font-size: 12px;
   font-weight: bold;
   text-align: center;
-  color: var(--text-strong);
+  color: #0f172a;
 }
 
 .health-separator {
   font-weight: bold;
   font-size: 14px;
-  color: #ff9800;
+  color: #0f172a;
 }
 
 /* Battle Arena */
@@ -693,8 +693,8 @@ footer {
 
 .card-slot {
   aspect-ratio: 2 / 3;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-  border: 2px dashed var(--surface-border);
+  background: #fdfdfd;
+  border: 2px dashed #d9dce3;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -706,12 +706,12 @@ footer {
 }
 
 .card-slot.dropping {
-  border-color: #ff9800;
-  box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.3);
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3);
 }
 
 .empty-slot {
-  color: var(--text-muted);
+  color: #6b7280;
   font-size: 13px;
   text-align: center;
 }
@@ -721,10 +721,10 @@ footer {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, #ffffff 0%, #f6f7fb 100%);
   border-radius: 10px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #e5e7eb;
   animation: cardEntry 300ms ease;
 }
 
@@ -741,7 +741,7 @@ footer {
 
 .card-image {
   flex: 2;
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  background: #e5e7eb;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -797,15 +797,15 @@ footer {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
 }
 
 .card-info h4 {
   margin: 0;
   font-size: 12px;
   font-weight: bold;
-  color: #fff;
+  color: #0f172a;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -816,7 +816,7 @@ footer {
   gap: 6px;
   font-size: 10px;
   margin-top: 4px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #4b5563;
 }
 
 .attack-stat,
@@ -826,7 +826,7 @@ footer {
 
 .attack-stat strong,
 .defense-stat strong {
-  color: #ffab40;
+  color: #111827;
   font-size: 11px;
 }
 
@@ -836,7 +836,7 @@ footer {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #ff9800;
+  color: #0f172a;
   font-weight: bold;
 }
 
@@ -870,25 +870,25 @@ footer {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #ff9800 0%, #ff7043 100%);
-  color: #fff;
-  box-shadow: 0 8px 16px rgba(255, 152, 0, 0.3);
+  background: linear-gradient(135deg, #111827 0%, #374151 100%);
+  color: #f9fafb;
+  box-shadow: 0 8px 16px rgba(17, 24, 39, 0.24);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(255, 152, 0, 0.4);
+  box-shadow: 0 12px 24px rgba(17, 24, 39, 0.32);
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #e5e7eb;
+  color: #111827;
+  border: 1px solid #d1d5db;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: #d1d5db;
+  border-color: #cbd5e1;
 }
 
 .btn-primary:disabled,
@@ -900,8 +900,8 @@ footer {
 /* Round Result */
 .round-result {
   padding: 16px;
-  background: rgba(34, 211, 238, 0.1);
-  border: 1px solid rgba(34, 211, 238, 0.3);
+  background: #eef2f7;
+  border: 1px solid #d9dce3;
   border-radius: 12px;
   margin-bottom: 24px;
   animation: slideDown 200ms ease;
@@ -926,7 +926,7 @@ footer {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 12px;
-  color: #fff;
+  color: #0f172a;
 }
 
 .result-message.victory {
@@ -963,8 +963,8 @@ footer {
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--surface-border);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
 }
 
@@ -977,7 +977,7 @@ footer {
 
 .stat-label {
   font-size: 12px;
-  color: var(--text-muted);
+  color: #6b7280;
   text-transform: uppercase;
   font-weight: bold;
 }
@@ -985,7 +985,7 @@ footer {
 .stat-value {
   font-size: 18px;
   font-weight: bold;
-  color: #ff9800;
+  color: #0f172a;
 }
 
 /* Factors Comparison */
@@ -998,22 +998,22 @@ footer {
 
 .factors-group {
   padding: 10px;
-  background: rgba(255, 255, 255, 0.06);
+  background: #f9fafb;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 .factors-group h5 {
   margin: 0 0 8px 0;
   font-size: 12px;
-  color: #ff9800;
+  color: #111827;
   text-transform: uppercase;
 }
 
 .factor {
   display: block;
   font-size: 11px;
-  color: var(--text-muted);
+  color: #4b5563;
   margin: 3px 0;
 }
 
@@ -1039,26 +1039,26 @@ footer {
 }
 
 .comparison-table thead {
-  background: rgba(255, 255, 255, 0.08);
-  border-bottom: 2px solid var(--surface-border);
+  background: #eef2f7;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .comparison-table th {
   padding: 10px;
   font-weight: bold;
-  color: var(--text-strong);
+  color: #0f172a;
   text-align: center;
 }
 
 .comparison-table td {
   padding: 10px;
   text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .comparison-table td.label {
   font-weight: bold;
-  color: #ff9800;
+  color: #111827;
 }
 
 .comparison-table td.player {
