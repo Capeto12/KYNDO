@@ -1,0 +1,153 @@
+{
+    "name": "Clasificacion Aves - Bloque Maestro",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-sheets:watchRows",
+            "version": 1,
+            "parameters": {
+                "limit": 1
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": -100,
+                    "y": 0,
+                    "name": "1. DATOS (Sheet)"
+                }
+            }
+        },
+        {
+            "id": 2,
+            "module": "http:request",
+            "version": 1,
+            "parameters": {
+                "method": "GET",
+                "url": "https://www.googleapis.com/drive/v3/files",
+                "qs": {
+                    "q": "name=\"{{1.0}}\" AND mimeType=\"application/vnd.google-apps.folder\" AND \"ID_CARPETA_RAIZ\" in parents AND trashed=false",
+                    "fields": "files(id,name)"
+                },
+                "headers": [
+                    {
+                        "name": "Authorization",
+                        "value": "Bearer {{Connection.accessToken}}"
+                    }
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 200,
+                    "y": 0,
+                    "name": "2. BUSCAR (Nivel 1)"
+                }
+            }
+        },
+        {
+            "id": 3,
+            "module": "router",
+            "version": 1,
+            "metadata": {
+                "designer": {
+                    "x": 500,
+                    "y": 0
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 4,
+                            "module": "util:setVariable",
+                            "version": 1,
+                            "parameters": {
+                                "name": "ID_PADRE_SIGUIENTE",
+                                "value": "{{2.data.files[1].id}}"
+                            },
+                            "filter": {
+                                "name": "Ya Existe",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{2.data.files[1].id}}",
+                                            "o": "exists"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 750,
+                                    "y": -100,
+                                    "name": "RUTA A: Guardar ID"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 5,
+                            "module": "http:request",
+                            "version": 1,
+                            "parameters": {
+                                "method": "POST",
+                                "url": "https://www.googleapis.com/drive/v3/files",
+                                "headers": [
+                                    {
+                                        "name": "Authorization",
+                                        "value": "Bearer {{Connection.accessToken}}"
+                                    },
+                                    {
+                                        "name": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": "{\n  \"name\": \"{{1.0}}\",\n  \"mimeType\": \"application/vnd.google-apps.folder\",\n  \"parents\": [\"ID_CARPETA_RAIZ\"]\n}",
+                                "type": "raw"
+                            },
+                            "filter": {
+                                "name": "No Existe",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{2.data.files[1].id}}",
+                                            "o": "text:notexist"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 750,
+                                    "y": 100,
+                                    "name": "RUTA B: Crear Carpeta"
+                                }
+                            }
+                        },
+                        {
+                            "id": 6,
+                            "module": "util:setVariable",
+                            "version": 1,
+                            "parameters": {
+                                "name": "ID_PADRE_SIGUIENTE",
+                                "value": "{{5.data.id}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1000,
+                                    "y": 100,
+                                    "name": "Guardar Nuevo ID"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "version": 1
+    }
+}

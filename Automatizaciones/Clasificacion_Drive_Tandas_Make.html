@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clasificación Automática en Drive + Tandas — Make + Vertex AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0a0b0e;
+    --surf: #111318;
+    --surf2: #161921;
+    --bdr: #222832;
+    --bdr2: #2e3545;
+    --tx: #d4d9e2;
+    --txd: #636b7d;
+    --txb: #f0f2f5;
+    --g: #34d399;
+    --gd: #1a3d2b;
+    --gs: #0f2420;
+    --a: #fbbf24;
+    --as: #1f1a0a;
+    --b: #60a5fa;
+    --bs: #0c1a2e;
+    --r: #f87171;
+    --rs: #1f0c0c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Sora',sans-serif;
+    background:var(--bg);
+    color:var(--tx);
+    line-height:1.7;
+    padding:60px 20px;
+  }
+  .w { max-width:940px; margin:0 auto; }
+
+  /* HEADER */
+  .hdr { text-align:center; padding-bottom:52px; border-bottom:1px solid var(--bdr); margin-bottom:60px; }
+  .hdr .tag {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--gs); border:1px solid var(--gd); color:var(--g);
+    font-size:10px; font-weight:600; letter-spacing:1.8px; text-transform:uppercase;
+    padding:6px 18px; border-radius:30px; margin-bottom:24px;
+  }
+  .hdr h1 { font-size:32px; font-weight:700; color:var(--txb); line-height:1.3; margin-bottom:12px; letter-spacing:-0.3px; }
+  .hdr h1 em { font-style:normal; color:var(--g); }
+  .hdr .sub { color:var(--txd); font-size:13.5px; max-width:600px; margin:0 auto; font-weight:300; }
+  .hdr .pills { margin-top:22px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; }
+  .pill { background:var(--surf); border:1px solid var(--bdr); border-radius:6px; padding:4px 11px; font-size:10.5px; color:var(--txd); font-family:'IBM Plex Mono',monospace; }
+
+  /* SECTION */
+  .sec { margin-bottom:56px; }
+  .sh { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+  .sn {
+    font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--g);
+    background:var(--gs); border:1px solid var(--gd);
+    width:32px; height:32px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .sh h2 { font-size:19px; font-weight:600; color:var(--txb); }
+  .p { font-size:13px; color:var(--txd); margin-bottom:16px; line-height:1.8; }
+  .p strong { color:var(--tx); }
+
+  /* TREE */
+  .tree {
+    background:var(--surf); border:1px solid var(--bdr); border-radius:12px;
+    padding:22px 26px; margin:18px 0;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:2.2;
+  }
+  .f { color:var(--a); } .fi { color:var(--b); } .d { color:var(--txd); } .sp { color:var(--g); }
+
+  /* CODE */
+  .cw { background:var(--surf); border:1px solid var(--bdr); border-radius:12px; overflow:hidden; margin:16px 0; }
+  .cb {
+    background:var(--surf2); border-bottom:1px solid var(--bdr);
+    padding:9px 16px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .cb .dots { display:flex; gap:6px; }
+  .cb .dots span { width:9px; height:9px; border-radius:50%; }
+  .cb .dots .r{background:#ff5f57} .cb .dots .y{background:#febc2e} .cb .dots .g{background:#28c840}
+  .cb .lb { font-size:9.5px; color:var(--txd); font-family:'IBM Plex Mono',monospace; letter-spacing:1px; text-transform:uppercase; }
+  pre { padding:20px 22px; overflow-x:auto; font-family:'IBM Plex Mono',monospace; font-size:12px; line-height:1.95; color:#c9d1d9; }
+  .c{color:#636b7d} .k{color:#f87171} .s{color:#7dd3fc} .pr{color:#fbbf24} .v{color:#a78bfa} .n{color:#67e8f9} .m{color:#34d399} .o{color:#f9a8d4}
+
+  /* CALLOUT */
+  .co { border-radius:10px; padding:16px 18px; margin:16px 0; display:flex; gap:12px; border:1px solid; }
+  .co .ic { font-size:17px; flex-shrink:0; line-height:1.5; }
+  .co .bd h4 { font-size:12px; font-weight:600; margin-bottom:3px; }
+  .co .bd p { font-size:11.5px; color:var(--txd); line-height:1.7; }
+  .co.tip { background:var(--gs); border-color:var(--gd); } .co.tip .bd h4{color:var(--g)}
+  .co.warn { background:var(--as); border-color:#3d3015; } .co.warn .bd h4{color:var(--a)}
+  .co.info { background:var(--bs); border-color:#1a3050; } .co.info .bd h4{color:var(--b)}
+  .co.crit { background:var(--rs); border-color:#3d1515; } .co.crit .bd h4{color:var(--r)}
+
+  /* TABLE */
+  .tw { overflow-x:auto; margin:16px 0; }
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  thead th {
+    background:var(--surf2); color:var(--txd); font-size:9px; font-weight:600;
+    letter-spacing:1.2px; text-transform:uppercase; padding:10px 13px;
+    text-align:left; border-bottom:1px solid var(--bdr); white-space:nowrap;
+  }
+  tbody td { padding:10px 13px; border-bottom:1px solid var(--bdr); color:var(--tx); vertical-align:top; font-size:12.5px; }
+  tbody tr:last-child td { border-bottom:none; }
+  .rh td { background:#0f2420; }
+  .rh td:first-child { color:var(--g)!important; font-weight:600; }
+
+  /* FLOW */
+  .fl { display:flex; flex-direction:column; gap:2px; margin:20px 0; }
+  .fn { background:var(--surf); border:1px solid var(--bdr); border-radius:9px; padding:13px 16px; display:flex; align-items:flex-start; gap:12px; }
+  .fn.hl { border-color:var(--gd); background:var(--gs); }
+  .fn .fi2 { font-size:17px; flex-shrink:0; line-height:1.6; }
+  .fn .fb h4 { font-size:12px; font-weight:600; color:var(--txb); margin-bottom:2px; }
+  .fn .fb p { font-size:11px; color:var(--txd); }
+  .fa { text-align:center; color:var(--g); font-size:12px; line-height:5px; padding:1px 0; }
+
+  /* TANDA GRID */
+  .tg { display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:10px; margin:18px 0; }
+  .tc { background:var(--surf); border:1px solid var(--bdr); border-radius:10px; padding:16px; text-align:center; }
+  .tc.act { border-color:var(--gd); background:var(--gs); }
+  .tc .tp { font-size:8.5px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--g); margin-bottom:5px; }
+  .tc .tn { font-family:'IBM Plex Mono',monospace; font-size:26px; font-weight:700; color:var(--txb); }
+  .tc .tl { font-size:10px; color:var(--txd); margin-top:1px; }
+  .tc .td { font-size:10px; color:var(--txd); margin-top:9px; padding-top:9px; border-top:1px solid var(--bdr); line-height:1.6; }
+  .tc .td strong { color:var(--tx); }
+
+  /* CHECKLIST */
+  .chk { list-style:none; margin:14px 0; }
+  .chk li { display:flex; gap:9px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--bdr); font-size:12.5px; }
+  .chk li:last-child { border-bottom:none; }
+  .chk .bx { width:17px; height:17px; border:1.5px solid var(--g); border-radius:4px; flex-shrink:0; margin-top:2px; }
+  .chk li strong { color:var(--txb); }
+
+  /* STEP BADGE */
+  .step-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--surf2); border:1px solid var(--bdr2);
+    border-radius:6px; padding:3px 10px; margin-bottom:8px;
+    font-size:10px; color:var(--txd); font-family:'IBM Plex Mono',monospace;
+  }
+  .step-badge .sb-n { color:var(--g); font-weight:600; }
+
+  /* INLINE CODE */
+  code { background:var(--surf2); border:1px solid var(--bdr); padding:2px 6px; border-radius:4px; font-size:11px; font-family:'IBM Plex Mono',monospace; color:var(--b); }
+
+  hr { border:none; border-top:1px solid var(--bdr); margin:48px 0; }
+  .ftr { text-align:center; padding-top:36px; border-top:1px solid var(--bdr); color:var(--txd); font-size:10.5px; line-height:1.9; }
+
+  @media(max-width:600px){
+    body{padding:32px 12px} .hdr h1{font-size:22px} .tg{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="w">
+
+<!-- ═══ HEADER ═══ -->
+<div class="hdr">
+  <div class="tag">📂 Clasificación + Control por Tandas</div>
+  <h1>Organización automática en Drive<br><em>País → Grupo → Familia → Especie</em></h1>
+  <p class="sub">Estructura completa: las carpetas se crean solas, las imágenes se clasifican automáticamente, y tú controlas el avance con tandas pequeñas.</p>
+  <div class="pills">
+    <span class="pill">Google Drive API v3</span>
+    <span class="pill">Make.com · Router + HTTP</span>
+    <span class="pill">Vertex AI · Nano Banana Pro</span>
+    <span class="pill">Google Sheets · Control</span>
+  </div>
+</div>
+
+<!-- ═══ 01 ESTRUCTURA EN DRIVE ═══ -->
+<div class="sec">
+  <div class="sh"><div class="sn">01</div><h2>Estructura de carpetas en Drive</h2></div>
+  <p class="p">4 niveles de profundidad. Todo se crea automáticamente. La única carpeta que creas a mano es la raíz:</p>
+
+  <div class="tree">
+<span class="d">📁</span> <span class="f">Cartas de Aves</span>  <span class="d">← Carpeta raíz (la creas a mano, una sola vez)</span>
+<span class="d">│</span>
+<span class="d">├── 📁</span> <span class="f">México</span>  <span class="d">← Nivel 1: País</span>
+<span class="d">│   ├── 📁</span> <span class="f">Trogones</span>  <span class="d">← Nivel 2: Grupo</span>
+<span class="d">│   │   └── 📁</span> <span class="f">Trogonidae</span>  <span class="d">← Nivel 3: Familia</span>
+<span class="d">│   │       └── 📁</span> <span class="f">Quetzal Resplendente</span>  <span class="d">← Nivel 4: Especie</span>
+<span class="d">│   │           ├──</span> <span class="fi">AVE_001_pose1.png</span>
+<span class="d">│   │           └──</span> <span class="fi">AVE_001_pose2.png</span>
+<span class="d">│   │</span>
+<span class="d">│   └── 📁</span> <span class="f">Tucanes</span>
+<span class="d">│       └── 📁</span> <span class="f">Ramphastidae</span>
+<span class="d">│           └── 📁</span> <span class="f">Tucán Keel-billed</span>
+<span class="d">│               └──</span> <span class="fi">AVE_002_pose1.png</span>
+<span class="d">│</span>
+<span class="d">├── 📁</span> <span class="f">Colombia</span>
+<span class="d">│   └── 📁</span> <span class="f">Tángaras</span>
+<span class="d">│       └── 📁</span> <span class="f">Thraupidae</span>
+<span class="d">│           └── 📁</span> <span class="f">Tángara Azul y Negro</span>
+<span class="d">│               └──</span> <span class="fi">AVE_045_pose1.png</span>
+<span class="d">│</span>
+<span class="d">└── 📁</span> <span class="f">Brasil</span>
+<span class="d">    └──</span> <span class="d">...</span>
+  </div>
+
+  <div class="co tip">
+    <div class="ic">💡</div>
+    <div class="bd">
+      <h4>Por qué el nivel "Grupo"</h4>
+      <p>A 12,000 cartas vas a tener decenas de familias por país. Sin el nivel Grupo, cada carpeta de país estaría llena de familias sin jerarquía visual. Los Grupos (Trogones, Tucanes, Rapaces, Tángaras...) agrupan familias relacionadas y hacen que navegar Drive sea rápido incluso a gran escala.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 02 HOJA DE DATOS ═══ -->
+<div class="sec">
+  <div class="sh"><div class="sn">02</div><h2>Hoja de datos — Google Sheets</h2></div>
+  <p class="p">Esta hoja es el centro de control. Make lee de aquí, genera las imágenes, y escribe los resultados aquí mismo. Los campos <strong>País, Grupo, Familia, Especie</strong> construyen la ruta automáticamente. El campo <strong>Tanda</strong> controla qué lote procesas:</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Campo</th><th>Ejemplo</th><th>Rol</th></tr></thead>
+      <tbody>
+        <tr><td><strong style="color:var(--txb)">ID</strong></td><td>AVE_001</td><td>Base del nombre de archivo</td></tr>
+        <tr><td><strong style="color:var(--txb)">País</strong></td><td>México</td><td>Nivel 1 de carpetas</td></tr>
+        <tr><td><strong style="color:var(--txb)">Grupo</strong></td><td>Trogones</td><td>Nivel 2 — agrupa familias</td></tr>
+        <tr><td><strong style="color:var(--txb)">Familia</strong></td><td>Trogonidae</td><td>Nivel 3 — familia taxonómica</td></tr>
+        <tr><td><strong style="color:var(--txb)">Especie</strong></td><td>Quetzal Resplendente</td><td>Nivel 4 — carpeta final</td></tr>
+        <tr><td><strong style="color:var(--txb)">Nombre científico</strong></td><td><em>Pharomachrus mocinno</em></td><td>Precisión en el prompt</td></tr>
+        <tr><td><strong style="color:var(--txb)">Características</strong></td><td>Cola verde iridiscente, cabeza roja...</td><td>Detalle visual para la IA</td></tr>
+        <tr><td><strong style="color:var(--txb)">Posa</strong></td><td>Perfil, alas parcialmente extendidas</td><td>Composición de la imagen</td></tr>
+        <tr class="rh"><td>Tanda</td><td>TANDA-01</td><td>⬅ Tú escribes esto para controlar el lote</td></tr>
+        <tr class="rh"><td>Estado</td><td>Pendiente</td><td>⬅ Filtro principal del escenario</td></tr>
+        <tr><td><strong style="color:var(--txb)">URL imagen</strong></td><td>(automático)</td><td>Make lo llena al terminar</td></tr>
+        <tr><td><strong style="color:var(--txb)">Fecha</strong></td><td>(automático)</td><td>Timestamp de generación</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ 03 SISTEMA DE TANDAS ═══ -->
+<div class="sec">
+  <div class="sh"><div class="sn">03</div><h2>Control por tandas</h2></div>
+  <p class="p"><strong>Make no decide cuántas cartas procesar.</strong> Tú lo decides escribiendo la tanda en la hoja. El escenario solo toca filas donde Tanda = valor actual <em>y</em> Estado = Pendiente. Si no escribiste tanda, no hay nada que procesar.</p>
+
+  <div class="tg">
+    <div class="tc act">
+      <div class="tp">Inicio</div>
+      <div class="tn">10</div>
+      <div class="tl">por tanda</div>
+      <div class="td"><strong>Por qué 10:</strong> Estás validando carpetas, prompts y parseo. Si algo falla, solo perdiste crédito de 10 imágenes.</div>
+    </div>
+    <div class="tc">
+      <div class="tp">Estable</div>
+      <div class="tn">20</div>
+      <div class="tl">por tanda</div>
+      <div class="td"><strong>Por qué 20:</strong> Ya confirmaste que la clasificación es consistente. Una tanda puede cubrir una familia completa.</div>
+    </div>
+    <div class="tc">
+      <div class="tp">Fase 2</div>
+      <div class="tn">50</div>
+      <div class="tl">por tanda</div>
+      <div class="td"><strong>Por qué 50:</strong> El sistema es confiable. Cada tanda cubre varias especies de un mismo grupo.</div>
+    </div>
+    <div class="tc">
+      <div class="tp">Fase 3</div>
+      <div class="tn">200+</div>
+      <div class="tl">por tanda</div>
+      <div class="td"><strong>Por qué 200+:</strong> Pasas a Batch Processing de Vertex AI. Make ya no hace llamadas individuales.</div>
+    </div>
+  </div>
+
+  <p class="p" style="margin-top:20px"><strong>Ciclo de una tanda:</strong></p>
+  <div class="fl">
+    <div class="fn">
+      <div class="fi2">✍️</div>
+      <div class="fb"><h4>Escribir la tanda</h4><p>En la hoja, escribes "TANDA-01" en el campo Tanda de las primeras 10 filas. Estado = Pendiente.</p></div>
+    </div>
+    <div class="fa">▼</div>
+    <div class="fn hl">
+      <div class="fi2">⚙️</div>
+      <div class="fb"><h4>Ejecutar escenario en Make</h4><p>El filtro solo libera filas donde Tanda = TANDA-01 y Estado = Pendiente. Procesa las 10 filas una por una.</p></div>
+    </div>
+    <div class="fa">▼</div>
+    <div class="fn hl">
+      <div class="fi2">🦜</div>
+      <div class="fb"><h4>Generar + clasificar automáticamente</h4><p>Por cada fila: crea carpetas si no existen → genera imagen con Vertex AI → sube el archivo a la ruta correcta → actualiza Estado a "Generada".</p></div>
+    </div>
+    <div class="fa">▼</div>
+    <div class="fn">
+      <div class="fi2">👁️</div>
+      <div class="fb"><h4>Revisar en Drive</h4><p>Abres Drive, vas a las carpetas de la tanda, revisar visualmente. Si algo no está bien, cambias Estado a "Revisar".</p></div>
+    </div>
+    <div class="fa">▼</div>
+    <div class="fn">
+      <div class="fi2">✅</div>
+      <div class="fb"><h4>Aprobar y avanzar</h4><p>Si todo está bien, marcas como "Aprobada" y escribes TANDA-02 en las siguientes filas.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 04 LÓGICA DE CARPETAS ═══ -->
+<div class="sec">
+  <div class="sh"><div class="sn">04</div><h2>Lógica de creación automática de carpetas</h2></div>
+  <p class="p">Este es el núcleo del sistema. Para subir un archivo a Drive necesitas el <strong>ID de la carpeta padre</strong>. Si la carpeta no existe, hay que crearla primero. Este proceso se repite nivel por nivel, encadenado:</p>
+
+  <div class="co warn">
+    <div class="ic">⚠️</div>
+    <div class="bd">
+      <h4>Cómo funciona la lógica por nivel</h4>
+      <p>En cada nivel haces lo mismo: <strong style="color:var(--a)">buscar</strong> si la carpeta existe dentro de su padre → si existe, usar su ID → si no existe, <strong style="color:var(--a)">crear</strong> la carpeta y usar el ID nuevo. El output de cada nivel es el padre del siguiente. En Make esto se implementa con un <strong style="color:var(--a)">Router</strong> después de cada búsqueda: una rama "existe" y otra "crear".</p>
+    </div>
+  </div>
+
+  <div class="step-badge"><span class="sb-n">PASO A</span> Buscar/crear carpeta País</div>
+  <div class="cw">
+    <div class="cb"><div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><div class="lb">HTTP GET · Buscar carpeta por nombre dentro de un padre</div></div>
+    <pre><span class="c">// MÉTODO: GET</span>
+<span class="c">// URL:</span>
+https://www.googleapis.com/drive/v3/files
+
+<span class="c">// QUERY PARAMS:</span>
+<span class="pr">q</span> = name="<span class="n">{{País}}</span>"
+      AND mimeType="application/vnd.google-apps.folder"
+      AND "<span class="n">{{ID_CARPETA_RAIZ}}</span>" in parents
+      AND trashed=false
+
+<span class="pr">fields</span> = files(id,name)
+
+<span class="c">// HEADERS:</span>
+<span class="pr">Authorization</span>: Bearer <span class="n">{{ACCESS_TOKEN}}</span>
+
+<span class="c">// ─────────────────────────────────────────</span>
+<span class="c">// RESPUESTA SI EXISTE:</span>
+{ "files": [ { "id": "<span class="m">1BxiMVs0XRA5nF...</span>", "name": "México" } ] }
+<span class="c">//           ↑ usar este ID como padre del siguiente nivel</span>
+<span class="c">// RESPUESTA SI NO EXISTE:</span>
+{ "files": [] }
+<span class="c">//           ↑ Router manda a crear la carpeta</span></pre>
+  </div>
+
+  <div class="cw">
+    <div class="cb"><div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><div class="lb">HTTP POST · Crear carpeta (solo si no existe)</div></div>
+    <pre><span class="c">// MÉTODO: POST</span>
+<span class="c">// URL:</span>
+https://www.googleapis.com/drive/v3/files
+
+<span class="c">// HEADERS:</span>
+<span class="pr">Authorization</span>: Bearer <span class="n">{{ACCESS_TOKEN}}</span>
+<span class="pr">Content-Type</span>: application/json
+
+<span class="c">// BODY:</span>
+{
+  <span class="pr">"name"</span>: "<span class="n">{{País}}</span>",
+  <span class="pr">"mimeType"</span>: "<span class="k">application/vnd.google-apps.folder</span>",
+  <span class="pr">"parents"</span>: ["<span class="n">{{ID_CARPETA_RAIZ}}</span>"]
+}
+
+<span class="c">// RESPUESTA:</span>
+{ "id": "<span class="m">NUEVO_ID_CARPETA_PAIS</span>", "name": "México" }
+<span class="c">//           ↑ este ID pasa como padre al nivel 2 (Grupo)</span></pre>
+  </div>
+
+  <p class="p" style="margin-top:20px"><strong>Los niveles 2, 3 y 4 son idénticos en estructura.</strong> Solo cambia el nombre de la carpeta y el padre:</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Nivel</th><th>Campo de la hoja</th><th>Buscar dentro de</th><th>Si no existe, crear con padre</th></tr></thead>
+      <tbody>
+        <tr class="rh"><td>1</td><td>País</td><td>Carpeta raíz (ID fijo)</td><td>ID carpeta raíz</td></tr>
+        <tr><td>2</td><td>Grupo</td><td>Carpeta País</td><td>ID carpeta País (output nivel 1)</td></tr>
+        <tr><td>3</td><td>Familia</td><td>Carpeta Grupo</td><td>ID carpeta Grupo (output nivel 2)</td></tr>
+        <tr class="rh"><td>4</td><td>Especie</td><td>Carpeta Familia</td><td>ID carpeta Familia (output nivel 3)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="co tip">
+    <div class="ic">⚡</div>
+    <div class="bd">
+      <h4>Se vuelve más rápido con cada tanda</h4>
+      <p>La primera tanda crea la mayoría de las carpetas. En tandas siguientes de la misma región, el sistema solo hace GET (buscar) y no POST (crear). Para la Fase 3, casi todas las carpetas ya existen y el escenario se ejecuta mucho más rápido por cada imagen.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 05 SUBIR IMAGEN ═══ -->
+<div class="sec">
+  <div class="sh"><div class="sn">05</div><h2>Subir la imagen a la carpeta correcta</h2></div>
+  <p class="p">Una vez que tienes el ID de la carpeta Especie (nivel 4), subir la imagen es el paso más simple. Aquí usas el <strong>módulo nativo de Make para Google Drive</strong> (no HTTP), porque maneja el base64 y la subida automáticamente:</p>
+
+  <div class="cw">
+    <div class="cb"><div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><div class="lb">Make · Módulo Google Drive → Upload a File</div></div>
+    <pre><span class="pr">Nombre del archivo:</span>  {{ID}}_{{Posa_slug}}.png
+                       <span class="c">Ejemplo: AVE_001_perfil.png</span>
+
+<span class="pr">Datos del archivo:</span>   {{candidates[0].content.parts[].inlineData.data}}
+                       <span class="c">← El base64 que retorna Vertex AI</span>
+
+<span class="pr">Tipo MIME:</span>           image/png
+
+<span class="pr">Carpeta padre:</span>       {{ID_CARPETA_ESPECIE}}
+                       <span class="c">← El ID obtenido en el nivel 4</span></pre>
+  </div>
+
+  <div class="co info">
+    <div class="ic">📍</div>
+    <div class="bd">
+      <h4>Módulo nativo para subir, HTTP para crear carpetas</h4>
+      <p>Para buscar y crear carpetas necesitas HTTP porque la lógica condicional (buscar → ¿existe? → crear o usar) requiere Router. Pero para <strong style="color:var(--b)">subir el archivo</strong>, el módulo nativo de Drive en Make es más estable y maneja la decodificación base64 sin configuración extra.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 06 ESCENARIO COMPLETO ═══ -->
+<div class="sec">
+  <div class="sh"><div class="sn">06</div><h2>Escenario completo — Orden de módulos en Make</h2></div>
+  <p class="p">Este es el mapa exacto. Cada paso depende del output del anterior. Los módulos marcados en verde son los que necesitan configuración especial:</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>#</th><th>Módulo en Make</th><th>Qué hace</th><th>Output</th></tr></thead>
+      <tbody>
+        <tr class="rh"><td>1</td><td>Google Sheets · Watch Rows</td><td>Trigger: filas donde Tanda = actual y Estado = Pendiente</td><td>Datos de la fila</td></tr>
+        <tr><td>2</td><td>HTTP GET</td><td>Buscar carpeta País en la raíz</td><td>ID o vacío</td></tr>
+        <tr><td>3</td><td>Router</td><td>¿files[0].id existe?</td><td>—</td></tr>
+        <tr><td>3a</td><td>HTTP POST</td><td>Si no → crear carpeta País</td><td>ID País</td></tr>
+        <tr><td>4</td><td>HTTP GET</td><td>Buscar carpeta Grupo en País</td><td>ID o vacío</td></tr>
+        <tr><td>5</td><td>Router</td><td>¿files[0].id existe?</td><td>—</td></tr>
+        <tr><td>5a</td><td>HTTP POST</td><td>Si no → crear carpeta Grupo</td><td>ID Grupo</td></tr>
+        <tr><td>6</td><td>HTTP GET</td><td>Buscar carpeta Familia en Grupo</td><td>ID o vacío</td></tr>
+        <tr><td>7</td><td>Router</td><td>¿files[0].id existe?</td><td>—</td></tr>
+        <tr><td>7a</td><td>HTTP POST</td><td>Si no → crear carpeta Familia</td><td>ID Familia</td></tr>
+        <tr><td>8</td><td>HTTP GET</td><td>Buscar carpeta Especie en Familia</td><td>ID o vacío</td></tr>
+        <tr><td>9</td><td>Router</td><td>¿files[0].id existe?</td><td>—</td></tr>
+        <tr><td>9a</td><td>HTTP POST</td><td>Si no → crear carpeta Especie</td><td>ID Especie ✅</td></tr>
+        <tr class="rh"><td>10</td><td>HTTP POST</td><td>Llamada a Vertex AI → genera imagen</td><td>Base64 imagen</td></tr>
+        <tr class="rh"><td>11</td><td>Google Drive · Upload File</td><td>Sube imagen a carpeta Especie</td><td>URL del archivo</td></tr>
+        <tr class="rh"><td>12</td><td>Google Sheets · Update Row</td><td>Estado = "Generada", URL imagen, Fecha</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ 07 ESTADOS ═══ -->
+<div class="sec">
+  <div class="sh"><div class="sn">07</div><h2>Estados de control</h2></div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Estado</th><th>Significado</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr class="rh"><td>Pendiente</td><td>Esperando ser procesada</td><td>Escribir la tanda para incluirla en el lote</td></tr>
+        <tr><td>Generada</td><td>Imagen generada y subida a Drive</td><td>Revisar visualmente en Drive</td></tr>
+        <tr><td>Aprobada</td><td>Revisada y aceptada</td><td>Lista. No se toca más.</td></tr>
+        <tr><td>Revisar</td><td>La imagen no está bien</td><td>Corregir el prompt en la hoja → cambiar a Pendiente → incluir en siguiente tanda</td></tr>
+        <tr><td>Error</td><td>Vertex AI retornó error</td><td>Make lo marca automáticamente. Cambiar a Pendiente para reintentar.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ 08 ID RAÍZ ═══ -->
+<div class="sec">
+  <div class="sh"><div class="sn">08</div><h2>Obtener el ID de la carpeta raíz</h2></div>
+  <p class="p">Todo el sistema gira alrededor de un solo ID: el de la carpeta <strong>"Cartas de Aves"</strong> que creas a mano. Este ID es una variable fija en todos los HTTP GET del nivel 1.</p>
+
+  <div class="cw">
+    <div class="cb"><div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div><div class="lb">Cómo obtener el ID</div></div>
+    <pre><span class="c">1. Crea la carpeta "Cartas de Aves" en tu Drive</span>
+<span class="c">2. Ábrela. En la URL del navegador:</span>
+
+   https://drive.google.com/drive/folders/<span class="m">1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74</span>
+                                            <span class="o">↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑</span>
+                                            <span class="c">Este es tu ID de carpeta raíz</span>
+
+<span class="c">3. Cópialo. En Make va como valor fijo en el</span>
+<span class="c">   primer HTTP GET (buscar carpeta País).</span></pre>
+  </div>
+</div>
+
+<!-- ═══ 09 CHECKLIST ═══ -->
+<div class="sec">
+  <div class="sh"><div class="sn">09</div><h2>Checklist de setup</h2></div>
+  <ul class="chk">
+    <li><div class="bx"></div><div><strong>Crear carpeta raíz</strong> — "Cartas de Aves" en Drive. Copiar su ID de la URL.</div></li>
+    <li><div class="bx"></div><div><strong>Preparar la hoja</strong> — Google Sheets con todos los campos de la sección 02. Cargar las primeras 10 especies.</div></li>
+    <li><div class="bx"></div><div><strong>Escribir TANDA-01</strong> — En las primeras 10 filas del campo Tanda. Estado = Pendiente.</div></li>
+    <li><div class="bx"></div><div><strong>Configurar autenticación en Make</strong> — Conexión OAuth para Drive API. Service Account para Vertex AI.</div></li>
+    <li><div class="bx"></div><div><strong>Crear escenario</strong> — Siguiendo el orden de la sección 06. Trigger en Google Sheets con filtro doble (Tanda + Estado).</div></li>
+    <li><div class="bx"></div><div><strong>Test con 1 fila</strong> — Ejecutar con una sola ave. Verificar que las 4 carpetas se crean y la imagen aparece en la ruta correcta.</div></li>
+    <li><div class="bx"></div><div><strong>Ejecutar TANDA-01</strong> — Las 10 filas completas. Revisar cada imagen en Drive.</div></li>
+    <li><div class="bx"></div><div><strong>Aprobar y avanzar</strong> — Si todo está bien, marcar como Aprobada y escribir TANDA-02 en las siguientes filas.</div></li>
+  </ul>
+</div>
+
+<div class="ftr">
+  <p>Sistema de clasificación automática · País → Grupo → Familia → Especie</p>
+  <p>Google Drive API v3 · Make.com · Vertex AI · Control por tandas</p>
+</div>
+</div>
+</body>
+</html>

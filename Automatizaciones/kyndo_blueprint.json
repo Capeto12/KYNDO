@@ -1,0 +1,183 @@
+{
+    "name": "Clasificación Automática - Blueprint Base",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-sheets:watchRows",
+            "version": 1,
+            "parameters": {},
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": -300,
+                    "y": 0,
+                    "name": "1. LEER HOJA DE DATOS"
+                }
+            }
+        },
+        {
+            "id": 2,
+            "module": "util:setVariables",
+            "version": 1,
+            "parameters": {
+                "variables": [
+                    {
+                        "name": "ID_CARPETA_RAIZ",
+                        "value": "PON_AQUI_TU_ID_DE_DRIVE_MANUALMENTE"
+                    }
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "2. CONFIG: ID RAÍZ"
+                }
+            }
+        },
+        {
+            "id": 3,
+            "module": "http:request",
+            "version": 1,
+            "parameters": {
+                "method": "GET",
+                "url": "https://www.googleapis.com/drive/v3/files",
+                "qs": {
+                    "q": "name=\"{{1.COLUMNA_PAIS}}\" AND mimeType=\"application/vnd.google-apps.folder\" AND \"{{2.ID_CARPETA_RAIZ}}\" in parents AND trashed=false",
+                    "fields": "files(id,name)"
+                },
+                "headers": [
+                    {
+                        "name": "Authorization",
+                        "value": "Bearer {{Connection.accessToken}}"
+                    }
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0,
+                    "name": "3. BUSCAR CARPETA PAÍS"
+                }
+            }
+        },
+        {
+            "id": 4,
+            "module": "router",
+            "version": 1,
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 5,
+                            "module": "util:setVariable",
+                            "version": 1,
+                            "parameters": {
+                                "name": "ID_NIVEL_1_PAIS",
+                                "value": "{{3.data.files[1].id}}"
+                            },
+                            "filter": {
+                                "name": "Carpeta Existe",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{3.data.files[1].id}}",
+                                            "o": "exists"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": -100,
+                                    "name": "RUTA A: USAR EXISTENTE"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 6,
+                            "module": "http:request",
+                            "version": 1,
+                            "parameters": {
+                                "method": "POST",
+                                "url": "https://www.googleapis.com/drive/v3/files",
+                                "headers": [
+                                    {
+                                        "name": "Authorization",
+                                        "value": "Bearer {{Connection.accessToken}}"
+                                    },
+                                    {
+                                        "name": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": "{\n  \"name\": \"{{1.COLUMNA_PAIS}}\",\n  \"mimeType\": \"application/vnd.google-apps.folder\",\n  \"parents\": [\"{{2.ID_CARPETA_RAIZ}}\"]\n}",
+                                "type": "raw"
+                            },
+                            "filter": {
+                                "name": "Carpeta No Existe",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{3.data.files[1].id}}",
+                                            "o": "text:notexist"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 100,
+                                    "name": "RUTA B: CREAR NUEVA"
+                                }
+                            }
+                        },
+                        {
+                            "id": 7,
+                            "module": "util:setVariable",
+                            "version": 1,
+                            "parameters": {
+                                "name": "ID_NIVEL_1_PAIS",
+                                "value": "{{6.data.id}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": 100,
+                                    "name": "GUARDAR NUEVO ID"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "module": "util:getVariable",
+            "version": 1,
+            "parameters": {
+                "name": "ID_NIVEL_1_PAIS"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1500,
+                    "y": 0,
+                    "name": "8. PUNTO DE CONVERGENCIA (Output Nivel 1)"
+                }
+            }
+        }
+    ]
+}
