@@ -35,20 +35,12 @@ export class BattleCard {
     };
 
     // Rarity affects base stats
-    this.rarity = cardData.rarity || 'common';
+    this.rarity = cardData.rarity || 'abundante';
     this.applyRarityBonus();
   }
 
   applyRarityBonus() {
-    const rarityMultipliers = {
-      common: 1.0,
-      uncommon: 1.1,
-      rare: 1.2,
-      epic: 1.3,
-      legendary: 1.5
-    };
-
-    const multiplier = rarityMultipliers[this.rarity] || 1.0;
+    const multiplier = BATTLE_CONFIG.RARITY_MULTIPLIERS[this.rarity] || 1.0;
 
     // Apply rarity bonus to all factors (capped at 10)
     Object.keys(this.attackFactors).forEach(key => {
@@ -320,7 +312,7 @@ export function getSampleDeck() {
       cardId: 'guacamaya-roja',
       name: 'Guacamaya Roja',
       image: 'content/birds/guacamaya-roja-1.webp',
-      rarity: 'common',
+      rarity: 'abundante',
       attackFactors: { P: 4, S: 7, W: 6, H: 5, A: 5 },
       defenseFactors: { AD: 6, C: 4, E: 7, SD: 5, R: 5 }
     },
@@ -328,7 +320,7 @@ export function getSampleDeck() {
       cardId: 'condor-andino',
       name: 'Cóndor Andino',
       image: 'content/birds/condor-andino-1.webp',
-      rarity: 'rare',
+      rarity: 'rara',
       attackFactors: { P: 7, S: 6, W: 8, H: 7, A: 6 },
       defenseFactors: { AD: 7, C: 3, E: 5, SD: 4, R: 8 }
     },
@@ -336,7 +328,7 @@ export function getSampleDeck() {
       cardId: 'aguila-arpía',
       name: 'Águila Arpía',
       image: 'content/birds/aguila-harpia-1.webp',
-      rarity: 'epic',
+      rarity: 'excepcional',
       attackFactors: { P: 8, S: 8, W: 9, H: 8, A: 7 },
       defenseFactors: { AD: 6, C: 2, E: 6, SD: 3, R: 7 }
     }

@@ -135,12 +135,12 @@ export const BATTLE_CONFIG = {
   },
 
   // Multiplicadores de rareza (aplican a todos los factores)
+  // Escala oficial: Excepcional, Rara, Frecuente, Abundante
   RARITY_MULTIPLIERS: {
-    common: 1.0,
-    uncommon: 1.1,
-    rare: 1.2,
-    epic: 1.3,
-    legendary: 1.5
+    excepcional: 1.5,  // Morado  #7B3EFF
+    rara: 1.25,        // Rojo    #FF2E2E
+    frecuente: 1.1,    // Azul    #2E8BFF
+    abundante: 1.0     // Verde   #2ECC71
   },
 
   // Configuración de ligas (futuro)

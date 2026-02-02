@@ -92,42 +92,42 @@ test('BattleCard: Defense score is 0-99', () => {
   assertBetween(defense, 0, 99, `Defense ${defense} should be 0-99`);
 });
 
-test('BattleCard: Rarity bonus applied (Common 1.0x)', () => {
+test('BattleCard: Rarity bonus applied (Abundante 1.0x)', () => {
   const card = new BattleCard({
     cardId: 'test',
     name: 'Test',
     image: 'test.png',
-    rarity: 'common',
+    rarity: 'abundante',
     attackFactors: { P: 10, S: 10, W: 10, H: 10, A: 10 }
   });
 
-  // Common = 1.0x, so should still be max 10
+  // Abundante = 1.0x, so should still be max 10
   assert(card.attackFactors.P === 10);
 });
 
-test('BattleCard: Rarity bonus applied (Rare 1.2x)', () => {
+test('BattleCard: Rarity bonus applied (Rara 1.25x)', () => {
   const card = new BattleCard({
     cardId: 'test',
     name: 'Test',
     image: 'test.png',
-    rarity: 'rare',
+    rarity: 'rara',
     attackFactors: { P: 8, S: 8, W: 8, H: 8, A: 8 }
   });
 
-  // Rare = 1.2x → 8 * 1.2 = 9.6, capped at 10
+  // Rara = 1.25x → 8 * 1.25 = 10 (capped at 10)
   assert(card.attackFactors.P === 10);
 });
 
-test('BattleCard: Rarity bonus capped at 10', () => {
+test('BattleCard: Rarity bonus capped at 10 (Excepcional 1.5x)', () => {
   const card = new BattleCard({
     cardId: 'test',
     name: 'Test',
     image: 'test.png',
-    rarity: 'legendary',
+    rarity: 'excepcional',
     attackFactors: { P: 10, S: 10, W: 10, H: 10, A: 10 }
   });
 
-  // Legendary = 1.5x, but capped at 10
+  // Excepcional = 1.5x, but capped at 10
   assert(card.attackFactors.P === 10);
   assert(card.attackFactors.S === 10);
 });

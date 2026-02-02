@@ -38,7 +38,7 @@ const card1 = new BattleCard({
   cardId: 'bird-1',
   name: 'Eagle',
   image: 'eagle.png',
-  rarity: 'rare',
+  rarity: 'rara',
   attackFactors: { P: 8, S: 7, W: 9, H: 8, A: 6 },
   defenseFactors: { AD: 6, C: 3, E: 7, SD: 4, R: 8 }
 });
@@ -207,17 +207,19 @@ GET /api/battles/battle-123/summary
 }
 ```
 
-## Rarity Bonuses
+## Rareza / Frecuencia de avistamiento (colores oficiales)
 
-| Rarity | Bonus |
-|--------|-------|
-| Common | 1.0× |
-| Uncommon | 1.1× |
-| Rare | 1.2× |
-| Epic | 1.3× |
-| Legendary | 1.5× |
+| Nivel | Frecuencia      | Color | HEX      | Probabilidad | Valor | Multiplicador |
+| :---- | :-------------- | :---- | :------- | :----------- | :---- | :------------ |
+| 1 | Excepcional | 🟣 Morado | `#7B3EFF` | 1–2 %  | 100 | 1.5× |
+| 2 | Rara        | 🔴 Rojo   | `#FF2E2E` | 8–10 % | 70  | 1.25× |
+| 3 | Frecuente   | 🔵 Azul   | `#2E8BFF` | 30–40 %| 40  | 1.1× |
+| 4 | Abundante   | 🟢 Verde  | `#2ECC71` | 50–60 %| 20  | 1.0× |
 
-Rare cards get 20% bonus to all factors (capped at 10 max).
+Notas visuales:
+- Borde del color de la rareza; "Excepcional" con brillo metálico.
+- Gradiente morado → verde para progresiones.
+- Física: morado metalizado, borde carmesí, azul cielo, verde hoja.
 
 ## Environment Bonuses
 

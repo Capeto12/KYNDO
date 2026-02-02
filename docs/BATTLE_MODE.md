@@ -76,17 +76,40 @@ Damage Calculation:
 Result: Player loses 17 health, opponent loses 7 health
 ```
 
-### Rarity Bonuses
+### Rarity / Frecuencia de avistamiento (colores oficiales)
 
-Rarity affects base stats (capped at 10):
+Escala oficial (digital + físico) con paleta morado, rojo, azul y verde:
 
-| Rarity | Multiplier |
-|--------|-----------|
-| Common | 1.0× |
-| Uncommon | 1.1× |
-| Rare | 1.2× |
-| Epic | 1.3× |
-| Legendary | 1.5× |
+| Nivel | Frecuencia      | Color     | HEX      | Probabilidad estimada | Valor de carta | Emoción del jugador   | Descripción resumida |
+| :---- | :-------------- | :-------- | :------- | :-------------------- | :------------- | :-------------------- | :-------------------- |
+| **1** | **Excepcional** | 🟣 Morado | `#7B3EFF` | 1 – 2 %               | 100 pts        | Épica / Legendaria    | Especies únicas, endémicas o casi imposibles de ver. Verdaderos trofeos. |
+| **2** | **Rara**        | 🔴 Rojo   | `#FF2E2E` | 8 – 10 %              | 70 pts         | Prestigiosa           | Difíciles pero alcanzables; requieren suerte o experiencia. |
+| **3** | **Frecuente**   | 🔵 Azul   | `#2E8BFF` | 30 – 40 %             | 40 pts         | Reconocible           | Aves habituales de excursiones o tours; mantienen el ritmo. |
+| **4** | **Abundante**   | 🟢 Verde  | `#2ECC71` | 50 – 60 %             | 20 pts         | Cotidiana / Relajante | Comunes, de observación sencilla; equilibran la colección. |
+
+Multiplicadores aplicados en el motor (BATTLE_CONFIG.RARITY_MULTIPLIERS):
+- Excepcional: 1.5×
+- Rara: 1.25×
+- Frecuente: 1.1×
+- Abundante: 1.0×
+
+Coherencia visual recomendada:
+- Borde con el color asignado; "Excepcional" con brillo/efecto metálico.
+- Gradiente descendente morado → verde en menús o progresiones.
+- Versión física: tinta metalizada púrpura (Excepcional), borde carmesí (Rara), azul cielo (Frecuente), verde hoja (Abundante).
+
+Ejemplo JSON para persistencia:
+
+```json
+"frecuencia_avistamiento": {
+  "nivel": 1,
+  "etiqueta": "Excepcional",
+  "color": "#7B3EFF",
+  "probabilidad": 0.02,
+  "valor_puntos": 100,
+  "descripcion": "Especie única o de observación extraordinaria."
+}
+```
 
 ### Environment Bonuses
 

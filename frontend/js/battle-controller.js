@@ -221,7 +221,7 @@ export class DemoBattleController extends BattleController {
         cardId: 'halcon-peregrino',
         name: 'Halcón Peregrino',
         image: 'content/birds/halcon-peregrino-1.webp',
-        rarity: 'uncommon',
+        rarity: 'frecuente',
         attackFactors: { P: 6, S: 9, W: 7, H: 6, A: 6 },
         defenseFactors: { AD: 5, C: 5, E: 8, SD: 4, R: 4 }
       },
@@ -229,7 +229,7 @@ export class DemoBattleController extends BattleController {
         cardId: 'aguila-real',
         name: 'Águila Real',
         image: 'content/birds/aguila-real-1.webp',
-        rarity: 'rare',
+        rarity: 'rara',
         attackFactors: { P: 7, S: 7, W: 8, H: 7, A: 6 },
         defenseFactors: { AD: 6, C: 4, E: 6, SD: 5, R: 7 }
       },
@@ -237,7 +237,7 @@ export class DemoBattleController extends BattleController {
         cardId: 'buho-real',
         name: 'Búho Real',
         image: 'content/birds/buho-real-1.webp',
-        rarity: 'epic',
+        rarity: 'excepcional',
         attackFactors: { P: 8, S: 6, W: 7, H: 9, A: 5 },
         defenseFactors: { AD: 7, C: 8, E: 4, SD: 6, R: 6 }
       }

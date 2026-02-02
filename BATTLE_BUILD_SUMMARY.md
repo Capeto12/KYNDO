@@ -14,7 +14,7 @@ Pure logic, no DOM dependencies:
 - **BattleCard class**: Represents a card with A/D factors
   - 5 attack factors (P, S, W, H, A)
   - 5 defense factors (AD, C, E, SD, R)
-  - Rarity-based stat boosting (Common 1.0x → Legendary 1.5x)
+  - Escala de rareza 4 niveles (Excepcional→Abundante) con colores morado/rojo/azul/verde (1.5x → 1.0x)
   - Automatic factor capping at 10
   - Environment bonuses (Water +15%, Forest +10%, Mountain +12%, Sky +8%)
 
@@ -80,7 +80,7 @@ Game balance parameters:
   - Defense weights (AD:0.4, C:0.3, E:0.4, SD:0.2, R:0.6)
   - Starting health (100)
   - Environment bonuses (5 types)
-  - Rarity multipliers (5 tiers)
+  - Rarity multipliers (4 tiers: Excepcional, Rara, Frecuente, Abundante)
   - MMR system (prepared for future ranked)
   - Matchmaking constants
 
@@ -276,7 +276,7 @@ desert: 20,  // New environment
 ### Adjust Rarity Scaling
 ```javascript
 // In config.js, RARITY_MULTIPLIERS:
-epic: 1.4  // was 1.3 - slight buff
+rara: 1.3        // was 1.25 - slight buff
 ```
 
 ---
