@@ -14,6 +14,7 @@ export class BattleController {
     this.comparisonView = new ComparisonView();
     this.isAutoPlaying = false;
     this.containerElement = null;
+    this.isPlayingRound = false;
   }
 
   /**
@@ -41,7 +42,8 @@ export class BattleController {
 
     this.renderer.updateRoundNumber(1, this.game.playerDeck.length);
 
-    // Display first cards
+    // Render deck order and show opponent card for round 1
+    this.renderer.renderDeckList(this.game.playerDeck, this.game.currentRoundIndex);
     this.displayCurrentCards();
 
     return this.containerElement;
@@ -61,6 +63,72 @@ export class BattleController {
     if (autoBattleBtn) {
       autoBattleBtn.addEventListener('click', () => this.autoBattle());
     }
+
+    this.setupDragAndDrop();
+  }
+
+  /**
+   * Drag & drop handlers for deck ordering and playing
+   */
+  setupDragAndDrop() {
+    const deckList = this.containerElement.querySelector('#playerDeckList');
+    const playerSlot = this.containerElement.querySelector('#playerCardSlot');
+
+    if (!deckList || !playerSlot) return;
+
+    deckList.addEventListener('dragstart', (event) => {
+      const cardEl = event.target.closest('.deck-card');
+      if (!cardEl) return;
+      const index = Number(cardEl.dataset.index);
+      // Block dragging cards ya jugadas
+      if (index < this.game.currentRoundIndex) {
+        event.preventDefault();
+        return;
+      }
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', String(index));
+      cardEl.classList.add('dragging');
+    });
+
+    deckList.addEventListener('dragend', (event) => {
+      const cardEl = event.target.closest('.deck-card');
+      if (cardEl) {
+        cardEl.classList.remove('dragging');
+      }
+    });
+
+    // Reordenar dentro del mazo
+    deckList.addEventListener('dragover', (event) => {
+      event.preventDefault();
+    });
+
+    deckList.addEventListener('drop', (event) => {
+      event.preventDefault();
+      const targetCard = event.target.closest('.deck-card');
+      if (!targetCard) return;
+      const fromIndex = Number(event.dataTransfer.getData('text/plain'));
+      const toIndex = Number(targetCard.dataset.index);
+      if (Number.isNaN(fromIndex) || Number.isNaN(toIndex)) return;
+      this.swapDeckCards(fromIndex, toIndex);
+    });
+
+    // Jugar carta arrastrándola al tablero
+    playerSlot.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      playerSlot.classList.add('dropping');
+    });
+
+    playerSlot.addEventListener('dragleave', () => {
+      playerSlot.classList.remove('dropping');
+    });
+
+    playerSlot.addEventListener('drop', (event) => {
+      event.preventDefault();
+      playerSlot.classList.remove('dropping');
+      const index = Number(event.dataTransfer.getData('text/plain'));
+      if (Number.isNaN(index)) return;
+      this.handleCardDrop(index);
+    });
   }
 
   /**
@@ -69,13 +137,51 @@ export class BattleController {
   displayCurrentCards() {
     if (!this.game || this.game.status !== 'ongoing') return;
 
-    const playerCard = this.game.playerDeck[this.game.currentRoundIndex];
     const opponentCard = this.game.opponentDeck[this.game.currentRoundIndex];
 
-    if (playerCard && opponentCard) {
-      this.renderer.displayCard(playerCard, 'playerCardSlot');
+    this.renderer.resetPlayerSlot();
+
+    if (opponentCard) {
       this.renderer.displayCard(opponentCard, 'opponentCardSlot');
     }
+  }
+
+  /**
+   * Swap two cards inside the player's deck (reorder)
+   */
+  swapDeckCards(fromIndex, toIndex) {
+    if (!this.game || this.game.status !== 'ongoing') return;
+    if (fromIndex === toIndex) return;
+    if (fromIndex < this.game.currentRoundIndex || toIndex < this.game.currentRoundIndex) return;
+
+    const temp = this.game.playerDeck[fromIndex];
+    this.game.playerDeck[fromIndex] = this.game.playerDeck[toIndex];
+    this.game.playerDeck[toIndex] = temp;
+
+    this.renderer.renderDeckList(this.game.playerDeck, this.game.currentRoundIndex);
+  }
+
+  /**
+   * Handle dropping a card onto the player slot to play the round
+   */
+  handleCardDrop(selectedIndex) {
+    if (!this.game || this.game.status !== 'ongoing') return;
+    if (selectedIndex < this.game.currentRoundIndex) return; // ya jugada
+    const targetIndex = this.game.currentRoundIndex;
+
+    if (selectedIndex !== targetIndex) {
+      const temp = this.game.playerDeck[targetIndex];
+      this.game.playerDeck[targetIndex] = this.game.playerDeck[selectedIndex];
+      this.game.playerDeck[selectedIndex] = temp;
+    }
+
+    // Mostrar la carta elegida y jugar automáticamente
+    const playerCard = this.game.playerDeck[targetIndex];
+    if (playerCard) {
+      this.renderer.displayCard(playerCard, 'playerCardSlot');
+    }
+
+    this.playNextRound();
   }
 
   /**
@@ -83,9 +189,18 @@ export class BattleController {
    */
   async playNextRound() {
     if (!this.game || this.game.status !== 'ongoing') return;
+    if (this.isPlayingRound) return;
+
+    this.isPlayingRound = true;
 
     this.renderer.setLoading(true);
     this.renderer.setButtonsEnabled(false);
+
+    // Si el jugador no arrastró, usamos la carta en la posición actual
+    const playerCard = this.game.playerDeck[this.game.currentRoundIndex];
+    if (playerCard) {
+      this.renderer.displayCard(playerCard, 'playerCardSlot');
+    }
 
     // Simulate card flip delay
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -118,6 +233,9 @@ export class BattleController {
         this.game.playerDeck.length
       );
 
+      // Refresh deck list state
+      this.renderer.renderDeckList(this.game.playerDeck, this.game.currentRoundIndex);
+
       // Wait before displaying next cards
       await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -131,6 +249,7 @@ export class BattleController {
 
     this.renderer.setLoading(false);
     this.renderer.setButtonsEnabled(this.game.status === 'ongoing');
+    this.isPlayingRound = false;
   }
 
   /**

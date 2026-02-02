@@ -11,6 +11,7 @@ export class BattleUIRenderer {
     this.battleContainer = null;
     this.currentCard = null;
     this.opponentCard = null;
+    this.playerDeckListEl = null;
   }
 
   /**
@@ -19,87 +20,102 @@ export class BattleUIRenderer {
   mountBattle(playerDeck, opponentDeck) {
     const html = `
       <div class="battle-container">
-        <!-- Header -->
-        <div class="battle-header">
-          <div class="battle-player-info">
-            <h3>Tu mazo</h3>
-            <div class="deck-count">${playerDeck.length} cartas</div>
-          </div>
-          <div class="battle-title">⚔️ BATALLA ⚔️</div>
-          <div class="battle-opponent-info">
-            <h3>Oponente</h3>
-            <div class="deck-count">${opponentDeck.length} cartas</div>
-          </div>
-        </div>
-
-        <!-- Health Bars -->
-        <div class="battle-health">
-          <div class="health-bar-container">
-            <div class="health-label">Salud</div>
-            <div class="health-bar">
-              <div class="health-fill player-health" id="playerHealthBar"></div>
+        <div class="battle-grid">
+          <aside class="deck-panel">
+            <div class="deck-panel-header">
+              <div>
+                <h4>Organiza tu mazo</h4>
+                <p>Arrastra para ordenar. Arrastra una carta al tablero para jugar.</p>
+              </div>
+              <div class="deck-count">${playerDeck.length} cartas</div>
             </div>
-            <div class="health-value" id="playerHealthValue">100/100</div>
-          </div>
+            <div class="deck-list" id="playerDeckList"></div>
+          </aside>
 
-          <div class="health-separator">VS</div>
-
-          <div class="health-bar-container">
-            <div class="health-label">Salud</div>
-            <div class="health-bar">
-              <div class="health-fill opponent-health" id="opponentHealthBar"></div>
+          <div class="battle-main">
+            <!-- Header -->
+            <div class="battle-header">
+              <div class="battle-player-info">
+                <h3>Tu mazo</h3>
+                <div class="deck-count">${playerDeck.length} cartas</div>
+              </div>
+              <div class="battle-title">⚔️ BATALLA ⚔️</div>
+              <div class="battle-opponent-info">
+                <h3>Oponente</h3>
+                <div class="deck-count">${opponentDeck.length} cartas</div>
+              </div>
             </div>
-            <div class="health-value" id="opponentHealthValue">100/100</div>
-          </div>
-        </div>
 
-        <!-- Card Arena -->
-        <div class="battle-arena">
-          <div class="card-slot player-slot" id="playerCardSlot">
-            <div class="empty-slot">Esperando carta...</div>
-          </div>
+            <!-- Health Bars -->
+            <div class="battle-health">
+              <div class="health-bar-container">
+                <div class="health-label">Salud</div>
+                <div class="health-bar">
+                  <div class="health-fill player-health" id="playerHealthBar"></div>
+                </div>
+                <div class="health-value" id="playerHealthValue">100/100</div>
+              </div>
 
-          <div class="battle-vs">
-            <span>VS</span>
-            <span id="roundNumber">Ronda 1</span>
-          </div>
+              <div class="health-separator">VS</div>
 
-          <div class="card-slot opponent-slot" id="opponentCardSlot">
-            <div class="empty-slot">Esperando carta...</div>
-          </div>
-        </div>
-
-        <!-- Battle Controls -->
-        <div class="battle-controls">
-          <button id="playRoundBtn" class="btn-primary">⚔️ Siguiente Ronda</button>
-          <button id="autoBattleBtn" class="btn-secondary">⏭️ Auto-Batalla</button>
-        </div>
-
-        <!-- Round Result -->
-        <div class="round-result" id="roundResult" style="display:none;">
-          <div class="result-content">
-            <div class="result-message" id="resultMessage"></div>
-            <div class="damage-display">
-              <span id="damageDealt" class="damage-dealt">+0</span>
-              <span>|</span>
-              <span id="damageTaken" class="damage-taken">-0</span>
+              <div class="health-bar-container">
+                <div class="health-label">Salud</div>
+                <div class="health-bar">
+                  <div class="health-fill opponent-health" id="opponentHealthBar"></div>
+                </div>
+                <div class="health-value" id="opponentHealthValue">100/100</div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Stats Panel -->
-        <div class="battle-stats" id="battleStats">
-          <div class="stat-item">
-            <span class="stat-label">Rondas:</span>
-            <span class="stat-value" id="roundsPlayed">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Victorias:</span>
-            <span class="stat-value" id="playerWins">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Empates:</span>
-            <span class="stat-value" id="draws">0</span>
+            <!-- Card Arena -->
+            <div class="battle-arena">
+              <div class="card-slot player-slot droppable" id="playerCardSlot">
+                <div class="empty-slot">Arrastra aquí tu carta para esta ronda</div>
+              </div>
+
+              <div class="battle-vs">
+                <span>VS</span>
+                <span id="roundNumber">Ronda 1</span>
+              </div>
+
+              <div class="card-slot opponent-slot" id="opponentCardSlot">
+                <div class="empty-slot">Carta del oponente</div>
+              </div>
+            </div>
+
+            <!-- Battle Controls -->
+            <div class="battle-controls">
+              <button id="playRoundBtn" class="btn-primary">⚔️ Siguiente Ronda</button>
+              <button id="autoBattleBtn" class="btn-secondary">⏭️ Auto-Batalla</button>
+            </div>
+
+            <!-- Round Result -->
+            <div class="round-result" id="roundResult" style="display:none;">
+              <div class="result-content">
+                <div class="result-message" id="resultMessage"></div>
+                <div class="damage-display">
+                  <span id="damageDealt" class="damage-dealt">+0</span>
+                  <span>|</span>
+                  <span id="damageTaken" class="damage-taken">-0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Panel -->
+            <div class="battle-stats" id="battleStats">
+              <div class="stat-item">
+                <span class="stat-label">Rondas:</span>
+                <span class="stat-value" id="roundsPlayed">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Victorias:</span>
+                <span class="stat-value" id="playerWins">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Empates:</span>
+                <span class="stat-value" id="draws">0</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -107,7 +123,34 @@ export class BattleUIRenderer {
 
     this.battleContainer = document.createElement('div');
     this.battleContainer.innerHTML = html;
+    this.playerDeckListEl = this.battleContainer.querySelector('#playerDeckList');
     return this.battleContainer;
+  }
+
+  /**
+   * Render player deck list for drag & drop ordering
+   */
+  renderDeckList(deck, currentRoundIndex = 0) {
+    if (!this.playerDeckListEl) return;
+
+    this.playerDeckListEl.innerHTML = deck
+      .map((card, index) => {
+        const used = index < currentRoundIndex;
+        const isCurrent = index === currentRoundIndex;
+        return `
+          <div class="deck-card ${used ? 'used' : ''} ${isCurrent ? 'current' : ''}" data-index="${index}" draggable="${!used}">
+            <div class="deck-card-thumb" style="background-image: url('${card.image}');"></div>
+            <div class="deck-card-info">
+              <div class="deck-card-name">${card.name}</div>
+              <div class="deck-card-meta">
+                <span class="rarity-pill ${card.rarity}">${card.rarity}</span>
+                <span class="power-pill">ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
   }
 
   /**
@@ -138,6 +181,15 @@ export class BattleUIRenderer {
     `;
 
     slotElement.innerHTML = html;
+  }
+
+  /**
+   * Reset player slot to empty droppable state
+   */
+  resetPlayerSlot() {
+    const slotElement = document.getElementById('playerCardSlot');
+    if (!slotElement) return;
+    slotElement.innerHTML = '<div class="empty-slot">Arrastra aquí tu carta para esta ronda</div>';
   }
 
   /**
