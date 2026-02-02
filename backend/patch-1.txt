@@ -1,0 +1,2 @@
+cd C:\Users\Carlos\Desktop\KYNDO
+git push origin main:gh-pages
