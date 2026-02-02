@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KYNDO - Batalla de Mazos</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <!-- Cache bust for latest UI -->
+  <link rel="stylesheet" href="css/styles.css?v=20260202-1">
   <style>
     .demo-controls {
       text-align: center;
@@ -71,6 +72,7 @@
   </footer>
 
   <script type="module">
+    console.log('Battle UI version 2026-02-02-1');
     import { DemoBattleController, TutorialBattleController } from './js/battle-controller.js';
 
     const battleContainer = document.getElementById('battleContainer');
