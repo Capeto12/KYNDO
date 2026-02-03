@@ -14,28 +14,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
 
 :root {
-  --bg-1: #0f172a;
-  --bg-2: #0b1021;
-  --surface: rgba(255, 255, 255, 0.08);
-  --surface-strong: rgba(255, 255, 255, 0.16);
-  --surface-border: rgba(255, 255, 255, 0.18);
-  --text-strong: #f8fafc;
-  --text-muted: rgba(248, 250, 252, 0.7);
+  --bg-1: #f5f7fa;
+  --bg-2: #c3cfe2;
+  --surface: rgba(255, 255, 255, 0.95);
+  --surface-strong: rgba(255, 255, 255, 1);
+  --surface-border: rgba(0, 0, 0, 0.08);
+  --text-strong: #111;
+  --text-muted: rgba(17, 17, 17, 0.7);
   --accent: #8b5cf6;
   --accent-2: #22d3ee;
   --warning: #f59e0b;
   --success: #10b981;
-  --shadow-1: 0 10px 30px rgba(2, 6, 23, 0.35);
-  --shadow-2: 0 20px 60px rgba(2, 6, 23, 0.45);
+  --shadow-1: 0 4px 20px rgba(0, 0, 0, 0.15);
+  --shadow-2: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
 
 body {
   margin: 0;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  background:
-    radial-gradient(800px circle at 10% 10%, rgba(139, 92, 246, 0.35), transparent 45%),
-    radial-gradient(700px circle at 90% 20%, rgba(34, 211, 238, 0.28), transparent 40%),
-    linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   color: var(--text-strong);
   min-height: 100vh;
   padding: 16px;
@@ -45,11 +42,11 @@ body {
 header {
   padding: 18px 16px 14px;
   text-align: center;
-  border: 1px solid var(--surface-border);
-  background: var(--surface);
-  border-radius: 18px;
+  border: none;
+  background: #ffffff;
+  border-radius: 0;
   box-shadow: var(--shadow-1);
-  backdrop-filter: blur(14px);
+  backdrop-filter: none;
   margin-bottom: 12px;
 }
 
@@ -67,16 +64,16 @@ footer {
   display: grid;
   gap: 10px;
   padding: 12px;
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
   border-radius: 18px;
   box-shadow: var(--shadow-1);
-  backdrop-filter: blur(14px);
+  backdrop-filter: none;
 }
 
 .card {
   aspect-ratio: 1 / 1;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -86,41 +83,41 @@ footer {
   font-weight: bold;
   color: var(--text-strong);
   transition: transform 160ms ease, opacity 120ms ease, background 100ms ease, box-shadow 160ms ease, border-color 160ms ease;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 10px 20px rgba(2, 6, 23, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Efecto hover sutil */
 .card:not(.matched):hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 16px 28px rgba(2, 6, 23, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .card.hidden {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
 }
 
 .card.hidden::after {
   content: "K";
   font-size: 14px;
-  color: rgba(248, 250, 252, 0.5);
+  color: rgba(17, 17, 17, 0.5);
 }
 
 .card.revealed {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.12));
+  background: linear-gradient(145deg, #ffffff 0%, #f0f9ff 100%);
   border: 1px solid rgba(34, 211, 238, 0.6);
   transform: scale(1.05);
-  box-shadow: 0 14px 30px rgba(34, 211, 238, 0.25);
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.3);
 }
 
 .card.pending {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
-  border: 1px dashed rgba(255, 255, 255, 0.45);
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px dashed rgba(245, 158, 11, 0.6);
   animation: pendingPulse 1s ease-in-out infinite;
 }
 
 .card.matched {
-  background: linear-gradient(145deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.08));
+  background: linear-gradient(145deg, #d1fae5 0%, #a7f3d0 100%);
   border: 2px solid rgba(16, 185, 129, 0.6);
   opacity: 0.65;
   pointer-events: none;
@@ -196,7 +193,7 @@ footer {
 #overlay {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.7);
+  background: rgba(0, 0, 0, 0.7);
   display: none;
   align-items: center;
   justify-content: center;
@@ -297,7 +294,7 @@ footer {
 #resultOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.72);
+  background: rgba(0, 0, 0, 0.72);
   display: none;
   align-items: center;
   justify-content: center;
@@ -393,7 +390,7 @@ footer {
 .btn:hover {
   transform: translateY(-1px);
   opacity: 0.95;
-  box-shadow: 0 10px 18px rgba(2, 6, 23, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .btn:active {
@@ -444,10 +441,10 @@ footer {
   max-width: 1000px;
   margin: 0 auto;
   padding: 16px;
-  background: #f7f7fa;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  border: none;
+  border-radius: 0;
+  box-shadow: var(--shadow-1);
   color: #0f172a;
 }
 
@@ -458,8 +455,8 @@ footer {
   font-size: 12px;
   font-weight: 700;
   color: #111827;
-  background: #e5e7eb;
-  border: 1px solid #d1d5db;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 6px 10px;
   margin-top: 6px;
@@ -474,9 +471,10 @@ footer {
 
 .deck-panel {
   background: #ffffff;
-  border: 1px dashed #d9dce3;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .deck-panel-header {
@@ -915,11 +913,12 @@ footer {
 /* Round Result */
 .round-result {
   padding: 16px;
-  background: #eef2f7;
-  border: 1px solid #d9dce3;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   margin-bottom: 24px;
   animation: slideDown 200ms ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 @keyframes slideDown {
