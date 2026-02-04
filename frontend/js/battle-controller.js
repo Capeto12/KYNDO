@@ -7,6 +7,8 @@
 import { BattleGame, BattleCard, getSampleDeck } from './battle-engine.js';
 import { BattleUIRenderer, ComparisonView } from './battle-ui.js';
 
+const PACK_PATH = '../content/content/birds/pack-1.json';
+
 export class BattleController {
   constructor() {
     this.game = null;
@@ -473,12 +475,74 @@ export class DemoBattleController extends BattleController {
    * Start demo battle with sample decks
    */
   async startDemo() {
-    const sampleDeck = this.buildDemoDeck(40);
+    const packDeck = await this.loadPackDeck();
+    const sampleDeck = packDeck && packDeck.length ? packDeck : this.buildDemoDeck(40);
     const opponentDeck = this.buildOpponentDeck(sampleDeck);
 
     await this.initializePreBattle(sampleDeck, opponentDeck);
 
     return this.containerElement;
+  }
+
+  async loadPackDeck() {
+    try {
+      const response = await fetch(PACK_PATH);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (!data.assets || !data.assets.length) return [];
+      return this.buildDeckFromPack(data.assets, data.count || 40);
+    } catch (err) {
+      console.warn('No se pudo cargar pack de tienda para batalla:', err);
+      return [];
+    }
+  }
+
+  buildDeckFromPack(assets, size = 40) {
+    const rarityList = ['abundante', 'frecuente', 'rara', 'excepcional'];
+    const cleanPath = (p = '') => {
+      return p
+        .replace('content/content/birds/content/birds/', '../content/birds/')
+        .replace('content/content/birds/', '../content/birds/')
+        .replace('content/birds/', '../content/birds/');
+    };
+
+    const factorFor = (id, salt) => {
+      let acc = 0;
+      for (let i = 0; i < id.length; i++) acc += id.charCodeAt(i) + salt;
+      return 3 + (acc % 7); // 3..9
+    };
+
+    const cards = assets.map((asset, idx) => {
+      const rarity = rarityList[idx % rarityList.length];
+      const id = asset.id || asset.cardId || `card-${idx}`;
+      return {
+        cardId: id,
+        name: asset.title || id,
+        image: cleanPath(asset.image_url || asset.imageUrl || ''),
+        rarity,
+        attackFactors: {
+          P: factorFor(id, 1),
+          S: factorFor(id, 3),
+          W: factorFor(id, 5),
+          H: factorFor(id, 7),
+          A: factorFor(id, 9)
+        },
+        defenseFactors: {
+          AD: factorFor(id, 2),
+          C: factorFor(id, 4),
+          E: factorFor(id, 6),
+          SD: factorFor(id, 8),
+          R: factorFor(id, 10)
+        }
+      };
+    });
+
+    if (cards.length >= size) return cards.slice(0, size);
+    const out = [];
+    for (let i = 0; i < size; i++) {
+      out.push({ ...cards[i % cards.length], cardId: `${cards[i % cards.length].cardId}-${Math.floor(i / cards.length) + 1}` });
+    }
+    return out;
   }
 
   buildDemoDeck(size = 40) {
