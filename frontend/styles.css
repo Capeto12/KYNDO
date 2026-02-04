@@ -19,21 +19,43 @@ body {
 
 /* Header y Footer */
 header {
-  padding: 10px 10px 8px;
-  text-align: center;
+  padding: 10px 12px 10px;
+  text-align: left;
   border-bottom: none;
   background: #ffffff;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   position: relative;
 }
 
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: #2d2d2d;
+  letter-spacing: 1px;
+}
+
 /* User Info at top of header */
 #user-info {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   flex-wrap: wrap;
-  padding: 4px 8px 6px;
+  padding: 0;
   gap: 8px;
 }
 
@@ -68,15 +90,6 @@ header {
   font-size: 12px;
   font-weight: 600;
   color: #4a4a4a;
-}
-
-header h1 {
-  margin: 0 0 6px;
-  font-size: 24px;
-  font-weight: 800;
-  color: #2d2d2d;
-  text-shadow: none;
-  letter-spacing: 1px;
 }
 
 
@@ -117,6 +130,7 @@ footer a:hover {
   flex-wrap: wrap;
   color: #3a3a3a;
   text-shadow: none;
+  margin-top: 6px;
 }
 
 #hud span {
@@ -140,7 +154,7 @@ footer a:hover {
 .grade-info {
   font-size: 12px;
   font-weight: 700;
-  margin-top: 4px;
+  margin: 0;
   color: #3a3a3a;
   background: rgba(0, 0, 0, 0.04);
   padding: 4px 10px;
@@ -148,6 +162,29 @@ footer a:hover {
   display: inline-block;
   backdrop-filter: blur(6px);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.header-links {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.header-links a {
+  color: #4a5568;
+  text-decoration: none;
+  padding: 4px 6px;
+}
+
+.header-links a:hover {
+  text-decoration: underline;
 }
 
 #hud-grade {
