@@ -162,7 +162,7 @@ export const BATTLE_CONFIG = {
 
   // Tutorial/Demo
   DEMO_MODE_ENABLED: true,
-  DEMO_DECK_SIZE: 3
+  DEMO_DECK_SIZE: 40
 };
 
 /**

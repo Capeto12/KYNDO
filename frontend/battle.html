@@ -83,39 +83,36 @@
 
     let currentController = null;
 
-    startDemoBtn.addEventListener('click', async () => {
-      // Clear previous battle
+    async function startBattle(mode = 'demo') {
       if (currentController) {
         currentController.reset();
       }
 
-      // Start new demo
-      currentController = new DemoBattleController();
-      const battleUI = await currentController.startDemo();
-      battleContainer.innerHTML = '';
-      battleContainer.appendChild(battleUI);
-    });
+      if (mode === 'tutorial') {
+        currentController = new TutorialBattleController();
+        const tutorialUI = await currentController.startTutorial();
+        battleContainer.innerHTML = '';
+        battleContainer.appendChild(tutorialUI);
 
-    startTutorialBtn.addEventListener('click', async () => {
-      // Clear previous battle
-      if (currentController) {
-        currentController.reset();
+        const msg = currentController.showTutorialMessage();
+        if (msg) {
+          alert(`${msg.title}\n\n${msg.content}`);
+        }
+      } else {
+        currentController = new DemoBattleController();
+        const battleUI = await currentController.startDemo();
+        battleContainer.innerHTML = '';
+        battleContainer.appendChild(battleUI);
       }
+    }
 
-      // Start tutorial
-      currentController = new TutorialBattleController();
-      const tutorialUI = await currentController.startTutorial();
-      battleContainer.innerHTML = '';
-      battleContainer.appendChild(tutorialUI);
+    startDemoBtn.addEventListener('click', () => startBattle('demo'));
+    startTutorialBtn.addEventListener('click', () => startBattle('tutorial'));
 
-      // Show first tutorial message
-      const msg = currentController.showTutorialMessage();
-      if (msg) {
-        alert(`${msg.title}\n\n${msg.content}`);
-      }
-    });
+    // Auto-launch arena on load so Kombat opens straight into the battle view
+    startBattle('demo');
 
-    console.log('Battle Demo loaded. Click buttons to start.');
+    console.log('Battle Demo loaded. Arena auto-started.');
   </script>
 </body>
 </html>

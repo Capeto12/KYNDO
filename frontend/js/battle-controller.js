@@ -332,35 +332,8 @@ export class DemoBattleController extends BattleController {
    * Start demo battle with sample decks
    */
   async startDemo() {
-    const sampleDeck = getSampleDeck();
-    
-    // Create opponent deck (slightly stronger)
-    const opponentDeck = [
-      {
-        cardId: 'halcon-peregrino',
-        name: 'Halcón Peregrino',
-        image: 'content/birds/halcon-peregrino-1.webp',
-        rarity: 'frecuente',
-        attackFactors: { P: 6, S: 9, W: 7, H: 6, A: 6 },
-        defenseFactors: { AD: 5, C: 5, E: 8, SD: 4, R: 4 }
-      },
-      {
-        cardId: 'aguila-real',
-        name: 'Águila Real',
-        image: 'content/birds/aguila-real-1.webp',
-        rarity: 'rara',
-        attackFactors: { P: 7, S: 7, W: 8, H: 7, A: 6 },
-        defenseFactors: { AD: 6, C: 4, E: 6, SD: 5, R: 7 }
-      },
-      {
-        cardId: 'buho-real',
-        name: 'Búho Real',
-        image: 'content/birds/buho-real-1.webp',
-        rarity: 'excepcional',
-        attackFactors: { P: 8, S: 6, W: 7, H: 9, A: 5 },
-        defenseFactors: { AD: 7, C: 8, E: 4, SD: 6, R: 6 }
-      }
-    ];
+    const sampleDeck = this.buildDemoDeck(40);
+    const opponentDeck = this.buildOpponentDeck(sampleDeck);
 
     await this.initializeBattle(sampleDeck, opponentDeck, {
       environment: 'neutral',
@@ -368,6 +341,70 @@ export class DemoBattleController extends BattleController {
     });
 
     return this.containerElement;
+  }
+
+  buildDemoDeck(size = 40) {
+    const base = getSampleDeck();
+    const deck = [];
+
+    for (let i = 0; i < size; i++) {
+      const template = base[i % base.length];
+      const boost = i % 3; // small variation to avoid identical stats
+
+      deck.push({
+        cardId: `${template.cardId}-${i + 1}`,
+        name: `${template.name} #${i + 1}`,
+        image: template.image,
+        rarity: template.rarity,
+        attackFactors: {
+          P: Math.min(10, (template.attackFactors.P || 0) + boost),
+          S: Math.min(10, (template.attackFactors.S || 0) + (boost === 2 ? 1 : 0)),
+          W: Math.min(10, (template.attackFactors.W || 0)),
+          H: Math.min(10, (template.attackFactors.H || 0) + (boost > 0 ? 1 : 0)),
+          A: Math.min(10, (template.attackFactors.A || 0))
+        },
+        defenseFactors: {
+          AD: Math.min(10, (template.defenseFactors.AD || 0) + (boost === 1 ? 1 : 0)),
+          C: Math.min(10, (template.defenseFactors.C || 0)),
+          E: Math.min(10, (template.defenseFactors.E || 0) + boost),
+          SD: Math.min(10, (template.defenseFactors.SD || 0)),
+          R: Math.min(10, (template.defenseFactors.R || 0) + (boost > 0 ? 1 : 0))
+        }
+      });
+    }
+
+    return deck;
+  }
+
+  buildOpponentDeck(playerDeck) {
+    return playerDeck.map((card, idx) => {
+      const bump = (idx % 4) + 1; // modest difficulty bump
+      const rarityShift = ['abundante', 'frecuente', 'rara', 'excepcional'];
+      const nextRarity = rarityShift[Math.min(rarityShift.length - 1, rarityShift.indexOf(card.rarity) + 1)] || card.rarity;
+
+      const plus = (v) => Math.min(10, v + bump * 0.2);
+
+      return {
+        ...card,
+        cardId: `${card.cardId}-opp`,
+        name: `${card.name} (AI)` ,
+        rarity: nextRarity,
+        attackFactors: {
+          P: plus(card.attackFactors.P || 0),
+          S: plus(card.attackFactors.S || 0),
+          W: plus(card.attackFactors.W || 0),
+          H: plus(card.attackFactors.H || 0),
+          A: plus(card.attackFactors.A || 0)
+        },
+        defenseFactors: {
+          AD: plus(card.defenseFactors.AD || 0),
+          C: plus(card.defenseFactors.C || 0),
+          E: plus(card.defenseFactors.E || 0),
+          SD: plus(card.defenseFactors.SD || 0),
+          R: plus(card.defenseFactors.R || 0)
+        }
+      };
+    });
   }
 }
 
