@@ -260,7 +260,7 @@ export class BattleController {
     }
 
     if (autoBattleBtn) {
-      autoBattleBtn.disabled = !ongoing || busy;
+      autoBattleBtn.disabled = (!ongoing && !readyToStart) || busy;
     }
 
     if (attackerBadge) {

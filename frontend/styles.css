@@ -28,11 +28,10 @@ header {
 }
 
 .header-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  flex-wrap: wrap;
 }
 
 .brand-block {
@@ -43,7 +42,7 @@ header {
 
 .brand-title {
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 800;
   color: #2d2d2d;
   letter-spacing: 1px;
@@ -120,17 +119,22 @@ footer a:hover {
   padding: 8px;
 }
 
-#hud {
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
+.hud-stack {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 4px;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  font-size: 12px;
   color: #3a3a3a;
   text-shadow: none;
-  margin-top: 6px;
+}
+
+.hud-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 #hud span {
@@ -185,6 +189,14 @@ footer a:hover {
 
 .header-links a:hover {
   text-decoration: underline;
+}
+
+.user-stack {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 4px;
+  align-items: end;
+  justify-items: end;
 }
 
 #hud-grade {

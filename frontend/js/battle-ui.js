@@ -50,10 +50,9 @@ export class BattleUIRenderer {
         .vs-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; gap:6px; }
         .badge { padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.08); font-size: 11px; }
         .badge.attacker { background: #10b981; color: #022c22; font-weight: 700; }
-        .battle-actions-inline { display:flex; gap:6px; margin-top:6px; }
-        .battle-btn { width: 100%; }
-        .auto-btn { width: 100%; }
-        .auto-btn { min-width: 64px; }
+        .battle-actions-inline { display:flex; gap:6px; margin-top:6px; justify-content: space-between; align-items:center; }
+        .battle-btn { flex: 1 1 auto; min-width: 110px; }
+        .auto-btn { flex: 0 0 72px; margin-left: auto; }
         .staging-list, .prep-list, .opponent-prep-list { display: flex; flex-direction: column; gap: 6px; overflow: auto; max-height: 320px; }
         .staging-card, .prep-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 4px; font-size: 11px; cursor: grab; }
         .staging-card:active, .prep-card:active { cursor: grabbing; }
