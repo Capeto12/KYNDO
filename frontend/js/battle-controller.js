@@ -265,9 +265,7 @@ export class BattleController {
 
     // Si el jugador no arrastró, usamos la carta en la posición actual
     const playerCard = this.game.playerDeck[this.game.currentRoundIndex];
-    if (playerCard) {
-      this.renderer.displayCard(playerCard, 'playerCardSlot');
-    }
+    // No need to place in arena; reveal handled after result
 
     // Simulate card flip delay
     await new Promise(resolve => setTimeout(resolve, 500));
