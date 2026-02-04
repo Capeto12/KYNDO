@@ -105,6 +105,20 @@ export class BattleController {
       event.dataTransfer.setData('staging-index', String(index));
     });
 
+    // Tap/click to send to prep (mobile friendly)
+    stagingList.addEventListener('click', (event) => {
+      const cardEl = event.target.closest('.staging-card');
+      if (!cardEl) return;
+      const index = Number(cardEl.dataset.index);
+      if (Number.isNaN(index)) return;
+      if (this.playerPrep.length >= 5) return;
+      const [card] = this.fullPlayerDeck.splice(index, 1);
+      if (card) this.playerPrep.push(card);
+      this.renderer.renderDeckList(this.fullPlayerDeck, 0);
+      this.renderer.renderPrepList(this.playerPrep);
+      this.updateReadyStates();
+    });
+
     prepList.addEventListener('dragstart', (event) => {
       const cardEl = event.target.closest('.prep-card');
       if (!cardEl) return;
