@@ -22,9 +22,9 @@ export class BattleUIRenderer {
       <style>
         .battle-grid-8 {
           display: grid;
-          grid-template-columns: minmax(90px, 18%) minmax(60px, 18%) minmax(160px, 32%) minmax(70px, 1fr);
+          grid-template-columns: minmax(90px, 18%) minmax(60px, 18%) minmax(180px, 40%) minmax(60px, 12%);
           grid-template-rows: 54px auto;
-          gap: 8px;
+          gap: 6px;
           align-items: stretch;
           width: 100%;
         }
@@ -38,7 +38,7 @@ export class BattleUIRenderer {
         .cont4.expanded { position: absolute; width: 75vw; max-width: 320px; min-width: 240px; min-height: 320px; z-index: 20; }
         .cont5 { grid-column: 2 / 3; grid-row: 2; min-height: 220px; }
         .cont6 { grid-column: 3 / 4; grid-row: 2; min-height: 260px; }
-        .cont7 { grid-column: 4 / 5; grid-row: 2; min-height: 220px; }
+        .cont7 { grid-column: 4 / 5; grid-row: 2; min-height: 160px; }
         .cont8 { display: none; }
         .card-slot { min-height: 120px; border: 1px dashed rgba(226,232,240,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 8px; background: rgba(15,23,42,0.6); }
         .slot-title { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; opacity: .7; margin-bottom: 4px; }
@@ -64,18 +64,31 @@ export class BattleUIRenderer {
         .arena-actions { display:flex; gap:8px; margin-top:8px; }
         .round-result { margin-top: 8px; }
         .result-badge { margin-top:6px; display:inline-block; padding:4px 8px; background:#10b981; color:#022c22; border-radius:6px; font-weight:700; font-size:11px; }
-        @media (max-width: 768px) {
+         @media (max-width: 768px) {
+           .battle-grid-8 {
+             grid-template-columns: 1fr 1fr;
+             grid-template-rows: repeat(4, auto);
+             gap: 6px;
+           }
+           .cont1 { grid-column: 1 / 2; grid-row: 1; }
+           .cont2 { grid-column: 2 / 3; grid-row: 1; }
+           .cont3 { grid-column: 1 / 2; grid-row: 2; }
+           .cont4 { grid-column: 2 / 3; grid-row: 2; }
+           .cont5 { grid-column: 1 / 2; grid-row: 3; }
+           .cont6 { grid-column: 2 / 3; grid-row: 3; }
+           .cont7 { grid-column: 1 / 3; grid-row: 4; }
+         }
+
+        /* Ultra-compact for very small screens */
+        @media (max-width: 414px) {
           .battle-grid-8 {
-            grid-template-columns: repeat(2, minmax(150px, 1fr));
-            grid-template-rows: repeat(4, auto);
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 4px;
+            transform: scale(0.92);
+            transform-origin: top left;
           }
-          .cont1 { grid-column: 1 / 2; grid-row: 1; }
-          .cont2 { grid-column: 2 / 3; grid-row: 1; }
-          .cont3 { grid-column: 1 / 2; grid-row: 2; }
-          .cont4 { grid-column: 2 / 3; grid-row: 2; }
-          .cont5 { grid-column: 1 / 2; grid-row: 3; }
-          .cont6 { grid-column: 2 / 3; grid-row: 3; }
-          .cont7 { grid-column: 1 / 3; grid-row: 4; }
+          .cont { padding: 6px; }
+          .cont4.expanded { width: 88vw; max-width: 280px; }
         }
       </style>
       <div class="battle-container">
@@ -142,8 +155,8 @@ export class BattleUIRenderer {
             <div class="battle-vs" style="margin:8px 0; text-align:center;">
               <span>VS</span> · <span id="roundNumber">Ronda 1</span>
             </div>
-            <div class="card-slot player-slot" id="playerCardSlot"><div class="empty-slot">Carta A</div></div>
-            <div class="card-slot opponent-slot" id="opponentCardSlot" style="margin-top:6px;"><div class="empty-slot">Carta B</div></div>
+            <div class="card-slot player-slot" id="playerCardSlot"></div>
+            <div class="card-slot opponent-slot" id="opponentCardSlot" style="margin-top:6px;"></div>
             <div class="arena-actions">
               <button id="playRoundBtn" class="btn-primary" disabled>⚔️ Ronda</button>
               <button id="autoBattleBtn" class="btn-secondary" disabled>⏭️ Auto</button>
