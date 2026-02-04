@@ -1,0 +1,638 @@
+# KYNDO — Documento Maestro del Juego de Combate (A/D)
+
+**Versión:** v1.0 (Fuente Única de Verdad)
+
+---
+
+## 0. Propósito
+
+Definir, sin ambigüedades, el **modo de combate Ataque/Defensa (A/D)** de KYNDO para que una **IA (Copilot/LLM)** pueda **codificar el motor, el flujo y la UI** de forma consistente. Este documento congela reglas, estados, cálculos y visibilidad.
+
+---
+
+## 1. Principios Rectores
+
+1. **Memoria aplicada > memoria pasiva**: el jugador gana cuando recuerda y aplica fortalezas en el momento correcto.
+2. **Contexto > fuerza bruta**: el entorno y la coherencia deciden.
+3. **Perder bien jugado progresa**: la energía premia criterio, no solo victoria.
+4. **Roles dinámicos**: atacante/defensor cambian cada ronda.
+5. **Explicabilidad**: todo resultado debe poder explicarse.
+
+---
+
+## 2. Cartas A / B / C (por especie)
+
+- **Carta A**: siempre visible; muestra ATK y DEF (0–99). Jugable desde inicio.
+- **Carta B**: se desbloquea en Memory; revela subatributos y composición.
+- **Carta C**: se desbloquea en Memory avanzado; activa habilidades (deltas discretos).
+
+> El valor final A/D es visible desde A; **la explicación** se desbloquea con B y C.
+
+---
+
+## 3. Factores del Motor A/D
+
+### 3.0 Fortaleza principal de la carta (primaryStrength)
+
+Cada carta **DEBE declarar explícitamente** sus fortalezas para permitir evaluar coherencia y estimulación.
+
+- `primaryStrength` (obligatoria): una característica dominante.
+- `secondaryStrength` (opcional): segunda característica relevante.
+
+Valores permitidos:
+
+- Ataque: {P, S, W, H, A}
+- Defensa: {AD, C, E, SD, R}
+
+**Regla dura:**
+
+- Solo se puede **estimular** `primaryStrength` o `secondaryStrength`.
+- La evaluación de “jugar bien” usa estas declaraciones, **no inferencias**.
+
+---
+
+### 3.1 Ataque (0–10)
+
+- P Depredación
+- S Velocidad
+- W Anatomía ofensiva
+- H Estrategia
+- A Agresividad
+
+### 3.2 Defensa (0–10)
+
+- AD Adaptabilidad
+- C Camuflaje
+- E Evasión
+- SD Defensa social
+- R Robustez
+
+**Pesos recomendados (defensa):** AD 0.30, C 0.25, E 0.20, SD 0.15, R 0.10
+
+---
+
+## 4. Cálculo Matemático (cerrado y explícito)
+
+Esta sección define **las fórmulas exactas** para calcular Ataque y Defensa. No hay interpretaciones.
+
+### 4.1 Variables base (0–10)
+
+**Ataque**
+
+- P = Depredación
+- S = Velocidad
+- W = Anatomía ofensiva
+- H = Estrategia de caza
+- A = Agresividad
+
+**Defensa**
+
+- AD = Adaptabilidad
+- C = Camuflaje
+- E = Evasión
+- SD = Defensa social
+- R = Robustez
+
+---
+
+### 4.2 Pesos oficiales (suman 1.0)
+
+**Pesos de Ataque**
+
+- wP = 0.25
+- wS = 0.20
+- wW = 0.20
+- wH = 0.20
+- wA = 0.15
+
+**Pesos de Defensa**
+
+- wAD = 0.30
+- wC  = 0.25
+- wE  = 0.20
+- wSD = 0.15
+- wR  = 0.10
+
+> Nota de diseño: Adaptabilidad y Camuflaje dominan la defensa. Robustez es secundaria.
+
+---
+
+### 4.3 Cálculo base (sin entorno ni habilidades)
+
+**Ataque base (0–10):**
+
+```
+ATK_base_0_10 = (P*wP) + (S*wS) + (W*wW) + (H*wH) + (A*wA)
+```
+
+**Defensa base (0–10):**
+
+```
+DEF_base_0_10 = (AD*wAD) + (C*wC) + (E*wE) + (SD*wSD) + (R*wR)
+```
+
+---
+
+### 4.4 Normalización a escala de combate (0–99)
+
+```
+ATK_base_0_99 = round( (ATK_base_0_10 / 10) * 99 )
+DEF_base_0_99 = round( (DEF_base_0_10 / 10) * 99 )
+```
+
+Los valores **00–99** son los que se muestran en Carta A.
+
+---
+
+### 4.5 Modificadores por entorno (porcentuales)
+
+Cada entorno define un **factor porcentual** independiente para ataque y defensa:
+
+```
+ATK_env = ATK_base_0_99 * (1 + envAtkPct)
+DEF_env = DEF_base_0_99 * (1 + envDefPct)
+```
+
+Ejemplo:
+
+- envDefPct = +0.20  → +20% defensa
+- envAtkPct = −0.30  → −30% ataque
+
+---
+
+### 4.6 Estimulación de característica (Contenedor 1)
+
+Si el jugador **usa energía** para estimular una característica, el estímulo **se aplica ANTES del entorno** y **SOLO** a la característica seleccionada.
+
+#### 4.6.1 Aplicación del estímulo (0–10)
+
+Sea `stimChar` la característica elegida y `stimBonus` el bono según energía:
+
+- ≥20% → +5
+- ≥40% → +10
+- ≥60% → +15
+- ≥80% → +20
+
+```
+// ejemplo para ataque
+if stimChar ∈ {P,S,W,H,A}:
+    stimChar = min(stimChar + stimBonus , 10)
+
+// ejemplo para defensa
+if stimChar ∈ {AD,C,E,SD,R}:
+    stimChar = min(stimChar + stimBonus , 10)
+```
+
+> El estímulo **no puede** crear una fortaleza inexistente: solo se permite si la característica es una **fortaleza real** de la carta.
+
+Luego se recalcula el **ATK\_base\_0\_10** o **DEF\_base\_0\_10** con los valores estimulados.
+
+---
+
+### 4.7 Penalización por contexto impuesto (combate avanzado)
+
+Si el **defensor** impone un contexto (p. ej. ALTURA) con umbral `T`:
+
+```
+if attacker.AD < T:
+    ATK_env = ATK_env * penaltyFactor
+```
+
+Valores recomendados:
+
+- penaltyFactor ∈ [0.30 , 0.50]
+
+---
+
+### 4.7 Habilidades (Carta C) — deltas discretos
+
+Las habilidades **no escalan porcentualmente**. Aplican deltas:
+
+```
+ATK_final = ATK_env + Σ(deltaATK)
+DEF_final = DEF_env + Σ(deltaDEF)
+```
+
+---
+
+### 4.8 Clamp final (regla dura)
+
+```
+ATK_final = clamp(ATK_final , 0 , 99)
+DEF_final = clamp(DEF_final , 0 , 99)
+```
+
+Estos valores finales son los que se comparan en la Arena.
+
+---
+
+## 5. Iniciativa y Flujo de Rondas
+
+### 5.1 Ronda Inicial (Iniciativa)
+
+- Ambos juegan **una carta** en la Arena.
+- **ATK vs ATK**, sin entorno, sin énfasis, sin habilidades.
+- No puntúa; **define atacante** de la Ronda 1.
+- Empate: repetir.
+
+### 5.2 Rondas Normales
+
+- **Atacante** = ganador de la ronda anterior.
+- Atacante actúa primero; defensor reacciona.
+
+**Empate**: el defensor pasa a ser atacante.
+
+---
+
+## 6. Tablero de Combate (Layout Fijo)
+
+**Fuente geométrica:** tablero oficial con **2 filas**: arriba **3 contenedores**, abajo **5 contenedores**.
+
+### 6.1 Disposición exacta (IDs y orden)
+
+```
+FILA SUPERIOR (PREPARACIÓN / REGLAS)
+[Cont1]   [Cont2]   [Cont3]
+
+FILA INFERIOR (COMBATE)
+[Cont4] [Cont5] [Cont6] [Cont7] [Cont8]
+```
+
+- **No reordenar.** Los IDs son contractuales para la IA.
+
+### 6.2 Jerarquía de tamaños (obligatoria)
+
+- **Grandes:** Cont1, Cont4, Cont5
+- **Medio–Grande:** Cont6 (ARENA)
+- **Medio:** Cont2
+- **Pequeños:** Cont3, Cont7, Cont8
+
+> Los contenedores pequeños representan **acciones/movimiento** y **no deben competir visualmente** con las cartas activas.
+
+### 6.3 Función por contenedor
+
+- **Cont1 (GRANDE):**
+
+  - Envase de **Energía (Maestría)**
+  - **Selector** de característica a estimular
+  - Botón **READY** (bloquea decisiones)
+
+- **Cont2 (MEDIO):**
+
+  - **Enfoque del ATACANTE** (ataque normal o característica enfatizada)
+
+- **Cont3 (PEQUEÑO):**
+
+  - **Acción del DEFENSOR** (selección defensiva). **Contenido oculto** al rival.
+
+- **Cont4 (GRANDE):**
+
+  - **Carta activa Jugador A** (visible solo para su dueño hasta el reveal)
+
+- **Cont5 (GRANDE):**
+
+  - **Carta activa Jugador B** (visible solo para su dueño hasta el reveal)
+
+- **Cont6 (ARENA – MEDIO/GRANDE):**
+
+  - **Reveal simultáneo**
+  - **Cálculo** (base → entorno → deltas)
+  - **Resultado y explicación** (explicabilidad)
+
+- **Cont7 (PEQUEÑO):**
+
+  - **Reserva / movimiento Jugador A** (oculto al rival)
+
+- **Cont8 (PEQUEÑO):**
+
+  - **Reserva / movimiento Jugador B** (oculto al rival)
+
+### 6.4 Reglas de visibilidad (críticas)
+
+- Antes del reveal:
+
+  - Cont4 y Cont5: **boca abajo** para el oponente.
+  - Cont3, Cont7, Cont8: **siempre ocultos** al oponente (solo indicador de acción).
+
+- Reveal:
+
+  - **Solo en Cont6** se revela **todo** (cartas, enfoques, penalizaciones, deltas).
+
+### 6.5 Flujo de interacción por ronda (tablero)
+
+1. **Cont1:** elegir carta, característica (si aplica) y presionar **READY**.
+2. **Cont2:** el ATACANTE fija enfoque.
+3. **Cont3:** el DEFENSOR fija respuesta.
+4. **Cont4/5:** cartas bloqueadas (ocultas).
+5. **Cont6:** reveal, resolución y explicación.
+6. Ganador toma **iniciativa** de la siguiente ronda.
+
+---
+
+## 7. Contenedor 1 — Energía, Selector y READY
+
+### 7.1 Energía (Maestría)
+
+- Rango 0–100%.
+- **+20%** si la ronda fue **bien jugada y ganada**.
+- **+10%** si fue **bien jugada pero perdida** (rival superior).
+- 0% si fue incoherente.
+
+### 7.2 Selector de Característica
+
+- Se elige **una** característica real de la carta.
+- Potencia según energía disponible:
+  - ≥20%: +5
+  - ≥40%: +10
+  - ≥60%: +15
+  - ≥80%: +20
+- Aplica **solo** a la siguiente ronda.
+
+### 7.3 READY
+
+- Bloquea carta, característica y consumo.
+- Avanza solo cuando **ambos** están READY.
+
+---
+
+## 8. ¿Qué es “Jugar Bien”?
+
+Una ronda es **bien jugada** si cumple **los 3 pilares**:
+
+1. **Rol correcto**: atacar cuando corresponde, defender cuando corresponde.
+2. **Fortaleza correcta**: usar/estimular la característica principal del ave.
+3. **Momento correcto**: usar la carta adecuada al contexto.
+
+> Ganar no implica jugar bien; perder no implica jugar mal.
+
+---
+
+## 9. Combate Avanzado — Énfasis por Característica
+
+- El atacante elige enfoque ofensivo.
+- El defensor elige enfoque defensivo.
+- Si el defensor impone un **contexto** (p. ej., altura) y el atacante no cumple **umbral**, su ATK se penaliza.
+
+---
+
+## 10. Aves Comunes y Defensa Alta
+
+- Alta **frecuencia** ⇒ **defensa estructural alta** (AD, C, E), no robustez.
+- Pueden neutralizar ataques superiores imponiendo contexto.
+
+---
+
+## 11. Habilidades Extraordinarias (Carta C)
+
+- Representan **traits únicos** (velocidad extrema, camuflaje excepcional, canto, inteligencia, etc.).
+- Implementadas como **deltas discretos** y/o condiciones.
+
+---
+
+## 12. Telemetría y Explicabilidad
+
+Registrar por ronda:
+
+- cartas, entorno, enfoque, deltas, resultado. Mostrar en Arena: **por qué** ganó/perdió.
+
+---
+
+## 13. Reglas de Implementación (IA)
+
+- Motor puro (sin UI).
+- Config por datos (pesos, entornos, umbrales).
+- Determinismo (seed).
+- Tests: unitarios, integración y golden.
+
+---
+
+## 14. Ejemplo numérico completo (canónico)
+
+**Carta:** Colibrí de páramo
+
+- primaryStrength = AD
+- secondaryStrength = E
+
+**Valores base (0–10):**
+
+- Ataque: P=2, S=6, W=2, H=4, A=2
+- Defensa: AD=9, C=5, E=8, SD=3, R=1
+
+**Energía:** 60% → estimulación +15 a AD
+
+### Paso 1 — Estimulación
+
+- AD: min(9 + 15, 10) = 10
+
+### Paso 2 — Cálculo base (0–10)
+
+- ATK\_base\_0\_10 = (2*0.25)+(6*0.20)+(2*0.20)+(4*0.20)+(2\*0.15) = **3.30**
+- DEF\_base\_0\_10 = (10*0.30)+(5*0.25)+(8*0.20)+(3*0.15)+(1\*0.10) = **7.40**
+
+### Paso 3 — Normalización (0–99)
+
+- ATK\_base\_0\_99 = round((3.30/10)\*99) = **33**
+- DEF\_base\_0\_99 = round((7.40/10)\*99) = **73**
+
+### Paso 4 — Entorno (páramo)
+
+- envDefPct = +0.20 → DEF\_env = 73 \* 1.20 = **88**
+- envAtkPct = −0.10 → ATK\_env = 33 \* 0.90 = **30**
+
+### Paso 5 — Penalización por contexto
+
+- Atacante AD = 4 < umbral 7 → penaltyFactor = 0.4
+- ATK\_env = 30 \* 0.4 = **12**
+
+### Paso 6 — Habilidades C
+
+- No aplica
+
+### Paso 7 — Clamp final
+
+- ATK\_final = 12
+- DEF\_final = 88
+
+**Resultado:** el colibrí **sobrevive y gana por defensa contextual**, aunque su ataque sea bajo.
+
+---
+
+## 15. Checklist DoD
+
+- PvE/PvP funcional.
+- Iniciativa correcta.
+- Energía coherente.
+- Explicabilidad visible.
+- Sin hardcodeo de balance.
+
+---
+
+## 16. Contrato del BattleEngine (INTERFACES OFICIALES)
+
+Esta sección define **las interfaces y métodos obligatorios** del motor de combate. La IA **no debe agregar ni omitir responsabilidades**.
+
+---
+
+### 16.1 Entidades clave (tipos de datos)
+
+```ts
+// Identificadores
+PlayerId: string
+CardId: string
+MatchId: string
+RoundId: string
+
+// Características permitidas
+type AttackChar = 'P' | 'S' | 'W' | 'H' | 'A'
+type DefenseChar = 'AD' | 'C' | 'E' | 'SD' | 'R'
+type Char = AttackChar | DefenseChar
+
+// Fortalezas declaradas por carta
+interface StrengthProfile {
+  primaryStrength: Char
+  secondaryStrength?: Char
+}
+
+// Factores base (0–10)
+interface AttackFactors { P:number; S:number; W:number; H:number; A:number }
+interface DefenseFactors { AD:number; C:number; E:number; SD:number; R:number }
+
+// Definición de carta
+interface CardDefinition {
+  cardId: CardId
+  strengths: StrengthProfile
+  attack: AttackFactors
+  defense: DefenseFactors
+  abilities?: AbilityDefinition[]
+}
+
+// Carta en posesión
+interface OwnedCard {
+  cardId: CardId
+  unlockedLevel: 'A' | 'B' | 'C'
+}
+
+// Entorno
+interface EnvironmentContext {
+  biome: string
+  altitudeBand?: string
+  envAtkPct: number
+  envDefPct: number
+  contextThresholds?: { char: DefenseChar; threshold:number; penaltyFactor:number }[]
+}
+
+// Estimulación desde Contenedor 1
+interface Stimulation {
+  char: Char
+  bonus: number // +5,+10,+15,+20
+}
+
+// Resultado de cálculo
+interface CombatValue {
+  atkFinal: number // 0–99
+  defFinal: number // 0–99
+  breakdown: CalculationBreakdown
+}
+
+interface CalculationBreakdown {
+  baseAtk:number
+  baseDef:number
+  envAtk:number
+  envDef:number
+  penalties: string[]
+  deltas: string[]
+}
+```
+
+---
+
+### 16.2 Interfaz principal del motor
+
+```ts
+interface BattleEngine {
+  // Inicializa un match
+  createMatch(players: PlayerId[], env: EnvironmentContext): MatchId
+
+  // Ejecuta la ronda inicial (ATK vs ATK)
+  resolveInitiativeRound(matchId: MatchId, cards: Record<PlayerId, CardDefinition>): PlayerId
+
+  // Inicia una ronda normal
+  startRound(matchId: MatchId, attacker: PlayerId): RoundId
+
+  // Registra selección del jugador (carta + estimulación + ready)
+  submitPlayerSelection(
+    matchId: MatchId,
+    roundId: RoundId,
+    playerId: PlayerId,
+    card: CardDefinition,
+    stimulation?: Stimulation
+  ): void
+
+  // Registra enfoque ofensivo/defensivo
+  submitFocus(
+    matchId: MatchId,
+    roundId: RoundId,
+    playerId: PlayerId,
+    focus: Char | 'NORMAL'
+  ): void
+
+  // Verifica si ambos jugadores están READY
+  isRoundReady(matchId: MatchId, roundId: RoundId): boolean
+
+  // Resuelve la ronda (reveal + cálculo)
+  resolveRound(matchId: MatchId, roundId: RoundId): RoundResult
+
+  // Evalúa si el jugador jugó bien
+  evaluatePlayedWell(
+    playerId: PlayerId,
+    role: 'ATTACKER' | 'DEFENDER',
+    card: CardDefinition,
+    stimulation?: Stimulation
+  ): boolean
+
+  // Aplica energía según evaluación
+  applyEnergy(playerId: PlayerId, playedWell: boolean, wonRound: boolean): number
+}
+```
+
+---
+
+### 16.3 Resolución matemática (contrato interno)
+
+```ts
+interface CombatCalculator {
+  applyStimulation(card: CardDefinition, stim?: Stimulation): CardDefinition
+  calculateBase(card: CardDefinition): { atk:number; def:number }
+  normalize(base:number): number
+  applyEnvironment(value:number, pct:number): number
+  applyContextPenalty(value:number, env:EnvironmentContext, attacker:CardDefinition): number
+  applyAbilities(value:number, abilities?:AbilityDefinition[]): number
+  clamp(value:number): number
+}
+```
+
+---
+
+### 16.4 Resultado de ronda
+
+```ts
+interface RoundResult {
+  roundId: RoundId
+  winner?: PlayerId
+  values: Record<PlayerId, CombatValue>
+  nextAttacker: PlayerId
+}
+```
+
+---
+
+### 16.5 Reglas de implementación (no violar)
+
+- El orden del pipeline **es obligatorio**.
+- Ningún método mezcla UI con lógica.
+- Toda salida debe incluir `breakdown` para explicabilidad.
+- No se permite hardcodear pesos ni entornos.
+
+---
+
+**Fin del Documento Maestro — Combate KYNDO v1.0**
