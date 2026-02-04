@@ -15,6 +15,7 @@ export class BattleCard {
     this.cardId = cardData.cardId;
     this.name = cardData.name;
     this.image = cardData.image;
+    this.strengths = cardData.strengths || { primaryStrength: 'P', secondaryStrength: 'AD' };
     
     // Attack factors (0-10 each)
     this.attackFactors = {
@@ -56,7 +57,7 @@ export class BattleCard {
    * Calculate total attack score (0-99)
    * Uses weighted formula from Manual-Maestro
    */
-  calculateAttack(environmentBonus = 0) {
+  calculateAttack(environment = 'neutral') {
     const weights = BATTLE_CONFIG.ATTACK_WEIGHTS;
     
     let totalAttack = 0;
@@ -67,18 +68,26 @@ export class BattleCard {
     totalAttack += this.attackFactors.A * weights.A;
 
     // Normalize to 0-99 scale
-    let normalizedAttack = Math.round((totalAttack / 50) * 99); // Assuming max sum ~50
-    normalizedAttack = Math.min(99, Math.max(0, normalizedAttack));
+    const atkBase010 =
+      this.attackFactors.P * weights.P +
+      this.attackFactors.S * weights.S +
+      this.attackFactors.W * weights.W +
+      this.attackFactors.H * weights.H +
+      this.attackFactors.A * weights.A;
 
-    // Apply environment bonus
-    const bonusAmount = Math.round((normalizedAttack * environmentBonus) / 100);
-    return normalizedAttack + bonusAmount;
+    let atkBase099 = Math.round((atkBase010 / 10) * 99);
+    atkBase099 = Math.min(99, Math.max(0, atkBase099));
+
+    const env = BATTLE_CONFIG.ENVIRONMENT_BONUSES[environment] || { atk: 0, def: 0 };
+    const envAtk = Math.round(atkBase099 * (env.atk / 100));
+    const atkFinal = Math.min(99, Math.max(0, atkBase099 + envAtk));
+    return atkFinal;
   }
 
   /**
    * Calculate total defense score (0-99)
    */
-  calculateDefense(environmentBonus = 0) {
+  calculateDefense(environment = 'neutral') {
     const weights = BATTLE_CONFIG.DEFENSE_WEIGHTS;
     
     let totalDefense = 0;
@@ -89,12 +98,20 @@ export class BattleCard {
     totalDefense += this.defenseFactors.R * weights.R;
 
     // Normalize to 0-99 scale
-    let normalizedDefense = Math.round((totalDefense / 50) * 99);
-    normalizedDefense = Math.min(99, Math.max(0, normalizedDefense));
+    const defBase010 =
+      this.defenseFactors.AD * weights.AD +
+      this.defenseFactors.C * weights.C +
+      this.defenseFactors.E * weights.E +
+      this.defenseFactors.SD * weights.SD +
+      this.defenseFactors.R * weights.R;
 
-    // Apply environment bonus
-    const bonusAmount = Math.round((normalizedDefense * environmentBonus) / 100);
-    return normalizedDefense + bonusAmount;
+    let defBase099 = Math.round((defBase010 / 10) * 99);
+    defBase099 = Math.min(99, Math.max(0, defBase099));
+
+    const env = BATTLE_CONFIG.ENVIRONMENT_BONUSES[environment] || { atk: 0, def: 0 };
+    const envDef = Math.round(defBase099 * (env.def / 100));
+    const defFinal = Math.min(99, Math.max(0, defBase099 + envDef));
+    return defFinal;
   }
 
   /**
@@ -117,14 +134,14 @@ export class BattleRound {
     this.opponentCard = opponentCard;
     this.round = round;
     this.environment = environment;
-    this.environmentBonus = BATTLE_CONFIG.ENVIRONMENT_BONUSES[environment] || 0;
+    this.environmentBonus = BATTLE_CONFIG.ENVIRONMENT_BONUSES[environment] || { atk: 0, def: 0 };
 
     // Battle mode: compare attack vs defense
-    this.playerAttack = playerCard.calculateAttack(0);
-    this.opponentDefense = opponentCard.calculateDefense(this.environmentBonus);
+    this.playerAttack = playerCard.calculateAttack(environment);
+    this.opponentDefense = opponentCard.calculateDefense(environment);
 
-    this.opponentAttack = opponentCard.calculateAttack(0);
-    this.playerDefense = playerCard.calculateDefense(this.environmentBonus);
+    this.opponentAttack = opponentCard.calculateAttack(environment);
+    this.playerDefense = playerCard.calculateDefense(environment);
 
     this.determineWinner();
   }
@@ -313,6 +330,7 @@ export function getSampleDeck() {
       name: 'Guacamaya Roja',
       image: 'content/birds/guacamaya-roja-1.webp',
       rarity: 'abundante',
+      strengths: { primaryStrength: 'S', secondaryStrength: 'C' },
       attackFactors: { P: 4, S: 7, W: 6, H: 5, A: 5 },
       defenseFactors: { AD: 6, C: 4, E: 7, SD: 5, R: 5 }
     },
@@ -321,6 +339,7 @@ export function getSampleDeck() {
       name: 'Cóndor Andino',
       image: 'content/birds/condor-andino-1.webp',
       rarity: 'rara',
+      strengths: { primaryStrength: 'H', secondaryStrength: 'AD' },
       attackFactors: { P: 7, S: 6, W: 8, H: 7, A: 6 },
       defenseFactors: { AD: 7, C: 3, E: 5, SD: 4, R: 8 }
     },
@@ -329,6 +348,7 @@ export function getSampleDeck() {
       name: 'Águila Arpía',
       image: 'content/birds/aguila-harpia-1.webp',
       rarity: 'excepcional',
+      strengths: { primaryStrength: 'W', secondaryStrength: 'E' },
       attackFactors: { P: 8, S: 8, W: 9, H: 8, A: 7 },
       defenseFactors: { AD: 6, C: 2, E: 6, SD: 3, R: 7 }
     }

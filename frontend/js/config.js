@@ -106,20 +106,20 @@ export const CARD_STATES = {
 export const BATTLE_CONFIG = {
   // Pesos de factores de ataque (P, S, W, H, A)
   ATTACK_WEIGHTS: {
-    P: 0.5,  // Predación
-    S: 0.4,  // Velocidad
-    W: 0.5,  // Weapons (anatomía ofensiva)
-    H: 0.3,  // Hunt strategy
-    A: 0.2   // Agresividad
+    P: 0.25, // Predación
+    S: 0.20, // Velocidad
+    W: 0.20, // Weapons (anatomía ofensiva)
+    H: 0.20, // Hunt strategy
+    A: 0.15  // Agresividad
   },
 
   // Pesos de factores de defensa (AD, C, E, SD, R)
   DEFENSE_WEIGHTS: {
-    AD: 0.4, // Adaptabilidad
-    C: 0.3,  // Camuflaje
-    E: 0.4,  // Evasión
-    SD: 0.2, // Social defense
-    R: 0.6   // Robustez
+    AD: 0.30, // Adaptabilidad
+    C: 0.25,  // Camuflaje
+    E: 0.20,  // Evasión
+    SD: 0.15, // Social defense
+    R: 0.10   // Robustez
   },
 
   // Salud inicial de cada jugador (batalla termina cuando llega a 0)
@@ -127,11 +127,11 @@ export const BATTLE_CONFIG = {
 
   // Bonos por entorno (% adicional a defensa)
   ENVIRONMENT_BONUSES: {
-    neutral: 0,
-    water: 15,      // Ventaja para aves acuáticas
-    forest: 10,     // Ventaja para aves forestales
-    mountain: 12,   // Ventaja para aves de montaña
-    sky: 8          // Ventaja para aves voladoras
+    neutral: { atk: 0, def: 0 },
+    water: { atk: 0, def: 15 },     // Ventaja defensiva para aves acuáticas
+    forest: { atk: 0, def: 10 },    // Ventaja defensiva forestal
+    mountain: { atk: 0, def: 12 },  // Ventaja defensiva montaña
+    sky: { atk: 0, def: 8 }         // Ventaja defensiva aérea
   },
 
   // Multiplicadores de rareza (aplican a todos los factores)

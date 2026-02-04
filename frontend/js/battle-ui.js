@@ -19,77 +19,88 @@ export class BattleUIRenderer {
    */
   mountBattle(playerDeck, opponentDeck) {
     const html = `
+      <style>
+        .battle-grid-8 {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          grid-template-rows: auto auto;
+          gap: 12px;
+        }
+        .cont { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); min-height: 120px; }
+        .cont h4 { margin: 0 0 6px 0; font-size: 14px; letter-spacing: .3px; }
+        .cont p { margin: 0; font-size: 12px; opacity: .8; }
+        .cont1 { grid-column: 1 / 2; grid-row: 1; }
+        .cont2 { grid-column: 2 / 3; grid-row: 1; }
+        .cont3 { grid-column: 3 / 4; grid-row: 1; }
+        .cont4 { grid-column: 1 / 2; grid-row: 2; }
+        .cont5 { grid-column: 2 / 3; grid-row: 2; }
+        .cont6 { grid-column: 3 / 4; grid-row: 2; }
+        .cont7 { grid-column: 4 / 5; grid-row: 2; }
+        .cont8 { grid-column: 5 / 6; grid-row: 2; }
+        .card-slot { min-height: 160px; border: 1px dashed rgba(226,232,240,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 8px; background: rgba(15,23,42,0.6); }
+        .slot-title { font-size: 12px; text-transform: uppercase; letter-spacing: .8px; opacity: .7; margin-bottom: 6px; }
+        .battle-controls-inline { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .battle-controls-inline button { flex: 1; min-width: 140px; }
+        .deck-list { max-height: 280px; overflow: auto; margin-top: 10px; }
+        .round-result { margin-top: 8px; }
+        .health-bar-compact { display:flex; gap:10px; align-items:center; }
+        .health-bar { background: rgba(255,255,255,0.08); height: 12px; border-radius: 8px; overflow: hidden; flex:1; }
+        .health-fill { height:100%; transition: width 0.3s ease; }
+        .player-health { background: linear-gradient(90deg,#10b981,#22c55e); }
+        .opponent-health { background: linear-gradient(90deg,#f43f5e,#ef4444); }
+      </style>
       <div class="battle-container">
-        <div class="battle-grid">
-          <aside class="deck-panel">
-            <div class="deck-panel-header">
-              <div>
-                <h4>Organiza tu mazo</h4>
-                <p>Arrastra para ordenar. Arrastra una carta al tablero para jugar.</p>
-              </div>
-              <div class="deck-count">${playerDeck.length} cartas</div>
-            </div>
-            <div class="deck-list" id="playerDeckList"></div>
-          </aside>
-
-          <div class="battle-main">
-            <!-- Header -->
-            <div class="battle-header">
-              <div class="battle-player-info">
-                <h3>Tu mazo</h3>
-                <div class="deck-count">${playerDeck.length} cartas</div>
-              </div>
-              <div class="battle-title">⚔️ BATALLA ⚔️</div>
-              <div class="battle-opponent-info">
-                <h3>Oponente</h3>
-                <div class="deck-count">${opponentDeck.length} cartas</div>
-              </div>
-            </div>
-
-            <!-- Health Bars -->
-            <div class="battle-health">
-              <div class="health-bar-container">
-                <div class="health-label">Salud</div>
-                <div class="health-bar">
-                  <div class="health-fill player-health" id="playerHealthBar"></div>
-                </div>
-                <div class="health-value" id="playerHealthValue">100/100</div>
-              </div>
-
-              <div class="health-separator">VS</div>
-
-              <div class="health-bar-container">
-                <div class="health-label">Salud</div>
-                <div class="health-bar">
-                  <div class="health-fill opponent-health" id="opponentHealthBar"></div>
-                </div>
-                <div class="health-value" id="opponentHealthValue">100/100</div>
-              </div>
-            </div>
-
-            <!-- Card Arena -->
-            <div class="battle-arena">
-              <div class="card-slot player-slot droppable" id="playerCardSlot">
-                <div class="empty-slot">Arrastra aquí tu carta para esta ronda</div>
-              </div>
-
-              <div class="battle-vs">
-                <span>VS</span>
-                <span id="roundNumber">Ronda 1</span>
-              </div>
-
-              <div class="card-slot opponent-slot" id="opponentCardSlot">
-                <div class="empty-slot">Carta del oponente</div>
-              </div>
-            </div>
-
-            <!-- Battle Controls -->
-            <div class="battle-controls">
+        <div class="battle-grid-8">
+          <div class="cont cont1">
+            <h4>Cont1 · Energía y READY</h4>
+            <p>Elige carta, estímulo y presiona READY.</p>
+            <div class="battle-controls-inline">
               <button id="playRoundBtn" class="btn-primary">⚔️ Siguiente Ronda</button>
               <button id="autoBattleBtn" class="btn-secondary">⏭️ Auto-Batalla</button>
             </div>
+            <div class="deck-count" style="margin-top:8px;">${playerDeck.length} cartas</div>
+            <div class="deck-list" id="playerDeckList"></div>
+          </div>
 
-            <!-- Round Result -->
+          <div class="cont cont2" id="cont2">
+            <h4>Cont2 · Enfoque del Atacante</h4>
+            <p>Mostrar enfoque ofensivo seleccionado.</p>
+          </div>
+
+          <div class="cont cont3" id="cont3">
+            <h4>Cont3 · Acción Defensor</h4>
+            <p>Oculto al rival hasta el reveal.</p>
+          </div>
+
+          <div class="cont cont4">
+            <div class="slot-title">Cont4 · Carta activa Jugador A</div>
+            <div class="card-slot player-slot droppable" id="playerCardSlot">
+              <div class="empty-slot">Arrastra aquí tu carta para esta ronda</div>
+            </div>
+          </div>
+
+          <div class="cont cont5">
+            <div class="slot-title">Cont5 · Carta activa Jugador B</div>
+            <div class="card-slot opponent-slot" id="opponentCardSlot">
+              <div class="empty-slot">Carta del oponente</div>
+            </div>
+          </div>
+
+          <div class="cont cont6">
+            <div class="slot-title">Cont6 · Arena (reveal y resultado)</div>
+            <div class="health-bar-compact">
+              <span>Salud A</span>
+              <div class="health-bar"><div class="health-fill player-health" id="playerHealthBar"></div></div>
+              <span id="playerHealthValue">100/100</span>
+            </div>
+            <div class="health-bar-compact" style="margin-top:6px;">
+              <span>Salud B</span>
+              <div class="health-bar"><div class="health-fill opponent-health" id="opponentHealthBar"></div></div>
+              <span id="opponentHealthValue">100/100</span>
+            </div>
+            <div class="battle-vs" style="margin:8px 0; text-align:center;">
+              <span>VS</span> · <span id="roundNumber">Ronda 1</span>
+            </div>
             <div class="round-result" id="roundResult" style="display:none;">
               <div class="result-content">
                 <div class="result-message" id="resultMessage"></div>
@@ -100,8 +111,6 @@ export class BattleUIRenderer {
                 </div>
               </div>
             </div>
-
-            <!-- Stats Panel -->
             <div class="battle-stats" id="battleStats">
               <div class="stat-item">
                 <span class="stat-label">Rondas:</span>
@@ -116,6 +125,16 @@ export class BattleUIRenderer {
                 <span class="stat-value" id="draws">0</span>
               </div>
             </div>
+          </div>
+
+          <div class="cont cont7" id="cont7">
+            <h4>Cont7 · Reserva Jugador A</h4>
+            <p>Zona de movimiento/oculta para A.</p>
+          </div>
+
+          <div class="cont cont8" id="cont8">
+            <h4>Cont8 · Reserva Jugador B</h4>
+            <p>Zona de movimiento/oculta para B.</p>
           </div>
         </div>
       </div>
