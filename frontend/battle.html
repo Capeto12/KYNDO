@@ -9,9 +9,37 @@
 </head>
 <body style="margin:0; padding:0;">
   <header>
-    <h1>⚔️ Batalla</h1>
-    <div style="margin-top:4px; font-size:12px;">
-      <a href="../index.html" style="color:#334155; text-decoration:none;">← Volver al home</a>
+    <div class="header-bar">
+      <div class="brand-block">
+        <h1 class="brand-title">Kindo</h1>
+        <div class="brand-subtitle">Kombat</div>
+      </div>
+
+      <div class="hud-block" aria-label="Estado de batalla">
+        <div class="hud-row hud-meta">
+          <span>Nivel <span id="battle-hud-level">1</span></span>
+          <span>Grado <span id="battle-hud-grade">1</span></span>
+        </div>
+        <div class="hud-row">
+          <span>Game <span id="battle-hud-game">1</span>/<span id="battle-hud-gamesTotal">8</span></span>
+          <span>Ronda <span id="battle-hud-round">1</span>/<span id="battle-hud-roundsPerGame">5</span></span>
+          <span>Game points <span id="battle-hud-score">0-0-0</span></span>
+        </div>
+      </div>
+
+      <div class="actions-block">
+        <div class="header-links"><a href="../index.html">Home</a></div>
+        <div id="user-info">
+          <div class="player-info" id="battle-player">
+            <div class="player-avatar">👤</div>
+            <div class="player-name">Jugador</div>
+          </div>
+          <div class="player-info" id="battle-opponent" style="display: none;">
+            <div class="player-avatar">👤</div>
+            <div class="player-name">Oponente</div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 

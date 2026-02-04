@@ -462,6 +462,19 @@ export class BattleUIRenderer {
     if (pGames) pGames.textContent = playerGameWins;
     if (oGames) oGames.textContent = opponentGameWins;
     if (dGames) dGames.textContent = drawGames;
+
+    // Header HUD (si existe)
+    const hudGame = document.getElementById('battle-hud-game');
+    const hudGamesTotal = document.getElementById('battle-hud-gamesTotal');
+    const hudRound = document.getElementById('battle-hud-round');
+    const hudRoundsPerGame = document.getElementById('battle-hud-roundsPerGame');
+    const hudScore = document.getElementById('battle-hud-score');
+
+    if (hudGame) hudGame.textContent = gameNumber;
+    if (hudGamesTotal) hudGamesTotal.textContent = totalGames;
+    if (hudRound) hudRound.textContent = roundInGame;
+    if (hudRoundsPerGame) hudRoundsPerGame.textContent = roundsPerGame;
+    if (hudScore) hudScore.textContent = `${playerGameWins}-${opponentGameWins}-${drawGames}`;
   }
 
   /**
