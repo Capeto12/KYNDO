@@ -6,111 +6,40 @@
   <title>KYNDO - Batalla de Mazos</title>
   <!-- Cache bust for latest UI -->
   <link rel="stylesheet" href="./css/styles.css?v=20260202-4">
-  <style>
-    .demo-controls {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .demo-controls button {
-      padding: 12px 24px;
-      margin: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      border: 0;
-      border-radius: 8px;
-      cursor: pointer;
-      background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-      color: white;
-      transition: all 200ms ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .demo-controls button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .back-link {
-      margin-bottom: 16px;
-    }
-
-    .back-link a {
-      color: #4a5568;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .back-link a:hover {
-      text-decoration: underline;
-    }
-  </style>
 </head>
 <body style="margin:0; padding:0;">
   <header>
-    <h1>⚔️ KYNDO - Batalla de Mazos</h1>
-    <p style="margin: 8px 0; font-size: 14px; color: rgba(0, 0, 0, 0.6);">
-      Compara tus cartas contra un oponente usando Ataque vs Defensa
-    </p>
-    <div class="build-badge">Build v2026-02-02-4</div>
+    <h1>⚔️ Batalla</h1>
   </header>
 
-  <main style="max-width: 1200px; margin: 0 auto; padding: 8px 10px 32px; width: 100%;">
-    <div class="back-link">
-      <a href="../index.html">← Volver al menú</a>
-    </div>
-
-    <div class="demo-controls">
-      <h3 style="margin: 0 0 12px 0; color: #0f172a;">Elige un modo</h3>
-      <button id="startDemoBtn">🎮 Demo</button>
-      <button id="startTutorialBtn">📖 Tutorial</button>
-    </div>
-
+  <main style="max-width: 1200px; margin: 0 auto; padding: 6px 8px 16px; width: 100%;">
     <div id="battleContainer"></div>
   </main>
 
   <footer>
-    <p>KYNDO - Cognitive Card Game Engine v1.0</p>
+    <p style="font-size:12px; opacity:.65;">KYNDO - Cognitive Card Game Engine</p>
   </footer>
 
   <script type="module">
     console.log('Battle UI version 2026-02-02-4');
-    import { DemoBattleController, TutorialBattleController } from './js/battle-controller.js';
+    import { DemoBattleController } from './js/battle-controller.js';
 
     const battleContainer = document.getElementById('battleContainer');
-    const startDemoBtn = document.getElementById('startDemoBtn');
-    const startTutorialBtn = document.getElementById('startTutorialBtn');
-
     let currentController = null;
 
-    async function startBattle(mode = 'demo') {
+    async function startBattle() {
       if (currentController) {
         currentController.reset();
       }
 
-      if (mode === 'tutorial') {
-        currentController = new TutorialBattleController();
-        const tutorialUI = await currentController.startTutorial();
-        battleContainer.innerHTML = '';
-        battleContainer.appendChild(tutorialUI);
-
-        const msg = currentController.showTutorialMessage();
-        if (msg) {
-          alert(`${msg.title}\n\n${msg.content}`);
-        }
-      } else {
-        currentController = new DemoBattleController();
-        const battleUI = await currentController.startDemo();
-        battleContainer.innerHTML = '';
-        battleContainer.appendChild(battleUI);
-      }
+      currentController = new DemoBattleController();
+      const battleUI = await currentController.startDemo();
+      battleContainer.innerHTML = '';
+      battleContainer.appendChild(battleUI);
     }
 
-    startDemoBtn.addEventListener('click', () => startBattle('demo'));
-    startTutorialBtn.addEventListener('click', () => startBattle('tutorial'));
-
     // Auto-launch arena on load so Kombat opens straight into the battle view
-    startBattle('demo');
+    startBattle();
 
     console.log('Battle Demo loaded. Arena auto-started.');
   </script>

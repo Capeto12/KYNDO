@@ -22,23 +22,23 @@ export class BattleUIRenderer {
       <style>
         .battle-grid-8 {
           display: grid;
-          grid-template-columns: minmax(90px, 20%) minmax(70px, 18%) minmax(200px, 44%) minmax(50px, 12%);
-          grid-template-rows: 48px auto;
+          grid-template-columns: minmax(95px, 22%) minmax(80px, 20%) minmax(220px, 42%) minmax(40px, 16%);
+          grid-template-rows: minmax(68px, auto) 1fr;
           gap: 6px;
           align-items: stretch;
           width: 100%;
         }
-        .cont { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
+        .cont { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.18); position: relative; overflow: hidden; }
         .cont h4 { margin: 0 0 4px 0; font-size: 12px; letter-spacing: .3px; display:none; }
         .cont p { margin: 0; font-size: 11px; opacity: .8; }
         .cont1 { grid-column: 1 / 3; grid-row: 1; min-width: 90px; }
         .cont2 { grid-column: 3 / 4; grid-row: 1; min-width: 160px; }
         .cont3 { grid-column: 4 / 5; grid-row: 1; min-width: 50px; }
-        .cont4 { grid-column: 1 / 2; grid-row: 2; min-height: 240px; cursor: pointer; }
+        .cont4 { grid-column: 1 / 2; grid-row: 2; min-height: 280px; max-height: 360px; cursor: pointer; }
         .cont4.expanded { position: absolute; width: 75vw; max-width: 360px; min-width: 260px; min-height: 340px; z-index: 20; }
-        .cont5 { grid-column: 2 / 3; grid-row: 2; min-height: 240px; }
+        .cont5 { grid-column: 2 / 3; grid-row: 2; min-height: 260px; max-height: 360px; }
         .cont6 { grid-column: 3 / 4; grid-row: 2; min-height: 280px; }
-        .cont7 { grid-column: 4 / 5; grid-row: 2; min-height: 140px; }
+        .cont7 { grid-column: 4 / 5; grid-row: 2; min-height: 120px; }
         .cont8 { display: none; }
         .card-slot { min-height: 120px; border: 1px dashed rgba(226,232,240,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 8px; background: rgba(15,23,42,0.6); }
         .slot-title { display:none; }
@@ -47,14 +47,16 @@ export class BattleUIRenderer {
         .compact-row { display: flex; align-items: center; gap: 6px; font-size: 11px; }
         .select-char { width: 100%; font-size: 11px; padding: 2px 4px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: #e2e8f0; }
         .btn-ready { width: 100%; margin-top: 4px; }
-        .vs-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+        .vs-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; gap:6px; }
         .badge { padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.08); font-size: 11px; }
         .badge.attacker { background: #10b981; color: #022c22; font-weight: 700; }
-        .battle-btn { width: 100%; margin-top: 6px; }
-        .staging-list, .prep-list, .opponent-prep-list { display: flex; flex-direction: column; gap: 6px; overflow: auto; max-height: 240px; }
+        .battle-actions-inline { display:flex; gap:6px; margin-top:6px; }
+        .battle-btn { width: 100%; }
+        .auto-btn { width: 100%; }
+        .staging-list, .prep-list, .opponent-prep-list { display: flex; flex-direction: column; gap: 6px; overflow: auto; max-height: 320px; }
         .staging-card, .prep-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 4px; font-size: 11px; cursor: grab; }
         .staging-card:active, .prep-card:active { cursor: grabbing; }
-        .prep-drop { min-height: 160px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 8px; padding: 6px; }
+        .prep-drop { min-height: 180px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 8px; padding: 6px; }
         .prep-card:first-child { transform: scale(1.06); border-color: #22d3ee; box-shadow: 0 0 6px rgba(34,211,238,0.4); }
         .prep-card:first-child::after { content: 'Siguiente'; display: inline-block; margin-left: 6px; padding: 2px 6px; border-radius: 6px; background: rgba(34,211,238,0.2); font-size: 10px; color: #22d3ee; }
         .back-card { height: 32px; border-radius: 6px; background: linear-gradient(135deg,#1f2937,#111827); border: 1px solid rgba(255,255,255,0.12); }
@@ -63,31 +65,30 @@ export class BattleUIRenderer {
         .health-fill { height:100%; transition: width 0.3s ease; }
         .player-health { background: linear-gradient(90deg,#10b981,#22c55e); }
         .opponent-health { background: linear-gradient(90deg,#f43f5e,#ef4444); }
-        .arena-actions { display:flex; gap:8px; margin-top:8px; }
         .round-result { margin-top: 8px; }
         .result-badge { margin-top:6px; display:inline-block; padding:4px 8px; background:#10b981; color:#022c22; border-radius:6px; font-weight:700; font-size:11px; }
         .winner-slot { min-height: 140px; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px; background: rgba(255,255,255,0.04); }
          @media (max-width: 768px) {
           .battle-grid-8 {
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: repeat(3, auto);
-            gap: 5px;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(4, auto);
+            gap: 6px;
           }
           .cont1 { grid-column: 1 / 2; grid-row: 1; }
           .cont2 { grid-column: 2 / 3; grid-row: 1; }
-          .cont3 { grid-column: 3 / 4; grid-row: 1; }
-          .cont4 { grid-column: 1 / 2; grid-row: 2; }
-          .cont5 { grid-column: 2 / 3; grid-row: 2; }
-          .cont6 { grid-column: 3 / 4; grid-row: 2; }
-          .cont7 { grid-column: 1 / 4; grid-row: 3; }
+          .cont3 { grid-column: 1 / 3; grid-row: 2; }
+          .cont4 { grid-column: 1 / 2; grid-row: 3; min-height: 240px; }
+          .cont5 { grid-column: 2 / 3; grid-row: 3; min-height: 240px; }
+          .cont6 { grid-column: 1 / 2; grid-row: 4; }
+          .cont7 { grid-column: 2 / 3; grid-row: 4; }
          }
 
         /* Ultra-compact for very small screens */
         @media (max-width: 414px) {
           .battle-grid-8 {
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 4px;
-            transform: scale(0.9);
+            transform: scale(0.92);
             transform-origin: top left;
           }
           .cont { padding: 6px; }
@@ -123,7 +124,10 @@ export class BattleUIRenderer {
               <span class="badge" id="attackerBadge">DEF</span>
               <span id="opponentLabel">Usuario 2</span>
             </div>
-            <button id="battleBtn" class="btn-secondary battle-btn" disabled>Battle</button>
+            <div class="battle-actions-inline">
+              <button id="battleBtn" class="btn-secondary battle-btn" disabled>Battle</button>
+              <button id="autoBattleBtn" class="btn-ghost auto-btn" disabled>Auto</button>
+            </div>
           </div>
 
           <div class="cont cont3" id="cont3">
@@ -153,10 +157,6 @@ export class BattleUIRenderer {
               <span>VS</span> · <span id="roundNumber">Ronda 1</span>
             </div>
             <div class="winner-slot" id="winnerSlot"></div>
-            <div class="arena-actions">
-              <button id="playRoundBtn" class="btn-primary" disabled>⚔️ Ronda</button>
-              <button id="autoBattleBtn" class="btn-secondary" disabled>⏭️ Auto</button>
-            </div>
             <div class="round-result" id="roundResult" style="display:none;">
               <div class="result-content">
                 <div class="result-message" id="resultMessage"></div>
@@ -211,7 +211,6 @@ export class BattleUIRenderer {
           <div class="staging-card" data-index="${index}" draggable="true">
             <div><strong>${card.name}</strong></div>
             <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
-            <div style="opacity:.7; font-size:10px;">Tap/drag para enviar a prepista</div>
           </div>
         `;
       })
@@ -443,10 +442,8 @@ export class BattleUIRenderer {
    * Enable/disable battle buttons
    */
   setButtonsEnabled(enabled) {
-    const playRoundBtn = document.getElementById('playRoundBtn');
     const autoBattleBtn = document.getElementById('autoBattleBtn');
 
-    if (playRoundBtn) playRoundBtn.disabled = !enabled;
     if (autoBattleBtn) autoBattleBtn.disabled = !enabled;
   }
 
@@ -454,10 +451,17 @@ export class BattleUIRenderer {
    * Show loading state
    */
   setLoading(isLoading) {
-    const btn = document.getElementById('playRoundBtn');
-    if (btn) {
-      btn.disabled = isLoading;
-      btn.textContent = isLoading ? '⏳ Cargando...' : '⚔️ Siguiente Ronda';
+    const battleBtn = document.getElementById('battleBtn');
+    const autoBattleBtn = document.getElementById('autoBattleBtn');
+    if (battleBtn) {
+      if (!battleBtn.dataset.defaultLabel) {
+        battleBtn.dataset.defaultLabel = battleBtn.textContent || 'Ronda';
+      }
+      battleBtn.disabled = isLoading;
+      battleBtn.textContent = isLoading ? '⏳ Ronda...' : battleBtn.dataset.defaultLabel;
+    }
+    if (autoBattleBtn && isLoading) {
+      autoBattleBtn.disabled = true;
     }
   }
 }

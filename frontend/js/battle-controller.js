@@ -50,18 +50,18 @@ export class BattleController {
    * Setup event listeners
    */
   setupEventListeners() {
-    const playRoundBtn = this.containerElement.querySelector('#playRoundBtn');
     const autoBattleBtn = this.containerElement.querySelector('#autoBattleBtn');
     const readyBtn = this.containerElement.querySelector('#readyBtn');
     const battleBtn = this.containerElement.querySelector('#battleBtn');
     const cont4 = this.containerElement.querySelector('.cont4');
 
-    if (playRoundBtn) {
-      playRoundBtn.addEventListener('click', () => this.playNextRound());
-    }
-
     if (autoBattleBtn) {
-      autoBattleBtn.addEventListener('click', () => this.autoBattle());
+      autoBattleBtn.addEventListener('click', () => {
+        if (!this.game && this.playerReady && this.opponentReady) {
+          this.startBattleFromPrep();
+        }
+        this.autoBattle();
+      });
     }
 
     if (readyBtn) {
@@ -75,8 +75,10 @@ export class BattleController {
 
     if (battleBtn) {
       battleBtn.addEventListener('click', () => {
-        if (this.playerReady && this.opponentReady) {
+        if (!this.game && this.playerReady && this.opponentReady) {
           this.startBattleFromPrep();
+        } else if (this.game && this.game.status === 'ongoing' && !this.isPlayingRound) {
+          this.playNextRound();
         }
       });
     }
@@ -178,19 +180,35 @@ export class BattleController {
   updateReadyStates() {
     const readyBtn = this.containerElement.querySelector('#readyBtn');
     const battleBtn = this.containerElement.querySelector('#battleBtn');
+    const autoBattleBtn = this.containerElement.querySelector('#autoBattleBtn');
     const attackerBadge = this.containerElement.querySelector('#attackerBadge');
 
+    const readyToStart = this.playerReady && this.opponentReady;
+    const hasGame = !!this.game;
+    const ongoing = hasGame && this.game.status === 'ongoing';
+    const busy = this.isPlayingRound;
+
     if (readyBtn) {
-      readyBtn.disabled = this.playerPrep.length < 5;
+      readyBtn.disabled = this.playerPrep.length < 5 || hasGame;
     }
 
     if (battleBtn) {
-      battleBtn.disabled = !(this.playerReady && this.opponentReady);
+      if (!hasGame) {
+        battleBtn.textContent = 'Battle';
+        battleBtn.disabled = !readyToStart || busy;
+      } else {
+        battleBtn.textContent = 'Ronda';
+        battleBtn.disabled = !ongoing || busy;
+      }
+    }
+
+    if (autoBattleBtn) {
+      autoBattleBtn.disabled = !ongoing || busy;
     }
 
     if (attackerBadge) {
-      attackerBadge.textContent = this.game ? 'ATK' : 'DEF';
-      attackerBadge.classList.toggle('attacker', !!this.game);
+      attackerBadge.textContent = hasGame ? 'ATK' : 'DEF';
+      attackerBadge.classList.toggle('attacker', !!hasGame);
     }
   }
 
@@ -210,8 +228,6 @@ export class BattleController {
     );
 
     this.renderer.updateRoundNumber(1, this.game.playerDeck.length);
-    this.displayCurrentCards();
-
     this.renderer.setButtonsEnabled(true);
     this.updateReadyStates();
   }
@@ -220,15 +236,7 @@ export class BattleController {
    * Display current round's cards
    */
   displayCurrentCards() {
-    if (!this.game || this.game.status !== 'ongoing') return;
-
-    const opponentCard = this.game.opponentDeck[this.game.currentRoundIndex];
-
-    this.renderer.resetPlayerSlot();
-
-    if (opponentCard) {
-      this.renderer.displayCard(opponentCard, 'opponentCardSlot');
-    }
+    // Arena simplificada: solo mostramos ganador, no precolocamos cartas
   }
 
   /**
@@ -262,6 +270,7 @@ export class BattleController {
 
     this.renderer.setLoading(true);
     this.renderer.setButtonsEnabled(false);
+    this.updateReadyStates();
 
     // Si el jugador no arrastró, usamos la carta en la posición actual
     const playerCard = this.game.playerDeck[this.game.currentRoundIndex];
@@ -314,6 +323,7 @@ export class BattleController {
 
     this.renderer.setLoading(false);
     this.renderer.setButtonsEnabled(this.game.status === 'ongoing');
+    this.updateReadyStates();
     this.isPlayingRound = false;
   }
 
@@ -325,12 +335,14 @@ export class BattleController {
 
     this.isAutoPlaying = true;
     this.renderer.setButtonsEnabled(false);
+    this.updateReadyStates();
 
     while (this.game.status === 'ongoing') {
       await this.playNextRound();
     }
 
     this.isAutoPlaying = false;
+    this.updateReadyStates();
   }
 
   /**
@@ -525,11 +537,11 @@ export class TutorialBattleController extends DemoBattleController {
     // Start demo battle
     await this.startDemo();
 
-    // Override play button to show tutorial messages
-    const playBtn = this.containerElement.querySelector('#playRoundBtn');
-    if (playBtn) {
-      const originalClick = playBtn.onclick;
-      playBtn.onclick = () => {
+    // Override battle button to show tutorial messages
+    const battleBtn = this.containerElement.querySelector('#battleBtn');
+    if (battleBtn) {
+      const originalClick = battleBtn.onclick;
+      battleBtn.onclick = () => {
         this.showTutorialMessage();
         if (originalClick) originalClick();
       };
