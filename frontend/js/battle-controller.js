@@ -274,21 +274,14 @@ export class BattleController {
     if (this.playerPrep.length !== 5 || this.opponentPrep.length !== 5) return;
 
     this.game = new BattleGame(this.playerPrep, this.opponentPrep, {
-      environment: 'neutral',
-      playerHealth: 100
+      environment: 'neutral'
     });
 
     // Configuramos mazos vivos y pilas de robo
     this.playerDrawPile = [...this.fullPlayerDeck];
     this.opponentDrawPile = this.fullOpponentDeck.slice(5);
 
-    this.renderer.updateHealth(
-      this.game.playerHealth,
-      this.game.opponentHealth,
-      this.game.maxHealth
-    );
-
-    this.renderer.updateRoundNumber(1, this.game.playerDeck.length);
+    this.renderer.updateRoundNumber(1, this.game.maxGames, 1, this.game.roundsPerGame, this.game.playerGameWins, this.game.opponentGameWins, this.game.drawGames);
     this.renderer.setButtonsEnabled(true);
     this.renderer.renderPrepList(this.game.playerDeck);
     this.renderer.renderOpponentPrep(this.game.opponentDeck);
@@ -355,13 +348,6 @@ export class BattleController {
       this.renderer.renderPrepList(this.game.playerDeck);
       this.renderer.renderOpponentPrep(this.game.opponentDeck.map(() => ({ back: true })));
 
-      // Update health
-      this.renderer.updateHealth(
-        this.game.playerHealth,
-        this.game.opponentHealth,
-        this.game.maxHealth
-      );
-
       // Update stats
       const summary = this.game.getSummary();
       this.renderer.updateStats(
@@ -372,8 +358,13 @@ export class BattleController {
 
       // Update round counter
       this.renderer.updateRoundNumber(
-        this.game.currentRoundIndex + 1,
-        this.game.playerDeck.length + this.playerDrawPile.length
+        roundResult.gameNumber,
+        roundResult.maxGames,
+        roundResult.roundInGame,
+        roundResult.roundsPerGame,
+        roundResult.playerGameWins,
+        roundResult.opponentGameWins,
+        roundResult.drawGames
       );
 
       // Refresh deck list state (staging) con las cartas restantes manuales

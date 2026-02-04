@@ -202,14 +202,22 @@ export class BattleGame {
     this.playerDeck = playerDeck.map(card => new BattleCard(card));
     this.opponentDeck = opponentDeck.map(card => new BattleCard(card));
 
-    this.playerHealth = options.playerHealth || BATTLE_CONFIG.STARTING_HEALTH;
-    this.opponentHealth = options.opponentHealth || BATTLE_CONFIG.STARTING_HEALTH;
-    this.maxHealth = this.playerHealth;
-
     this.rounds = [];
-    this.currentRoundIndex = 0;
     this.status = 'ongoing'; // ongoing, playerWon, opponentWon, draw
     this.environment = options.environment || 'neutral';
+
+    this.roundsPerGame = 5;
+    this.maxGames = Math.min(
+      8,
+      Math.floor(this.playerDeck.length / this.roundsPerGame),
+      Math.floor(this.opponentDeck.length / this.roundsPerGame)
+    );
+    this.currentGame = 0;
+    this.roundInGame = 0;
+    this.playerGameWins = 0;
+    this.opponentGameWins = 0;
+    this.drawGames = 0;
+    this.currentGameRoundScore = { player: 0, opponent: 0, draw: 0 };
   }
 
   /**
@@ -236,22 +244,47 @@ export class BattleGame {
     );
 
     this.rounds.push(round);
+    // Track per-game score
+    if (round.winner === 'player') this.currentGameRoundScore.player += 1;
+    if (round.winner === 'opponent') this.currentGameRoundScore.opponent += 1;
+    if (round.winner === 'draw') this.currentGameRoundScore.draw += 1;
 
-    // Apply damage
-    if (round.winner === 'player') {
-      this.opponentHealth -= round.damageDealt;
-    } else if (round.winner === 'opponent') {
-      this.playerHealth -= round.damageDealt;
+    this.roundInGame += 1;
+    const roundNumberInGame = this.roundInGame;
+    const gameNumber = this.currentGame + 1;
+
+    if (this.roundInGame >= this.roundsPerGame || !this.playerDeck.length || !this.opponentDeck.length) {
+      this.completeGame();
     }
 
-    this.currentRoundIndex = this.rounds.length;
-
-    // Check for early termination
-    if (this.playerHealth <= 0 || this.opponentHealth <= 0 || !this.playerDeck.length || !this.opponentDeck.length) {
+    if (this.currentGame >= this.maxGames || !this.playerDeck.length || !this.opponentDeck.length) {
       this.endGame();
     }
 
-    return round.getResults();
+    const result = round.getResults();
+    result.gameNumber = gameNumber;
+    result.roundInGame = roundNumberInGame;
+    result.playerGameWins = this.playerGameWins;
+    result.opponentGameWins = this.opponentGameWins;
+    result.drawGames = this.drawGames;
+    result.maxGames = this.maxGames;
+    result.roundsPerGame = this.roundsPerGame;
+    return result;
+  }
+
+  completeGame() {
+    // Decide game winner
+    if (this.currentGameRoundScore.player > this.currentGameRoundScore.opponent) {
+      this.playerGameWins += 1;
+    } else if (this.currentGameRoundScore.opponent > this.currentGameRoundScore.player) {
+      this.opponentGameWins += 1;
+    } else {
+      this.drawGames += 1;
+    }
+
+    this.currentGame += 1;
+    this.roundInGame = 0;
+    this.currentGameRoundScore = { player: 0, opponent: 0, draw: 0 };
   }
 
   /**
@@ -272,9 +305,9 @@ export class BattleGame {
    * Determine final winner
    */
   endGame() {
-    if (this.playerHealth > this.opponentHealth) {
+    if (this.playerGameWins > this.opponentGameWins) {
       this.status = 'playerWon';
-    } else if (this.opponentHealth > this.playerHealth) {
+    } else if (this.opponentGameWins > this.playerGameWins) {
       this.status = 'opponentWon';
     } else {
       this.status = 'draw';
@@ -287,12 +320,13 @@ export class BattleGame {
   getSummary() {
     return {
       status: this.status,
-      playerHealth: Math.max(0, this.playerHealth),
-      opponentHealth: Math.max(0, this.opponentHealth),
       totalRounds: this.rounds.length,
       playerWins: this.rounds.filter(r => r.winner === 'player').length,
       opponentWins: this.rounds.filter(r => r.winner === 'opponent').length,
       draws: this.rounds.filter(r => r.winner === 'draw').length,
+      playerGameWins: this.playerGameWins,
+      opponentGameWins: this.opponentGameWins,
+      drawGames: this.drawGames,
       environment: this.environment,
       history: this.rounds.map(r => r.getResults())
     };
@@ -318,10 +352,8 @@ export class BattleGame {
       winRate: Math.round(playerWinRate),
       damageDealt: totalDamageDealt,
       damageTaken: totalDamageTaken,
-      cardsUsed: this.currentRoundIndex,
-      efficiency: this.maxHealth > 0 
-        ? Math.round((this.playerHealth / this.maxHealth) * 100)
-        : 0
+      cardsUsed: this.rounds.length,
+      efficiency: 0
     };
   }
 }

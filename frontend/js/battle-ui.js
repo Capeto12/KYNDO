@@ -73,6 +73,9 @@ export class BattleUIRenderer {
         .opp-reveal { font-size: 11px; padding:6px; border:1px dashed rgba(255,255,255,0.2); border-radius:8px; background: rgba(255,255,255,0.04); }
         .opp-reveal h5 { margin:0 0 4px 0; font-size:12px; color:#e2e8f0; }
         .opp-reveal .meta { opacity:0.7; font-size:10px; }
+        .game-meta { display:flex; flex-direction:column; gap:6px; margin-bottom:6px; }
+        .game-counter { font-weight:700; font-size:12px; }
+        .game-score { font-size:11px; opacity:0.85; }
          @media (max-width: 768px) {
           .battle-grid-8 {
             grid-template-columns: 1fr 1fr 1fr;
@@ -151,18 +154,9 @@ export class BattleUIRenderer {
           </div>
 
           <div class="cont cont6">
-            <div class="health-bar-compact">
-              <span>Salud A</span>
-              <div class="health-bar"><div class="health-fill player-health" id="playerHealthBar"></div></div>
-              <span id="playerHealthValue">100/100</span>
-            </div>
-            <div class="health-bar-compact" style="margin-top:6px;">
-              <span>Salud B</span>
-              <div class="health-bar"><div class="health-fill opponent-health" id="opponentHealthBar"></div></div>
-              <span id="opponentHealthValue">100/100</span>
-            </div>
-            <div class="battle-vs" style="margin:8px 0; text-align:center;">
-              <span>VS</span> · <span id="roundNumber">Ronda 1</span>
+            <div class="game-meta">
+              <div class="game-counter" id="roundNumber">Game 1/8 · Ronda 1/5</div>
+              <div class="game-score">Games: <span id="playerGameWins">0</span>-<span id="opponentGameWins">0</span>-<span id="drawGameWins">0</span></div>
             </div>
             <div class="winner-slot" id="winnerSlot"></div>
             <div class="round-result" id="roundResult" style="display:none;">
@@ -456,11 +450,18 @@ export class BattleUIRenderer {
   /**
    * Update round number display
    */
-  updateRoundNumber(roundNumber, totalRounds) {
+  updateRoundNumber(gameNumber, totalGames, roundInGame, roundsPerGame, playerGameWins, opponentGameWins, drawGames) {
     const roundEl = document.getElementById('roundNumber');
     if (roundEl) {
-      roundEl.textContent = `Ronda ${roundNumber}/${totalRounds}`;
+      roundEl.textContent = `Game ${gameNumber}/${totalGames} · Ronda ${roundInGame}/${roundsPerGame}`;
     }
+
+    const pGames = document.getElementById('playerGameWins');
+    const oGames = document.getElementById('opponentGameWins');
+    const dGames = document.getElementById('drawGameWins');
+    if (pGames) pGames.textContent = playerGameWins;
+    if (oGames) oGames.textContent = opponentGameWins;
+    if (dGames) dGames.textContent = drawGames;
   }
 
   /**
@@ -487,6 +488,7 @@ export class BattleUIRenderer {
         <p>Rondas: ${summary.totalRounds}</p>
         <p>Victorias: ${summary.playerWins}</p>
         <p>Empates: ${summary.draws}</p>
+        <p>Games: ${summary.playerGameWins}-${summary.opponentGameWins}-${summary.drawGames}</p>
       </div>
     `;
 
