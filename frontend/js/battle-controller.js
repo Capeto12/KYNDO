@@ -17,6 +17,8 @@ export class BattleController {
     this.isPlayingRound = false;
     this.fullPlayerDeck = [];
     this.fullOpponentDeck = [];
+    this.playerDrawPile = [];
+    this.opponentDrawPile = [];
     this.playerPrep = [];
     this.opponentPrep = [];
     this.playerReady = false;
@@ -33,6 +35,8 @@ export class BattleController {
     this.opponentPrep = this.fullOpponentDeck.slice(0, 5);
     this.playerReady = false;
     this.opponentReady = true; // demo: máquina ya tiene 5
+    this.playerDrawPile = []; // se llena al iniciar batalla
+    this.opponentDrawPile = this.fullOpponentDeck.slice(5);
 
     this.containerElement = this.renderer.mountBattle();
     this.setupEventListeners();
@@ -113,12 +117,25 @@ export class BattleController {
       if (!cardEl) return;
       const index = Number(cardEl.dataset.index);
       if (Number.isNaN(index)) return;
-      if (this.playerPrep.length >= 5) return;
-      const [card] = this.fullPlayerDeck.splice(index, 1);
-      if (card) this.playerPrep.push(card);
-      this.renderer.renderDeckList(this.fullPlayerDeck, 0);
-      this.renderer.renderPrepList(this.playerPrep);
-      this.updateReadyStates();
+      if (this.game) {
+        if (this.game.playerDeck.length >= 5) return;
+        const [card] = this.fullPlayerDeck.splice(index, 1);
+        if (card) {
+          this.game.playerDeck.push(card);
+          // también sacamos de pile si estuviera ahí
+          const pileIdx = this.playerDrawPile.findIndex(c => c.cardId === card.cardId);
+          if (pileIdx >= 0) this.playerDrawPile.splice(pileIdx, 1);
+        }
+        this.renderer.renderDeckList(this.fullPlayerDeck, 0);
+        this.renderer.renderPrepList(this.game.playerDeck);
+      } else {
+        if (this.playerPrep.length >= 5) return;
+        const [card] = this.fullPlayerDeck.splice(index, 1);
+        if (card) this.playerPrep.push(card);
+        this.renderer.renderDeckList(this.fullPlayerDeck, 0);
+        this.renderer.renderPrepList(this.playerPrep);
+        this.updateReadyStates();
+      }
     });
 
     prepList.addEventListener('dragstart', (event) => {
@@ -169,12 +186,52 @@ export class BattleController {
       if (!cardEl) return;
       const idx = Number(cardEl.dataset.index);
       if (Number.isNaN(idx)) return;
-      const [card] = this.playerPrep.splice(idx, 1);
-      if (card) this.fullPlayerDeck.push(card);
-      this.renderer.renderDeckList(this.fullPlayerDeck, 0);
-      this.renderer.renderPrepList(this.playerPrep);
-      this.updateReadyStates();
+      if (this.game) {
+        const [card] = this.game.playerDeck.splice(idx, 1);
+        if (card) {
+          this.fullPlayerDeck.push(card);
+          this.playerDrawPile.push(card);
+        }
+        this.renderer.renderDeckList(this.fullPlayerDeck, 0);
+        this.renderer.renderPrepList(this.game.playerDeck);
+      } else {
+        const [card] = this.playerPrep.splice(idx, 1);
+        if (card) this.fullPlayerDeck.push(card);
+        this.renderer.renderDeckList(this.fullPlayerDeck, 0);
+        this.renderer.renderPrepList(this.playerPrep);
+        this.updateReadyStates();
+      }
     });
+  }
+
+  pullFromPlayerPile() {
+    if (!this.playerDrawPile.length) return null;
+    const idx = Math.floor(Math.random() * this.playerDrawPile.length);
+    const [card] = this.playerDrawPile.splice(idx, 1);
+    const stagingIdx = this.fullPlayerDeck.findIndex(c => c.cardId === card.cardId);
+    if (stagingIdx >= 0) this.fullPlayerDeck.splice(stagingIdx, 1);
+    return card;
+  }
+
+  pullFromOpponentPile() {
+    if (!this.opponentDrawPile.length) return null;
+    const idx = Math.floor(Math.random() * this.opponentDrawPile.length);
+    const [card] = this.opponentDrawPile.splice(idx, 1);
+    return card;
+  }
+
+  refillQueues() {
+    // Mantener prep de jugador en 5 si hay mazo
+    while (this.game && this.game.playerDeck.length < 5 && this.playerDrawPile.length) {
+      const card = this.pullFromPlayerPile();
+      if (card) this.game.playerDeck.push(card);
+    }
+
+    // Mantener prep de oponente
+    while (this.game && this.game.opponentDeck.length < 5 && this.opponentDrawPile.length) {
+      const card = this.pullFromOpponentPile();
+      if (card) this.game.opponentDeck.push(card);
+    }
   }
 
   updateReadyStates() {
@@ -221,6 +278,10 @@ export class BattleController {
       playerHealth: 100
     });
 
+    // Configuramos mazos vivos y pilas de robo
+    this.playerDrawPile = [...this.fullPlayerDeck];
+    this.opponentDrawPile = this.fullOpponentDeck.slice(5);
+
     this.renderer.updateHealth(
       this.game.playerHealth,
       this.game.opponentHealth,
@@ -229,6 +290,8 @@ export class BattleController {
 
     this.renderer.updateRoundNumber(1, this.game.playerDeck.length);
     this.renderer.setButtonsEnabled(true);
+    this.renderer.renderPrepList(this.game.playerDeck);
+    this.renderer.renderOpponentPrep(this.game.opponentDeck);
     this.updateReadyStates();
   }
 
@@ -272,9 +335,10 @@ export class BattleController {
     this.renderer.setButtonsEnabled(false);
     this.updateReadyStates();
 
-    // Si el jugador no arrastró, usamos la carta en la posición actual
-    const playerCard = this.game.playerDeck[this.game.currentRoundIndex];
-    // No need to place in arena; reveal handled after result
+    // Revelar info del oponente al iniciar la ronda
+    const playerCard = this.game.playerDeck[0];
+    const opponentCard = this.game.opponentDeck[0];
+    this.renderer.revealOpponentCard(opponentCard);
 
     // Simulate card flip delay
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -285,6 +349,11 @@ export class BattleController {
     if (roundResult) {
       // Show result
       this.renderer.displayRoundResult(roundResult);
+
+      // Alimentar colas (la carta jugada sale del mazo)
+      this.refillQueues();
+      this.renderer.renderPrepList(this.game.playerDeck);
+      this.renderer.renderOpponentPrep(this.game.opponentDeck.map(() => ({ back: true })));
 
       // Update health
       this.renderer.updateHealth(
@@ -304,11 +373,11 @@ export class BattleController {
       // Update round counter
       this.renderer.updateRoundNumber(
         this.game.currentRoundIndex + 1,
-        this.game.playerDeck.length
+        this.game.playerDeck.length + this.playerDrawPile.length
       );
 
-      // Refresh deck list state
-      this.renderer.renderDeckList(this.game.playerDeck, this.game.currentRoundIndex);
+      // Refresh deck list state (staging) con las cartas restantes manuales
+      this.renderer.renderDeckList(this.fullPlayerDeck, 0);
 
       // Wait before displaying next cards
       await new Promise(resolve => setTimeout(resolve, 2000));

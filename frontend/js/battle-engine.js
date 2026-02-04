@@ -174,6 +174,12 @@ export class BattleRound {
       round: this.round,
       playerCard: this.playerCard.name,
       opponentCard: this.opponentCard.name,
+      playerCardImage: this.playerCard.image,
+      opponentCardImage: this.opponentCard.image,
+      playerCardId: this.playerCard.cardId,
+      opponentCardId: this.opponentCard.cardId,
+      playerRarity: this.playerCard.rarity,
+      opponentRarity: this.opponentCard.rarity,
       playerAttack: this.playerAttack,
       opponentDefense: this.opponentDefense,
       opponentAttack: this.opponentAttack,
@@ -214,18 +220,18 @@ export class BattleGame {
       return null;
     }
 
-    const playerCard = this.playerDeck[this.currentRoundIndex];
-    const opponentCard = this.opponentDeck[this.currentRoundIndex];
-
-    if (!playerCard || !opponentCard) {
+    if (!this.playerDeck.length || !this.opponentDeck.length) {
       this.endGame();
       return null;
     }
 
+    const playerCard = this.playerDeck.shift();
+    const opponentCard = this.opponentDeck.shift();
+
     const round = new BattleRound(
       playerCard,
       opponentCard,
-      this.currentRoundIndex + 1,
+      this.rounds.length + 1,
       this.environment
     );
 
@@ -238,11 +244,11 @@ export class BattleGame {
       this.playerHealth -= round.damageDealt;
     }
 
+    this.currentRoundIndex = this.rounds.length;
+
     // Check for early termination
-    if (this.playerHealth <= 0 || this.opponentHealth <= 0) {
+    if (this.playerHealth <= 0 || this.opponentHealth <= 0 || !this.playerDeck.length || !this.opponentDeck.length) {
       this.endGame();
-    } else {
-      this.currentRoundIndex++;
     }
 
     return round.getResults();

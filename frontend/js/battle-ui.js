@@ -23,7 +23,7 @@ export class BattleUIRenderer {
         .battle-grid-8 {
           display: grid;
           grid-template-columns: minmax(95px, 22%) minmax(80px, 20%) minmax(220px, 42%) minmax(40px, 16%);
-          grid-template-rows: minmax(68px, auto) 1fr;
+          grid-template-rows: minmax(72px, auto) 1fr;
           gap: 6px;
           align-items: stretch;
           width: 100%;
@@ -53,6 +53,7 @@ export class BattleUIRenderer {
         .battle-actions-inline { display:flex; gap:6px; margin-top:6px; }
         .battle-btn { width: 100%; }
         .auto-btn { width: 100%; }
+        .auto-btn { min-width: 64px; }
         .staging-list, .prep-list, .opponent-prep-list { display: flex; flex-direction: column; gap: 6px; overflow: auto; max-height: 320px; }
         .staging-card, .prep-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 4px; font-size: 11px; cursor: grab; }
         .staging-card:active, .prep-card:active { cursor: grabbing; }
@@ -68,27 +69,32 @@ export class BattleUIRenderer {
         .round-result { margin-top: 8px; }
         .result-badge { margin-top:6px; display:inline-block; padding:4px 8px; background:#10b981; color:#022c22; border-radius:6px; font-weight:700; font-size:11px; }
         .winner-slot { min-height: 140px; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px; background: rgba(255,255,255,0.04); }
+        .arena-card { display:flex; gap:8px; align-items:center; }
+        .arena-card img { width: 72px; height: 72px; object-fit: cover; border-radius: 10px; border:1px solid rgba(255,255,255,0.1); }
+        .opp-reveal { font-size: 11px; padding:6px; border:1px dashed rgba(255,255,255,0.2); border-radius:8px; background: rgba(255,255,255,0.04); }
+        .opp-reveal h5 { margin:0 0 4px 0; font-size:12px; color:#e2e8f0; }
+        .opp-reveal .meta { opacity:0.7; font-size:10px; }
          @media (max-width: 768px) {
           .battle-grid-8 {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: repeat(4, auto);
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: repeat(3, auto);
             gap: 6px;
           }
-          .cont1 { grid-column: 1 / 2; grid-row: 1; }
-          .cont2 { grid-column: 2 / 3; grid-row: 1; }
-          .cont3 { grid-column: 1 / 3; grid-row: 2; }
-          .cont4 { grid-column: 1 / 2; grid-row: 3; min-height: 240px; }
-          .cont5 { grid-column: 2 / 3; grid-row: 3; min-height: 240px; }
-          .cont6 { grid-column: 1 / 2; grid-row: 4; }
-          .cont7 { grid-column: 2 / 3; grid-row: 4; }
+          .cont1 { grid-column: 1 / 3; grid-row: 1; }
+          .cont2 { grid-column: 3 / 4; grid-row: 1; }
+          .cont3 { grid-column: 1 / 4; grid-row: 2; }
+          .cont4 { grid-column: 1 / 2; grid-row: 3; min-height: 220px; }
+          .cont5 { grid-column: 2 / 3; grid-row: 3; min-height: 220px; }
+          .cont7 { grid-column: 3 / 4; grid-row: 3; min-height: 220px; }
+          .cont6 { grid-column: 1 / 4; grid-row: 4; }
          }
 
         /* Ultra-compact for very small screens */
         @media (max-width: 414px) {
           .battle-grid-8 {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 4px;
-            transform: scale(0.92);
+            transform: scale(0.9);
             transform-origin: top left;
           }
           .cont { padding: 6px; }
@@ -131,7 +137,10 @@ export class BattleUIRenderer {
           </div>
 
           <div class="cont cont3" id="cont3">
-            <p style="font-size:10px; opacity:.6;">Defensa oculta</p>
+            <div id="opponentReveal" class="opp-reveal">
+              <h5>Defensa oculta</h5>
+              <div class="meta">Se muestra al iniciar la ronda</div>
+            </div>
           </div>
 
           <div class="cont cont4">
@@ -236,6 +245,19 @@ export class BattleUIRenderer {
     oppEl.innerHTML = prepDeck
       .map(() => '<div class="back-card"></div>')
       .join('');
+  }
+
+  revealOpponentCard(card) {
+    const oppReveal = document.getElementById('opponentReveal');
+    if (!oppReveal || !card) return;
+    oppReveal.innerHTML = `
+      <h5>${card.name}</h5>
+      <div class="meta">ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+      <div style="margin-top:6px; display:flex; gap:6px; align-items:center;">
+        <img src="${card.image}" alt="${card.name}" style="width:56px; height:56px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.15);">
+        <span class="badge">${card.rarity || ''}</span>
+      </div>
+    `;
   }
 
   /**
@@ -343,6 +365,7 @@ export class BattleUIRenderer {
     const damageDealtDiv = document.getElementById('damageDealt');
     const damageTakenDiv = document.getElementById('damageTaken');
     const winnerSlot = document.getElementById('winnerSlot');
+    const oppReveal = document.getElementById('opponentReveal');
 
     if (!resultDiv) return;
 
@@ -369,12 +392,45 @@ export class BattleUIRenderer {
     if (winnerSlot) {
       winnerSlot.innerHTML = '';
       if (roundData.winner === 'player') {
-        winnerSlot.innerHTML = `<div class="battle-card"><div class="card-info"><h4>${roundData.playerCard}</h4><div class="card-stats"><div class="attack-stat">ATQ ${roundData.playerAttack}</div><div class="defense-stat">DEF ${roundData.playerDefense}</div></div><div class="result-badge">WIN</div></div></div>`;
+        winnerSlot.innerHTML = `
+          <div class="arena-card">
+            <img src="${roundData.playerCardImage}" alt="${roundData.playerCard}">
+            <div class="card-info">
+              <h4>${roundData.playerCard}</h4>
+              <div class="card-stats">
+                <div class="attack-stat">ATQ ${roundData.playerAttack}</div>
+                <div class="defense-stat">DEF ${roundData.playerDefense}</div>
+              </div>
+              <div class="result-badge">WIN</div>
+            </div>
+          </div>`;
       } else if (roundData.winner === 'opponent') {
-        winnerSlot.innerHTML = `<div class="battle-card"><div class="card-info"><h4>${roundData.opponentCard}</h4><div class="card-stats"><div class="attack-stat">ATQ ${roundData.opponentAttack}</div><div class="defense-stat">DEF ${roundData.opponentDefense}</div></div><div class="result-badge">WIN</div></div></div>`;
+        winnerSlot.innerHTML = `
+          <div class="arena-card">
+            <img src="${roundData.opponentCardImage}" alt="${roundData.opponentCard}">
+            <div class="card-info">
+              <h4>${roundData.opponentCard}</h4>
+              <div class="card-stats">
+                <div class="attack-stat">ATQ ${roundData.opponentAttack}</div>
+                <div class="defense-stat">DEF ${roundData.opponentDefense}</div>
+              </div>
+              <div class="result-badge">WIN</div>
+            </div>
+          </div>`;
       } else {
         winnerSlot.innerHTML = '<div class="battle-card"><div class="card-info"><h4>Empate</h4><div class="card-stats"><div class="attack-stat">ATQ = DEF</div></div><div class="result-badge" style="background:#fbbf24;color:#78350f;">DRAW</div></div></div>';
       }
+    }
+
+    if (oppReveal) {
+      oppReveal.innerHTML = `
+        <h5>${roundData.opponentCard}</h5>
+        <div class="meta">ATQ ${roundData.opponentAttack} · DEF ${roundData.opponentDefense}</div>
+        <div style="margin-top:6px; display:flex; gap:6px; align-items:center;">
+          <img src="${roundData.opponentCardImage}" alt="${roundData.opponentCard}" style="width:56px; height:56px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.15);">
+          <span class="badge">${roundData.opponentRarity || ''}</span>
+        </div>
+      `;
     }
 
     resultDiv.style.display = 'block';
