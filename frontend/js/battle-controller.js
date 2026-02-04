@@ -15,36 +15,33 @@ export class BattleController {
     this.isAutoPlaying = false;
     this.containerElement = null;
     this.isPlayingRound = false;
+    this.fullPlayerDeck = [];
+    this.fullOpponentDeck = [];
+    this.playerPrep = [];
+    this.opponentPrep = [];
+    this.playerReady = false;
+    this.opponentReady = false;
   }
 
   /**
-   * Initialize new battle
+   * Initialize pre-battle board (no combat yet)
    */
-  async initializeBattle(playerDeck, opponentDeck, options = {}) {
-    // Create game engine
-    this.game = new BattleGame(playerDeck, opponentDeck, {
-      environment: options.environment || 'neutral',
-      playerHealth: options.playerHealth || 100
-    });
+  async initializePreBattle(playerDeck, opponentDeck) {
+    this.fullPlayerDeck = playerDeck.map(card => new BattleCard(card));
+    this.fullOpponentDeck = opponentDeck.map(card => new BattleCard(card));
+    this.playerPrep = [];
+    this.opponentPrep = this.fullOpponentDeck.slice(0, 5);
+    this.playerReady = false;
+    this.opponentReady = true; // demo: máquina ya tiene 5
 
-    // Mount UI
-    this.containerElement = this.renderer.mountBattle(playerDeck, opponentDeck);
-
-    // Setup event listeners
+    this.containerElement = this.renderer.mountBattle();
     this.setupEventListeners();
+    this.setupPrebattleDragAndDrop();
 
-    // Update initial UI
-    this.renderer.updateHealth(
-      this.game.playerHealth,
-      this.game.opponentHealth,
-      this.game.maxHealth
-    );
-
-    this.renderer.updateRoundNumber(1, this.game.playerDeck.length);
-
-    // Render deck order and show opponent card for round 1
-    this.renderer.renderDeckList(this.game.playerDeck, this.game.currentRoundIndex);
-    this.displayCurrentCards();
+    this.renderer.renderDeckList(this.fullPlayerDeck, 0);
+    this.renderer.renderPrepList(this.playerPrep);
+    this.renderer.renderOpponentPrep(this.opponentPrep);
+    this.updateReadyStates();
 
     return this.containerElement;
   }
@@ -55,6 +52,9 @@ export class BattleController {
   setupEventListeners() {
     const playRoundBtn = this.containerElement.querySelector('#playRoundBtn');
     const autoBattleBtn = this.containerElement.querySelector('#autoBattleBtn');
+    const readyBtn = this.containerElement.querySelector('#readyBtn');
+    const battleBtn = this.containerElement.querySelector('#battleBtn');
+    const cont4 = this.containerElement.querySelector('.cont4');
 
     if (playRoundBtn) {
       playRoundBtn.addEventListener('click', () => this.playNextRound());
@@ -64,71 +64,142 @@ export class BattleController {
       autoBattleBtn.addEventListener('click', () => this.autoBattle());
     }
 
-    this.setupDragAndDrop();
+    if (readyBtn) {
+      readyBtn.addEventListener('click', () => {
+        if (this.playerPrep.length === 5) {
+          this.playerReady = true;
+          this.updateReadyStates();
+        }
+      });
+    }
+
+    if (battleBtn) {
+      battleBtn.addEventListener('click', () => {
+        if (this.playerReady && this.opponentReady) {
+          this.startBattleFromPrep();
+        }
+      });
+    }
+
+    if (cont4) {
+      cont4.addEventListener('click', () => {
+        cont4.classList.toggle('expanded');
+      });
+    }
   }
 
   /**
    * Drag & drop handlers for deck ordering and playing
    */
-  setupDragAndDrop() {
-    const deckList = this.containerElement.querySelector('#playerDeckList');
-    const playerSlot = this.containerElement.querySelector('#playerCardSlot');
+  setupPrebattleDragAndDrop() {
+    const stagingList = this.containerElement.querySelector('#playerStagingList');
+    const prepList = this.containerElement.querySelector('#playerPrepList');
 
-    if (!deckList || !playerSlot) return;
+    if (!stagingList || !prepList) return;
 
-    deckList.addEventListener('dragstart', (event) => {
-      const cardEl = event.target.closest('.deck-card');
+    stagingList.addEventListener('dragstart', (event) => {
+      const cardEl = event.target.closest('.staging-card');
       if (!cardEl) return;
       const index = Number(cardEl.dataset.index);
-      // Block dragging cards ya jugadas
-      if (index < this.game.currentRoundIndex) {
-        event.preventDefault();
-        return;
-      }
       event.dataTransfer.effectAllowed = 'move';
-      event.dataTransfer.setData('text/plain', String(index));
-      cardEl.classList.add('dragging');
+      event.dataTransfer.setData('staging-index', String(index));
     });
 
-    deckList.addEventListener('dragend', (event) => {
-      const cardEl = event.target.closest('.deck-card');
-      if (cardEl) {
-        cardEl.classList.remove('dragging');
+    prepList.addEventListener('dragstart', (event) => {
+      const cardEl = event.target.closest('.prep-card');
+      if (!cardEl) return;
+      const index = Number(cardEl.dataset.index);
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('prep-index', String(index));
+    });
+
+    prepList.addEventListener('dragover', (event) => {
+      event.preventDefault();
+    });
+
+    prepList.addEventListener('drop', (event) => {
+      event.preventDefault();
+      const fromStaging = event.dataTransfer.getData('staging-index');
+      const fromPrep = event.dataTransfer.getData('prep-index');
+
+      if (fromStaging && this.playerPrep.length < 5) {
+        const idx = Number(fromStaging);
+        if (!Number.isNaN(idx)) {
+          const [card] = this.fullPlayerDeck.splice(idx, 1);
+          if (card) {
+            this.playerPrep.push(card);
+          }
+        }
       }
+
+      if (fromPrep) {
+        const idx = Number(fromPrep);
+        if (!Number.isNaN(idx)) {
+          const [card] = this.playerPrep.splice(idx, 1);
+          if (card) {
+            this.fullPlayerDeck.push(card);
+          }
+        }
+      }
+
+      this.renderer.renderDeckList(this.fullPlayerDeck, 0);
+      this.renderer.renderPrepList(this.playerPrep);
+      this.updateReadyStates();
     });
 
-    // Reordenar dentro del mazo
-    deckList.addEventListener('dragover', (event) => {
-      event.preventDefault();
+    // Click to remove from prep
+    prepList.addEventListener('click', (event) => {
+      const cardEl = event.target.closest('.prep-card');
+      if (!cardEl) return;
+      const idx = Number(cardEl.dataset.index);
+      if (Number.isNaN(idx)) return;
+      const [card] = this.playerPrep.splice(idx, 1);
+      if (card) this.fullPlayerDeck.push(card);
+      this.renderer.renderDeckList(this.fullPlayerDeck, 0);
+      this.renderer.renderPrepList(this.playerPrep);
+      this.updateReadyStates();
+    });
+  }
+
+  updateReadyStates() {
+    const readyBtn = this.containerElement.querySelector('#readyBtn');
+    const battleBtn = this.containerElement.querySelector('#battleBtn');
+    const attackerBadge = this.containerElement.querySelector('#attackerBadge');
+
+    if (readyBtn) {
+      readyBtn.disabled = this.playerPrep.length < 5;
+    }
+
+    if (battleBtn) {
+      battleBtn.disabled = !(this.playerReady && this.opponentReady);
+    }
+
+    if (attackerBadge) {
+      attackerBadge.textContent = this.game ? 'ATK' : 'DEF';
+      attackerBadge.classList.toggle('attacker', !!this.game);
+    }
+  }
+
+  startBattleFromPrep() {
+    if (this.game) return;
+    if (this.playerPrep.length !== 5 || this.opponentPrep.length !== 5) return;
+
+    this.game = new BattleGame(this.playerPrep, this.opponentPrep, {
+      environment: 'neutral',
+      playerHealth: 100
     });
 
-    deckList.addEventListener('drop', (event) => {
-      event.preventDefault();
-      const targetCard = event.target.closest('.deck-card');
-      if (!targetCard) return;
-      const fromIndex = Number(event.dataTransfer.getData('text/plain'));
-      const toIndex = Number(targetCard.dataset.index);
-      if (Number.isNaN(fromIndex) || Number.isNaN(toIndex)) return;
-      this.swapDeckCards(fromIndex, toIndex);
-    });
+    this.renderer.updateHealth(
+      this.game.playerHealth,
+      this.game.opponentHealth,
+      this.game.maxHealth
+    );
 
-    // Jugar carta arrastrándola al tablero
-    playerSlot.addEventListener('dragover', (event) => {
-      event.preventDefault();
-      playerSlot.classList.add('dropping');
-    });
+    this.renderer.updateRoundNumber(1, this.game.playerDeck.length);
+    this.displayCurrentCards();
 
-    playerSlot.addEventListener('dragleave', () => {
-      playerSlot.classList.remove('dropping');
-    });
-
-    playerSlot.addEventListener('drop', (event) => {
-      event.preventDefault();
-      playerSlot.classList.remove('dropping');
-      const index = Number(event.dataTransfer.getData('text/plain'));
-      if (Number.isNaN(index)) return;
-      this.handleCardDrop(index);
-    });
+    this.renderer.setButtonsEnabled(true);
+    this.updateReadyStates();
   }
 
   /**
@@ -164,25 +235,7 @@ export class BattleController {
   /**
    * Handle dropping a card onto the player slot to play the round
    */
-  handleCardDrop(selectedIndex) {
-    if (!this.game || this.game.status !== 'ongoing') return;
-    if (selectedIndex < this.game.currentRoundIndex) return; // ya jugada
-    const targetIndex = this.game.currentRoundIndex;
-
-    if (selectedIndex !== targetIndex) {
-      const temp = this.game.playerDeck[targetIndex];
-      this.game.playerDeck[targetIndex] = this.game.playerDeck[selectedIndex];
-      this.game.playerDeck[selectedIndex] = temp;
-    }
-
-    // Mostrar la carta elegida y jugar automáticamente
-    const playerCard = this.game.playerDeck[targetIndex];
-    if (playerCard) {
-      this.renderer.displayCard(playerCard, 'playerCardSlot');
-    }
-
-    this.playNextRound();
-  }
+  handleCardDrop() { /* replaced by prebattle drag logic */ }
 
   /**
    * Play single round
@@ -291,6 +344,10 @@ export class BattleController {
   reset() {
     this.game = null;
     this.isAutoPlaying = false;
+    this.playerPrep = [];
+    this.opponentPrep = [];
+    this.playerReady = false;
+    this.opponentReady = false;
     if (this.containerElement) {
       this.containerElement.remove();
       this.containerElement = null;
@@ -335,10 +392,7 @@ export class DemoBattleController extends BattleController {
     const sampleDeck = this.buildDemoDeck(40);
     const opponentDeck = this.buildOpponentDeck(sampleDeck);
 
-    await this.initializeBattle(sampleDeck, opponentDeck, {
-      environment: 'neutral',
-      playerHealth: 100
-    });
+    await this.initializePreBattle(sampleDeck, opponentDeck);
 
     return this.containerElement;
   }

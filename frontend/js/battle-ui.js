@@ -17,77 +17,102 @@ export class BattleUIRenderer {
   /**
    * Create and mount battle interface
    */
-  mountBattle(playerDeck, opponentDeck) {
+  mountBattle() {
     const html = `
       <style>
         .battle-grid-8 {
           display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          grid-template-rows: auto auto;
-          gap: 12px;
+          grid-template-columns: 40px 50px 160px 50px;
+          grid-template-rows: 50px auto;
+          gap: 10px;
+          align-items: stretch;
         }
-        .cont { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); min-height: 120px; }
-        .cont h4 { margin: 0 0 6px 0; font-size: 14px; letter-spacing: .3px; }
-        .cont p { margin: 0; font-size: 12px; opacity: .8; }
-        .cont1 { grid-column: 1 / 2; grid-row: 1; }
-        .cont2 { grid-column: 2 / 3; grid-row: 1; }
-        .cont3 { grid-column: 3 / 4; grid-row: 1; }
-        .cont4 { grid-column: 1 / 2; grid-row: 2; }
-        .cont5 { grid-column: 2 / 3; grid-row: 2; }
-        .cont6 { grid-column: 3 / 4; grid-row: 2; }
-        .cont7 { grid-column: 4 / 5; grid-row: 2; }
-        .cont8 { grid-column: 5 / 6; grid-row: 2; }
-        .card-slot { min-height: 160px; border: 1px dashed rgba(226,232,240,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 8px; background: rgba(15,23,42,0.6); }
-        .slot-title { font-size: 12px; text-transform: uppercase; letter-spacing: .8px; opacity: .7; margin-bottom: 6px; }
-        .battle-controls-inline { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-        .battle-controls-inline button { flex: 1; min-width: 140px; }
-        .deck-list { max-height: 280px; overflow: auto; margin-top: 10px; }
-        .round-result { margin-top: 8px; }
-        .health-bar-compact { display:flex; gap:10px; align-items:center; }
+        .cont { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
+        .cont h4 { margin: 0 0 4px 0; font-size: 12px; letter-spacing: .3px; }
+        .cont p { margin: 0; font-size: 11px; opacity: .8; }
+        .cont1 { grid-column: 1 / 3; grid-row: 1; min-width: 90px; }
+        .cont2 { grid-column: 3 / 4; grid-row: 1; min-width: 160px; }
+        .cont3 { grid-column: 4 / 5; grid-row: 1; min-width: 50px; }
+        .cont4 { grid-column: 1 / 2; grid-row: 2; min-height: 240px; cursor: pointer; }
+        .cont4.expanded { position: absolute; width: 260px; max-width: 260px; min-width: 260px; min-height: 320px; z-index: 20; }
+        .cont5 { grid-column: 2 / 3; grid-row: 2; min-height: 240px; }
+        .cont6 { grid-column: 3 / 4; grid-row: 2; min-height: 260px; }
+        .cont7 { grid-column: 4 / 5; grid-row: 2; min-height: 240px; }
+        .cont8 { display: none; }
+        .card-slot { min-height: 120px; border: 1px dashed rgba(226,232,240,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 8px; background: rgba(15,23,42,0.6); }
+        .slot-title { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; opacity: .7; margin-bottom: 4px; }
+        .energy-bar { background: rgba(255,255,255,0.08); height: 10px; border-radius: 8px; overflow: hidden; margin: 4px 0; }
+        .energy-fill { background: linear-gradient(90deg,#22d3ee,#a855f7); height: 100%; width: 0%; transition: width 0.25s ease; }
+        .compact-row { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+        .select-char { width: 100%; font-size: 11px; padding: 2px 4px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .btn-ready { width: 100%; margin-top: 4px; }
+        .vs-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+        .badge { padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.08); font-size: 11px; }
+        .badge.attacker { background: #10b981; color: #022c22; font-weight: 700; }
+        .battle-btn { width: 100%; margin-top: 6px; }
+        .staging-list, .prep-list, .opponent-prep-list { display: flex; flex-direction: column; gap: 6px; overflow: auto; max-height: 210px; }
+        .staging-card, .prep-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 4px; font-size: 11px; cursor: grab; }
+        .prep-drop { min-height: 160px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 8px; padding: 6px; }
+        .back-card { height: 32px; border-radius: 6px; background: linear-gradient(135deg,#1f2937,#111827); border: 1px solid rgba(255,255,255,0.12); }
+        .health-bar-compact { display:flex; gap:10px; align-items:center; font-size: 11px; }
         .health-bar { background: rgba(255,255,255,0.08); height: 12px; border-radius: 8px; overflow: hidden; flex:1; }
         .health-fill { height:100%; transition: width 0.3s ease; }
         .player-health { background: linear-gradient(90deg,#10b981,#22c55e); }
         .opponent-health { background: linear-gradient(90deg,#f43f5e,#ef4444); }
+        .arena-actions { display:flex; gap:8px; margin-top:8px; }
+        .round-result { margin-top: 8px; }
       </style>
       <div class="battle-container">
         <div class="battle-grid-8">
           <div class="cont cont1">
-            <h4>Cont1 · Energía y READY</h4>
-            <p>Elige carta, estímulo y presiona READY.</p>
-            <div class="battle-controls-inline">
-              <button id="playRoundBtn" class="btn-primary">⚔️ Siguiente Ronda</button>
-              <button id="autoBattleBtn" class="btn-secondary">⏭️ Auto-Batalla</button>
+            <h4>Cont1 · Energía</h4>
+            <div class="compact-row"><span>Energia:</span><span id="energyValue">0%</span></div>
+            <div class="energy-bar"><div id="energyFill" class="energy-fill"></div></div>
+            <div class="compact-row" style="margin-top:4px;">
+              <span>Carac.</span>
+              <select id="charSelect" class="select-char">
+                <option value="P">P</option>
+                <option value="S">S</option>
+                <option value="W">W</option>
+                <option value="H">H</option>
+                <option value="A">A</option>
+                <option value="AD">AD</option>
+                <option value="C">C</option>
+                <option value="E">E</option>
+                <option value="SD">SD</option>
+                <option value="R">R</option>
+              </select>
             </div>
-            <div class="deck-count" style="margin-top:8px;">${playerDeck.length} cartas</div>
-            <div class="deck-list" id="playerDeckList"></div>
+            <button id="readyBtn" class="btn-primary btn-ready" disabled>READY</button>
           </div>
 
           <div class="cont cont2" id="cont2">
-            <h4>Cont2 · Enfoque del Atacante</h4>
-            <p>Mostrar enfoque ofensivo seleccionado.</p>
+            <h4>Cont2 · Turno</h4>
+            <div class="vs-row">
+              <span id="playerLabel">Usuario 1</span>
+              <span class="badge" id="attackerBadge">DEF</span>
+              <span id="opponentLabel">Usuario 2</span>
+            </div>
+            <button id="battleBtn" class="btn-secondary battle-btn" disabled>Battle</button>
           </div>
 
           <div class="cont cont3" id="cont3">
-            <h4>Cont3 · Acción Defensor</h4>
-            <p>Oculto al rival hasta el reveal.</p>
+            <h4>Cont3</h4>
+            <p style="font-size:10px;">Defensa oculta</p>
           </div>
 
           <div class="cont cont4">
-            <div class="slot-title">Cont4 · Carta activa Jugador A</div>
-            <div class="card-slot player-slot droppable" id="playerCardSlot">
-              <div class="empty-slot">Arrastra aquí tu carta para esta ronda</div>
-            </div>
+            <div class="slot-title">Cont4 · Mazo (40)</div>
+            <div class="staging-list" id="playerStagingList"></div>
           </div>
 
           <div class="cont cont5">
-            <div class="slot-title">Cont5 · Carta activa Jugador B</div>
-            <div class="card-slot opponent-slot" id="opponentCardSlot">
-              <div class="empty-slot">Carta del oponente</div>
-            </div>
+            <div class="slot-title">Cont5 · Prepista (5)</div>
+            <div class="prep-drop" id="playerPrepList"></div>
           </div>
 
           <div class="cont cont6">
-            <div class="slot-title">Cont6 · Arena (reveal y resultado)</div>
+            <div class="slot-title">Cont6 · Arena</div>
             <div class="health-bar-compact">
               <span>Salud A</span>
               <div class="health-bar"><div class="health-fill player-health" id="playerHealthBar"></div></div>
@@ -100,6 +125,12 @@ export class BattleUIRenderer {
             </div>
             <div class="battle-vs" style="margin:8px 0; text-align:center;">
               <span>VS</span> · <span id="roundNumber">Ronda 1</span>
+            </div>
+            <div class="card-slot player-slot" id="playerCardSlot"><div class="empty-slot">Carta A</div></div>
+            <div class="card-slot opponent-slot" id="opponentCardSlot" style="margin-top:6px;"><div class="empty-slot">Carta B</div></div>
+            <div class="arena-actions">
+              <button id="playRoundBtn" class="btn-primary" disabled>⚔️ Ronda</button>
+              <button id="autoBattleBtn" class="btn-secondary" disabled>⏭️ Auto</button>
             </div>
             <div class="round-result" id="roundResult" style="display:none;">
               <div class="result-content">
@@ -128,21 +159,18 @@ export class BattleUIRenderer {
           </div>
 
           <div class="cont cont7" id="cont7">
-            <h4>Cont7 · Reserva Jugador A</h4>
-            <p>Zona de movimiento/oculta para A.</p>
+            <div class="slot-title">Cont7 · Prep enemigo</div>
+            <div class="opponent-prep-list" id="opponentPrepList"></div>
           </div>
 
-          <div class="cont cont8" id="cont8">
-            <h4>Cont8 · Reserva Jugador B</h4>
-            <p>Zona de movimiento/oculta para B.</p>
-          </div>
+          <div class="cont cont8" id="cont8"></div>
         </div>
       </div>
     `;
 
     this.battleContainer = document.createElement('div');
     this.battleContainer.innerHTML = html;
-    this.playerDeckListEl = this.battleContainer.querySelector('#playerDeckList');
+    this.playerDeckListEl = this.battleContainer.querySelector('#playerStagingList');
     return this.battleContainer;
   }
 
@@ -154,21 +182,34 @@ export class BattleUIRenderer {
 
     this.playerDeckListEl.innerHTML = deck
       .map((card, index) => {
-        const used = index < currentRoundIndex;
-        const isCurrent = index === currentRoundIndex;
         return `
-          <div class="deck-card ${used ? 'used' : ''} ${isCurrent ? 'current' : ''}" data-index="${index}" draggable="${!used}">
-            <div class="deck-card-thumb" style="background-image: url('${card.image}');"></div>
-            <div class="deck-card-info">
-              <div class="deck-card-name">${card.name}</div>
-              <div class="deck-card-meta">
-                <span class="rarity-pill ${card.rarity}">${card.rarity}</span>
-                <span class="power-pill">ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</span>
-              </div>
-            </div>
+          <div class="staging-card" data-index="${index}" draggable="true">
+            <div><strong>${card.name}</strong></div>
+            <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
           </div>
         `;
       })
+      .join('');
+  }
+
+  renderPrepList(prepDeck) {
+    const prepEl = this.battleContainer.querySelector('#playerPrepList');
+    if (!prepEl) return;
+    prepEl.innerHTML = prepDeck
+      .map((card, index) => `
+        <div class="prep-card" data-index="${index}" draggable="true">
+          <div><strong>${card.name}</strong></div>
+          <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+        </div>
+      `)
+      .join('');
+  }
+
+  renderOpponentPrep(prepDeck) {
+    const oppEl = this.battleContainer.querySelector('#opponentPrepList');
+    if (!oppEl) return;
+    oppEl.innerHTML = prepDeck
+      .map(() => '<div class="back-card"></div>')
       .join('');
   }
 
