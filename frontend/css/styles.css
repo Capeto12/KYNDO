@@ -39,6 +39,18 @@ body {
   box-sizing: border-box;
 }
 
+.page-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+.page-main {
+  width: 100%;
+  padding: 6px 0 16px;
+  box-sizing: border-box;
+}
+
 header {
   padding: 18px 16px 14px;
   text-align: left;
@@ -53,7 +65,7 @@ header {
 .header-bar {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  align-items: center;
+  align-items: start;
   gap: 8px 16px;
 }
 
@@ -84,6 +96,12 @@ header {
   border-radius: 12px;
 }
 
+.brand-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+}
+
 .hud-block {
   display: grid;
   grid-auto-rows: auto;
@@ -108,7 +126,7 @@ header {
 
 .actions-block {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-end;
   gap: 10px;
   flex-wrap: nowrap;
