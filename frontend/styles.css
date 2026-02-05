@@ -78,12 +78,12 @@ header {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  flex-wrap: wrap;
+    padding: 0;
   padding: 0;
   gap: 8px;
 }
 
-.player-info {
+    padding: 8px 0 10px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -93,8 +93,9 @@ header {
   transition: all 0.2s ease;
 }
 
-.player-info:hover {
+    align-items: start;
   background: rgba(0, 0, 0, 0.05);
+    width: 100%;
   transform: translateY(-1px);
 }
 
@@ -122,6 +123,9 @@ footer {
   padding: 12px;
   text-align: center;
   margin-top: 20px;
+    justify-self: center;
+    align-self: start;
+    text-align: center;
 }
 
 footer a {
@@ -131,6 +135,9 @@ footer a {
   border-radius: 8px;
   transition: background-color 0.2s;
 }
+    background: rgba(0, 0, 0, 0.04);
+    padding: 4px 10px;
+    border-radius: 12px;
 
 footer a:hover {
   background-color: #f0f0f0;
@@ -142,20 +149,16 @@ footer a:hover {
   font-size: 14px;
   color: #fff;
   padding: 8px;
-}
-
-.header-top {
-  display: none;
-}
-
-.hud-block {
-  display: grid;
-  grid-auto-rows: auto;
-  gap: 4px;
-  justify-content: flex-start;
-  align-items: center;
-  font-size: 12px;
-  color: #3a3a3a;
+    .header-bar { grid-template-columns: auto 1fr auto; gap: 6px; }
+    .brand-title { font-size: 28px; }
+    .brand-subtitle { font-size: 11px; }
+    .hud-block { font-size: 10px; }
+    .hud-row { flex-wrap: nowrap; gap: 6px; }
+    .hud-meta { font-size: 10px; gap: 6px; padding: 3px 8px; }
+    .actions-block { flex-wrap: wrap; justify-content: flex-end; }
+    .player-info { padding: 3px 6px; }
+    .player-avatar { width: 24px; height: 24px; font-size: 13px; }
+    .player-name { font-size: 11px; }
   text-shadow: none;
 }
 
