@@ -79,3 +79,110 @@ model AuditLog {
   @@index([createdAt])
   @@map("audit_logs")
 }
+
+enum CatalogCardType {
+  A
+  B
+  C
+}
+
+enum CatalogRarity {
+  common
+  rare
+  epic
+  legendary
+}
+
+model Domain {
+  id        String   @id @default(uuid()) @db.Uuid @map("domain_id")
+  name      String   @unique @db.VarChar(100)
+  status    String   @default("active") @db.VarChar(20)
+  metadata  Json?    @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  objects Object[]
+
+  @@index([status])
+  @@map("domains")
+}
+
+model Object {
+  id             String        @id @default(uuid()) @db.Uuid @map("object_id")
+  domainId       String        @db.Uuid @map("domain_id")
+  scientificName String?       @db.VarChar(255) @map("scientific_name")
+  commonName     String?       @db.VarChar(255) @map("common_name")
+  metadata       Json?         @default("{}")
+  createdAt      DateTime      @default(now()) @map("created_at")
+
+  domain        Domain         @relation(fields: [domainId], references: [id])
+  images        ObjectImage[]
+  catalogCards  CatalogCard[]
+  attackFactors AttackFactor?
+  defenseFactors DefenseFactor?
+
+  @@index([domainId])
+  @@index([scientificName])
+  @@index([commonName])
+  @@map("objects")
+}
+
+model ObjectImage {
+  id           String   @id @default(uuid()) @db.Uuid @map("image_id")
+  objectId     String   @db.Uuid @map("object_id")
+  variantIndex Int      @map("variant_index")
+  imagePath    String   @db.VarChar(500) @map("image_path")
+  format       String   @default("webp") @db.VarChar(10)
+  source       String?  @db.VarChar(50)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  object Object @relation(fields: [objectId], references: [id], onDelete: Cascade)
+
+  @@unique([objectId, variantIndex])
+  @@index([objectId])
+  @@map("object_images")
+}
+
+model CatalogCard {
+  id        String          @id @default(uuid()) @db.Uuid @map("card_id")
+  objectId  String          @db.Uuid @map("object_id")
+  type      CatalogCardType @map("type")
+  rarity    CatalogRarity   @default(common)
+  metadata  Json?           @default("{}")
+  createdAt DateTime        @default(now()) @map("created_at")
+
+  object Object @relation(fields: [objectId], references: [id], onDelete: Restrict)
+
+  @@unique([objectId, type], map: "uq_object_type")
+  @@index([objectId])
+  @@index([type])
+  @@index([rarity])
+  @@map("catalog_cards")
+}
+
+model AttackFactor {
+  objectId  String   @id @db.Uuid @map("object_id")
+  p         Decimal  @db.Decimal(3, 1)
+  s         Decimal  @db.Decimal(3, 1)
+  w         Decimal  @db.Decimal(3, 1)
+  h         Decimal  @db.Decimal(3, 1)
+  a         Decimal  @db.Decimal(3, 1)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  object Object @relation(fields: [objectId], references: [id], onDelete: Cascade)
+
+  @@map("attack_factors")
+}
+
+model DefenseFactor {
+  objectId  String   @id @db.Uuid @map("object_id")
+  ad        Decimal  @db.Decimal(3, 1)
+  c         Decimal  @db.Decimal(3, 1)
+  e         Decimal  @db.Decimal(3, 1)
+  sd        Decimal  @db.Decimal(3, 1)
+  r         Decimal  @db.Decimal(3, 1)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  object Object @relation(fields: [objectId], references: [id], onDelete: Cascade)
+
+  @@map("defense_factors")
+}
