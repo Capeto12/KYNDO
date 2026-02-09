@@ -148,9 +148,6 @@ FILA SUPERIOR (PREPARACIÓN / REGLAS)
 FILA INFERIOR (COMBATE)
 [Cont4] [Cont5] [Cont6] [Cont7] [Cont8]
 * No reordenar. Los IDs son contractuales para la IA.
-
-Ver tablerodebatalla.pdf
-
 6.2 Jerarquía de tamaños (obligatoria)
 * Grandes: Cont1, Cont4, Cont5
 * Medio–Grande: Cont6 (ARENA)
@@ -276,6 +273,148 @@ Resultado: el colibrí sobrevive y gana por defensa contextual, aunque su ataque 
 * Energía coherente.
 * Explicabilidad visible.
 * Sin hardcodeo de balance.
+
+16. Contrato del BattleEngine (INTERFACES OFICIALES)
+Esta sección define las interfaces y métodos obligatorios del motor de combate. La IA no debe agregar ni omitir responsabilidades.
+
+16.1 Entidades clave (tipos de datos)
+// Identificadores
+PlayerId: string
+CardId: string
+MatchId: string
+RoundId: string
+
+// Características permitidas
+type AttackChar = 'P' | 'S' | 'W' | 'H' | 'A'
+type DefenseChar = 'AD' | 'C' | 'E' | 'SD' | 'R'
+type Char = AttackChar | DefenseChar
+
+// Fortalezas declaradas por carta
+interface StrengthProfile {
+  primaryStrength: Char
+  secondaryStrength?: Char
+}
+
+// Factores base (0–10)
+interface AttackFactors { P:number; S:number; W:number; H:number; A:number }
+interface DefenseFactors { AD:number; C:number; E:number; SD:number; R:number }
+
+// Definición de carta
+interface CardDefinition {
+  cardId: CardId
+  strengths: StrengthProfile
+  attack: AttackFactors
+  defense: DefenseFactors
+  abilities?: AbilityDefinition[]
+}
+
+// Carta en posesión
+interface OwnedCard {
+  cardId: CardId
+  unlockedLevel: 'A' | 'B' | 'C'
+}
+
+// Entorno
+interface EnvironmentContext {
+  biome: string
+  altitudeBand?: string
+  envAtkPct: number
+  envDefPct: number
+  contextThresholds?: { char: DefenseChar; threshold:number; penaltyFactor:number }[]
+}
+
+// Estimulación desde Contenedor 1
+interface Stimulation {
+  char: Char
+  bonus: number // +5,+10,+15,+20
+}
+
+// Resultado de cálculo
+interface CombatValue {
+  atkFinal: number // 0–99
+  defFinal: number // 0–99
+  breakdown: CalculationBreakdown
+}
+
+interface CalculationBreakdown {
+  baseAtk:number
+  baseDef:number
+  envAtk:number
+  envDef:number
+  penalties: string[]
+  deltas: string[]
+}
+
+16.2 Interfaz principal del motor
+interface BattleEngine {
+  // Inicializa un match
+  createMatch(players: PlayerId[], env: EnvironmentContext): MatchId
+
+  // Ejecuta la ronda inicial (ATK vs ATK)
+  resolveInitiativeRound(matchId: MatchId, cards: Record<PlayerId, CardDefinition>): PlayerId
+
+  // Inicia una ronda normal
+  startRound(matchId: MatchId, attacker: PlayerId): RoundId
+
+  // Registra selección del jugador (carta + estimulación + ready)
+  submitPlayerSelection(
+    matchId: MatchId,
+    roundId: RoundId,
+    playerId: PlayerId,
+    card: CardDefinition,
+    stimulation?: Stimulation
+  ): void
+
+  // Registra enfoque ofensivo/defensivo
+  submitFocus(
+    matchId: MatchId,
+    roundId: RoundId,
+    playerId: PlayerId,
+    focus: Char | 'NORMAL'
+  ): void
+
+  // Verifica si ambos jugadores están READY
+  isRoundReady(matchId: MatchId, roundId: RoundId): boolean
+
+  // Resuelve la ronda (reveal + cálculo)
+  resolveRound(matchId: MatchId, roundId: RoundId): RoundResult
+
+  // Evalúa si el jugador jugó bien
+  evaluatePlayedWell(
+    playerId: PlayerId,
+    role: 'ATTACKER' | 'DEFENDER',
+    card: CardDefinition,
+    stimulation?: Stimulation
+  ): boolean
+
+  // Aplica energía según evaluación
+  applyEnergy(playerId: PlayerId, playedWell: boolean, wonRound: boolean): number
+}
+
+16.3 Resolución matemática (contrato interno)
+interface CombatCalculator {
+  applyStimulation(card: CardDefinition, stim?: Stimulation): CardDefinition
+  calculateBase(card: CardDefinition): { atk:number; def:number }
+  normalize(base:number): number
+  applyEnvironment(value:number, pct:number): number
+  applyContextPenalty(value:number, env:EnvironmentContext, attacker:CardDefinition): number
+  applyAbilities(value:number, abilities?:AbilityDefinition[]): number
+  clamp(value:number): number
+}
+
+16.4 Resultado de ronda
+interface RoundResult {
+  roundId: RoundId
+  winner?: PlayerId
+  values: Record<PlayerId, CombatValue>
+  nextAttacker: PlayerId
+}
+
+16.5 Reglas de implementación (no violar)
+* El orden del pipeline es obligatorio.
+* Ningún método mezcla UI con lógica.
+* Toda salida debe incluir breakdown para explicabilidad.
+* No se permite hardcodear pesos ni entornos.
 
 Fin del Documento Maestro — Combate KYNDO v1.0
 
