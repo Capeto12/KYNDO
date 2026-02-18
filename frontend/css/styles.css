@@ -12,14 +12,13 @@
    ========================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
-  padding: 0;
+
 :root {
   --bg-1: #f5f7fa;
   --bg-2: #c3cfe2;
   --surface: rgba(255, 255, 255, 0.95);
   --surface-strong: rgba(255, 255, 255, 1);
   --surface-border: rgba(0, 0, 0, 0.08);
-  padding: 0;
   --text-muted: rgba(17, 17, 17, 0.7);
   --accent: #8b5cf6;
   --accent-2: #22d3ee;
@@ -29,16 +28,15 @@
   --shadow-2: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
 
-  padding: 14px 0 12px;
+body {
   margin: 0;
+  padding: 16px;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   color: var(--text-strong);
   min-height: 100vh;
-  padding: 16px;
   box-sizing: border-box;
 }
-  align-items: start;
 .page-shell {
   max-width: 1200px;
   margin: 0 auto;
@@ -68,9 +66,6 @@ header {
   align-items: start;
   gap: 8px 16px;
 }
-  justify-self: center;
-  align-self: start;
-  text-align: center;
 
 .brand-block {
   display: flex;
@@ -90,23 +85,18 @@ header {
   color: #2d2d2d;
   letter-spacing: 1px;
 }
-  align-items: flex-start;
+
 .brand-subtitle {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: #6b7280;
-  .header-bar { grid-template-columns: auto 1fr auto; gap: 6px; }
-  .brand-title { font-size: 28px; }
-  .brand-subtitle { font-size: 11px; }
-  .hud-block { font-size: 10px; }
-  .hud-row { flex-wrap: nowrap; gap: 6px; }
-  .hud-meta { font-size: 10px; gap: 6px; padding: 3px 8px; }
-  .actions-block { flex-wrap: wrap; justify-content: flex-end; }
-  .player-info { padding: 3px 6px; }
-  .player-avatar { width: 24px; height: 24px; font-size: 13px; }
-  .player-name { font-size: 11px; }
+}
+
+.hud-block {
+  display: flex;
+  flex-direction: column;
   gap: 4px;
   justify-content: flex-start;
   align-items: center;
