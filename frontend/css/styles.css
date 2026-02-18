@@ -123,7 +123,7 @@ header {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .hud-row > span {
@@ -211,23 +211,42 @@ header {
 
 @media (max-width: 640px) {
   .header-bar {
-    grid-template-columns: 1fr;
-    gap: 6px;
+    grid-template-columns: auto 1fr auto;
+    gap: 4px 8px;
+    align-items: center;
   }
-  .brand-title { font-size: 28px; }
-  .brand-subtitle { font-size: 11px; }
-  .hud-block { font-size: 10px; }
-  .hud-row { flex-wrap: nowrap; gap: 6px; }
+  .brand-title { font-size: 24px; }
+  .brand-subtitle { font-size: 10px; padding: 2px 6px; }
+  .hud-block { 
+    font-size: 9px; 
+    padding: 4px 6px;
+    gap: 2px;
+  }
+  .hud-row { 
+    flex-wrap: wrap; 
+    gap: 4px;
+    justify-content: center;
+  }
+  .hud-row > span {
+    font-size: 9px;
+    white-space: nowrap;
+  }
   .hud-score-highlight { 
-    padding: 2px 6px; 
-    font-size: 10px;
+    padding: 2px 5px; 
+    font-size: 9px;
   }
-  .hud-meta { font-size: 10px; gap: 6px; }
+  .hud-meta { 
+    font-size: 9px; 
+    gap: 6px; 
+  }
   .header-links { font-size: 10px; }
-  .actions-block { flex-wrap: wrap; justify-content: flex-start; }
+  .actions-block { 
+    flex-wrap: nowrap; 
+    justify-content: flex-end; 
+  }
   .player-info { padding: 3px 6px; }
-  .player-avatar { width: 24px; height: 24px; font-size: 13px; }
-  .player-name { font-size: 11px; }
+  .player-avatar { width: 22px; height: 22px; font-size: 12px; }
+  .player-name { font-size: 10px; }
 }
 
 footer {
