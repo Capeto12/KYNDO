@@ -75,12 +75,23 @@ header {
   gap: 4px;
 }
 
+.brand-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-flex;
+}
+
+.brand-link:hover {
+  text-decoration: none;
+}
+
 .brand-title {
   margin: 0;
   font-size: 34px;
   font-weight: 800;
   color: #2d2d2d;
   letter-spacing: 1px;
+  text-decoration: none;
 }
 
 .brand-subtitle {
@@ -92,6 +103,7 @@ header {
   background: rgba(0, 0, 0, 0.04);
   padding: 2px 8px;
   border-radius: 12px;
+  text-decoration: none;
 }
 
 .hud-block {
