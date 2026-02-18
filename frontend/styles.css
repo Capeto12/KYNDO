@@ -73,6 +73,15 @@ header {
   display: inline-flex;
 }
 
+.brand-link:hover {
+  text-decoration: none;
+}
+
+.brand-title,
+.brand-subtitle {
+  text-decoration: none;
+}
+
 /* User Info at top of header */
 #user-info {
   display: flex;
