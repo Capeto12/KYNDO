@@ -149,24 +149,39 @@ footer a:hover {
   font-size: 14px;
   color: #fff;
   padding: 8px;
-    .header-bar { grid-template-columns: auto 1fr auto; gap: 6px; }
-    .brand-title { font-size: 28px; }
-    .brand-subtitle { font-size: 11px; }
-    .hud-block { font-size: 10px; }
-    .hud-row { flex-wrap: nowrap; gap: 6px; }
-    .hud-meta { font-size: 10px; gap: 6px; padding: 3px 8px; }
-    .actions-block { flex-wrap: wrap; justify-content: flex-end; }
-    .player-info { padding: 3px 6px; }
-    .player-avatar { width: 24px; height: 24px; font-size: 13px; }
-    .player-name { font-size: 11px; }
   text-shadow: none;
+}
+
+.hud-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 12px;
+  color: #3a3a3a;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 6px 10px;
+  border-radius: 8px;
 }
 
 .hud-row {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
+}
+
+.hud-row > span {
+  font-weight: 600;
+}
+
+.hud-score-highlight {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
 }
 
 .hud-meta {
