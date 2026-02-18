@@ -27,6 +27,7 @@ build/
 # Logs
 logs/
 *.log
+nohup.out
 
 # Variables de entorno
 .env
