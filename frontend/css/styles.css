@@ -50,7 +50,7 @@ body {
 }
 
 header {
-  padding: 18px 16px 14px;
+  padding: 10px 12px 10px;
   text-align: left;
   border: none;
   background: #ffffff;
@@ -78,9 +78,6 @@ header {
 .brand-title {
   margin: 0;
   font-size: 34px;
-  background: rgba(0, 0, 0, 0.04);
-  padding: 4px 10px;
-  border-radius: 12px;
   font-weight: 800;
   color: #2d2d2d;
   letter-spacing: 1px;
@@ -92,9 +89,9 @@ header {
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: #6b7280;
-  border-bottom: 2px solid #6b7280;
-  padding-bottom: 2px;
-  display: inline-block;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 
 .hud-block {
@@ -105,6 +102,9 @@ header {
   align-items: center;
   font-size: 12px;
   color: #3a3a3a;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 6px 10px;
+  border-radius: 8px;
 }
 
 .hud-row {
