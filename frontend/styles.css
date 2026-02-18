@@ -181,11 +181,7 @@ footer a:hover {
 }
 
 .hud-score-highlight {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-  color: white;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-weight: 700;
+  /* Styles removed for better alignment */
 }
 
 .hud-meta {
@@ -205,10 +201,7 @@ footer a:hover {
 }
 
 #hud-score {
-  font-size: 16px;
-  font-weight: 800;
-  color: #ff9800;
-  text-shadow: none;
+  /* Styles removed for better alignment */
 }
 
 .grade-info {
@@ -295,8 +288,7 @@ footer a:hover {
   .hud-row { flex-wrap: wrap; gap: 6px; font-size: 10px; }
   .hud-meta { font-size: 10px; gap: 8px; }
   .hud-score-highlight { 
-    padding: 2px 6px; 
-    font-size: 10px;
+    /* Styles removed for better alignment */
   }
   .header-links { font-size: 10px; }
   .player-info { padding: 3px 6px; }
@@ -305,11 +297,7 @@ footer a:hover {
 }
 
 #hud-grade {
-  font-size: 14px;
-  font-weight: 800;
-  color: #ff9800;
-  animation: gradeHighlight 1s ease-in-out infinite alternate;
-  transition: all 0.3s ease;
+  /* Styles removed for better alignment */
 }
 
 #hud-grade.grade-up {
@@ -322,29 +310,20 @@ footer a:hover {
   }
   25% {
     transform: scale(1.5) rotate(-10deg);
-    color: #ff6b6b;
   }
   50% {
     transform: scale(1.8) rotate(10deg);
-    color: #4ecdc4;
   }
   75% {
     transform: scale(1.5) rotate(-5deg);
-    color: #95e1d3;
   }
   100% {
     transform: scale(1);
-    color: #ff9800;
   }
 }
 
 @keyframes gradeHighlight {
-  from {
-    color: #ff9800;
-  }
-  to {
-    color: #ffb84d;
-  }
+  /* Animation removed for better alignment */
 }
 
 /* =========================
@@ -832,7 +811,7 @@ footer a:hover {
   }
   
   #hud-score {
-    font-size: 18px;
+    /* Styles removed for better alignment */
   }
   
   #user-info {
