@@ -255,42 +255,29 @@ footer a:hover {
 
 @media (max-width: 640px) {
   .header-bar {
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
-    align-items: start;
-    gap: 6px 8px;
-  }
-  
-  /* Brand stays in top-left */
-  .brand-block {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  
-  /* User stays in top-right */
-  .actions-block {
-    grid-column: 2;
-    grid-row: 1;
-    justify-content: flex-end;
-    align-items: flex-start;
-  }
-  
-  /* HUD wraps to second row, spans full width */
-  .hud-block {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    font-size: 10px;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
+    gap: 4px 8px;
   }
-  
+
   .brand-title { font-size: 24px; }
-  .brand-subtitle { font-size: 11px; }
-  .hud-row { flex-wrap: wrap; gap: 6px; font-size: 10px; }
-  .hud-meta { font-size: 10px; gap: 8px; }
+  .brand-subtitle { font-size: 10px; padding: 2px 6px; }
+  .hud-block {
+    font-size: 9px;
+    padding: 4px 6px;
+    gap: 2px;
+  }
+  .hud-row { flex-wrap: wrap; gap: 4px; justify-content: center; }
+  .hud-row > span { font-size: 9px; white-space: nowrap; }
+  .hud-meta { font-size: 9px; gap: 6px; }
   .hud-score-highlight { 
     /* Styles removed for better alignment */
   }
   .header-links { font-size: 10px; }
+  .actions-block {
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+  }
   .player-info { padding: 3px 6px; }
   .player-avatar { width: 22px; height: 22px; font-size: 12px; }
   .player-name { font-size: 11px; }
