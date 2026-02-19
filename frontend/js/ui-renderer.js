@@ -260,3 +260,26 @@ export function showResultWithDelay(resultOverlay, gameState, passed) {
     resultOverlay.show(gameState, passed);
   }, RESULT_DELAY_MS);
 }
+
+/**
+ * Muestra una notificación temporal de recompensa al jugador.
+ * Se inserta en el DOM y se elimina automáticamente tras unos segundos.
+ *
+ * @param {string} message - Mensaje a mostrar
+ * @param {number} [durationMs=3000] - Duración de la notificación en ms
+ */
+export function showRewardNotification(message, durationMs = 3000) {
+  const notification = document.createElement('div');
+  notification.className = 'reward-notification';
+  notification.textContent = message;
+  document.body.appendChild(notification);
+
+  // Forzar reflow para que la transición CSS se active correctamente
+  void notification.offsetHeight;
+  notification.classList.add('reward-notification--visible');
+
+  setTimeout(() => {
+    notification.classList.remove('reward-notification--visible');
+    notification.addEventListener('transitionend', () => notification.remove(), { once: true });
+  }, durationMs);
+}

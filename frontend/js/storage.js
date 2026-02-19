@@ -76,6 +76,37 @@ export class ProgressStorage {
   }
 
   /**
+   * Carga el inventario de recompensas del jugador
+   * @returns {Object[]} Array de recompensas guardadas
+   */
+  loadRewards() {
+    const progress = this.load();
+    return Array.isArray(progress.rewards) ? progress.rewards : [];
+  }
+
+  /**
+   * Guarda el inventario de recompensas del jugador
+   * @param {Object[]} rewards - Array de recompensas a persistir
+   * @returns {boolean} true si se guardó correctamente
+   */
+  saveRewards(rewards) {
+    const progress = this.load();
+    progress.rewards = rewards;
+    return this.save(progress);
+  }
+
+  /**
+   * Agrega una recompensa al inventario persistido
+   * @param {Object} reward - Recompensa a agregar
+   * @returns {boolean} true si se guardó correctamente
+   */
+  addReward(reward) {
+    const rewards = this.loadRewards();
+    rewards.push(reward);
+    return this.saveRewards(rewards);
+  }
+
+  /**
    * Limpia todo el progreso guardado
    * @returns {boolean} true si se limpió correctamente
    */

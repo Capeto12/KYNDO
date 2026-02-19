@@ -165,6 +165,41 @@ export const BATTLE_CONFIG = {
   DEMO_DECK_SIZE: 40
 };
 
+// =========================
+// SISTEMA DE RECOMPENSAS
+// =========================
+
+/**
+ * Umbral de racha para ganar una carta en Memory
+ * Al llegar a esta racha el jugador recibe 1 carta
+ * @type {number}
+ */
+export const STREAK_CARD_REWARD_THRESHOLD = 3;
+
+/**
+ * Tamaños de paquete según el tipo
+ * @type {Object.<string, number>}
+ */
+export const PACK_SIZES = {
+  PURCHASED: 40,    // Paquete de venta
+  GRADE_PASS: 5,    // Premio por pasar un grado
+  KOMBAT_MATCH: 5   // Premio por ganar una partida de Kombat
+};
+
+/**
+ * Cantidad de cartas ganadas por ganar un set en Kombat
+ * @type {number}
+ */
+export const KOMBAT_SET_WIN_CARDS = 1;
+
+/**
+ * Grado mínimo por defecto para cartas de nivel restringido.
+ * Úsalo como valor de `minGrade` al definir cartas en el catálogo
+ * cuando no se especifica un grado mínimo concreto para la carta.
+ * @type {number}
+ */
+export const LEVEL_LOCKED_MIN_GRADE = 3;
+
 /**
  * Equivalencias de factores A/D (para UI)
  */
