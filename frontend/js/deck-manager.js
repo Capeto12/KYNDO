@@ -350,16 +350,18 @@ export class DeckManager {
   // -------------------------
 
   /**
-   * Devuelve las cartas que tienen DUPLICATES_FOR_EXCHANGE o más copias
-   * disponibles en colección (copias intercambiables = count - 1).
+   * Devuelve las cartas que tienen más de DUPLICATES_FOR_EXCHANGE copias
+   * en colección. Se requiere al menos DUPLICATES_FOR_EXCHANGE + 1 copias
+   * para poder canjear: se gastan DUPLICATES_FOR_EXCHANGE y siempre se
+   * conserva al menos 1 copia de la carta original tras el canje.
    * @returns {Array<{ cardId, availableToExchange }>}
    */
   getExchangeableDuplicates() {
     return Object.values(this.state.collection)
-      .filter(entry => entry.count >= DUPLICATES_FOR_EXCHANGE)
+      .filter(entry => entry.count > DUPLICATES_FOR_EXCHANGE)
       .map(entry => ({
         cardId: entry.cardId,
-        availableToExchange: Math.floor(entry.count / DUPLICATES_FOR_EXCHANGE),
+        availableToExchange: Math.floor((entry.count - 1) / DUPLICATES_FOR_EXCHANGE),
       }));
   }
 
@@ -371,7 +373,7 @@ export class DeckManager {
    */
   exchangeDuplicates(sourceCardId) {
     const entry = this.state.collection[sourceCardId];
-    if (!entry || entry.count < DUPLICATES_FOR_EXCHANGE) {
+    if (!entry || entry.count <= DUPLICATES_FOR_EXCHANGE) {
       return { success: false, newCardId: null, reason: 'not_enough_copies' };
     }
 
