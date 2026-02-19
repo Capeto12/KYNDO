@@ -71,6 +71,7 @@ export const PACK_SIZE = 5;                // Cartas por sobre
 export const STARTING_PACK_CREDITS = 3;   // Créditos gratis al inicio
 export const DUPLICATES_FOR_EXCHANGE = 5; // Copias extra para canjear 1 carta nueva
 export const STORAGE_KEY = 'kyndo_decks_v1';
+export const STARTING_COPIES_PER_CARD = 2; // Copias iniciales de cada carta para garantizar al menos 80 cartas al inicio (CARD_CATALOG.length × STARTING_COPIES_PER_CARD)
 
 /** Pesos de rareza para apertura aleatoria de sobres */
 const RARITY_WEIGHTS = {
@@ -143,8 +144,15 @@ export class DeckManager {
 
   /** Estado inicial por defecto */
   _defaultState() {
+    // Pre-poblar colección con STARTING_COPIES_PER_CARD copias de cada carta
+    // del catálogo (CARD_CATALOG.length × STARTING_COPIES_PER_CARD cartas en total)
+    // para garantizar suficientes cartas para jugar hasta el último grado del Nivel 1
+    const collection = {};
+    for (const card of CARD_CATALOG) {
+      collection[card.cardId] = { cardId: card.cardId, count: STARTING_COPIES_PER_CARD };
+    }
     return {
-      collection: {},            // { [cardId]: { cardId, count } }
+      collection,
       decks: [
         { id: 1, name: 'Mazo 1', mode: 'pairs',  cards: [] },
         { id: 2, name: 'Mazo 2', mode: 'kombat', cards: [] },
