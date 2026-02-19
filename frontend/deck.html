@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KYNDO - Área de Mazo</title>
+  <style>
+    /* ============================================================
+       KYNDO - Deck Area Styles
+       ============================================================ */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+    :root {
+      --color-bg: #f0f4f8;
+      --color-surface: #ffffff;
+      --color-primary: #667eea;
+      --color-primary-dark: #764ba2;
+      --color-danger: #e53e3e;
+      --color-success: #38a169;
+      --color-warning: #d69e2e;
+      --color-text: #2d3748;
+      --color-text-muted: #718096;
+      --color-border: #e2e8f0;
+
+      /* Rareza */
+      --rarity-abundante:   #2ECC71;
+      --rarity-frecuente:   #2E8BFF;
+      --rarity-rara:        #FF2E2E;
+      --rarity-excepcional: #7B3EFF;
+
+      --radius: 12px;
+      --shadow: 0 4px 16px rgba(0,0,0,0.10);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+    }
+
+    /* ---- Header ---- */
+    .app-header {
+      background: var(--color-surface);
+      box-shadow: var(--shadow-sm);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .app-header a { text-decoration: none; color: var(--color-primary); font-weight: 700; }
+    .app-header h1 { font-size: 22px; font-weight: 800; color: var(--color-text); flex: 1; }
+    .header-badge {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: #fff;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ---- Layout ---- */
+    .page-body {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px 16px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .page-body { grid-template-columns: 1fr; }
+    }
+
+    /* ---- Panel genérico ---- */
+    .panel {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .panel-body { padding: 16px; }
+
+    /* ---- Botones ---- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: #fff;
+    }
+    .btn-primary:not(:disabled):hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-success { background: var(--color-success); color: #fff; }
+    .btn-success:not(:disabled):hover { filter: brightness(1.1); }
+    .btn-danger  { background: var(--color-danger);  color: #fff; }
+    .btn-ghost   { background: transparent; color: var(--color-primary); border: 2px solid var(--color-primary); }
+    .btn-ghost:not(:disabled):hover { background: var(--color-primary); color: #fff; }
+    .btn-sm { padding: 5px 10px; font-size: 11px; border-radius: 6px; }
+
+    /* ---- Filtros colección ---- */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-bar input[type="search"] {
+      flex: 1;
+      min-width: 140px;
+      padding: 7px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+    .filter-bar input[type="search"]:focus { border-color: var(--color-primary); }
+    .filter-bar select {
+      padding: 7px 10px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+
+    /* ---- Grid de cartas ---- */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .card-grid::-webkit-scrollbar { width: 6px; }
+    .card-grid::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+
+    /* ---- Card tile ---- */
+    .card-tile {
+      border-radius: 10px;
+      border: 2px solid var(--color-border);
+      background: #fafafa;
+      padding: 10px 8px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      user-select: none;
+    }
+    .card-tile:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(102,126,234,0.25);
+      border-color: var(--color-primary);
+    }
+    .card-tile.selected {
+      border-color: var(--color-primary);
+      background: #eef2ff;
+      box-shadow: 0 0 0 3px rgba(102,126,234,0.3);
+    }
+    .card-tile .card-emoji {
+      font-size: 32px;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .card-tile .card-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-text);
+      line-height: 1.2;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+    .card-tile .card-count {
+      display: inline-block;
+      background: var(--color-primary);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1px 7px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .card-tile .card-count.has-dupe {
+      background: var(--color-warning);
+    }
+
+    /* Rareza — franja inferior */
+    .rarity-strip {
+      height: 4px;
+      border-radius: 0 0 8px 8px;
+      margin: 6px -8px -8px;
+    }
+    .rarity-strip.abundante   { background: var(--rarity-abundante); }
+    .rarity-strip.frecuente   { background: var(--rarity-frecuente); }
+    .rarity-strip.rara        { background: var(--rarity-rara); }
+    .rarity-strip.excepcional { background: var(--rarity-excepcional); }
+
+    /* Badge rareza small */
+    .rarity-badge {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: #fff;
+    }
+    .rarity-badge.abundante   { background: var(--rarity-abundante); }
+    .rarity-badge.frecuente   { background: var(--rarity-frecuente); }
+    .rarity-badge.rara        { background: var(--rarity-rara); }
+    .rarity-badge.excepcional { background: var(--rarity-excepcional); }
+
+    /* ---- Empty state ---- */
+    .empty-state {
+      text-align: center;
+      padding: 30px 16px;
+      color: var(--color-text-muted);
+    }
+    .empty-state .empty-icon { font-size: 36px; margin-bottom: 8px; }
+    .empty-state p { font-size: 13px; }
+
+    /* ---- Sidebar ---- */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+    /* ---- Deck slots ---- */
+    .deck-slot { border-radius: var(--radius); border: 2px solid var(--color-border); overflow: hidden; }
+    .deck-slot-header {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: linear-gradient(135deg, #f7fafc, #edf2f7);
+      border-bottom: 1px solid var(--color-border);
+      flex-wrap: wrap;
+    }
+    .deck-slot-title-area { display: flex; align-items: center; gap: 8px; }
+    .deck-slot-icon { font-size: 20px; }
+    .deck-slot-name {
+      font-size: 14px;
+      font-weight: 700;
+      background: none;
+      border: none;
+      border-bottom: 1px dashed transparent;
+      font-family: inherit;
+      color: var(--color-text);
+      padding: 2px 4px;
+      cursor: pointer;
+      border-radius: 4px;
+      max-width: 120px;
+    }
+    .deck-slot-name:focus {
+      outline: none;
+      border-bottom-color: var(--color-primary);
+      background: #eef2ff;
+    }
+    .deck-mode-toggle {
+      display: flex;
+      gap: 4px;
+    }
+    .mode-btn {
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--color-border);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #fff;
+      color: var(--color-text-muted);
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .mode-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    .deck-card-list {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+      min-height: 48px;
+    }
+    .deck-card-list::-webkit-scrollbar { width: 4px; }
+    .deck-card-list::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+
+    .deck-card-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #f7fafc;
+      border: 1px solid var(--color-border);
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .deck-card-row:hover { background: #fee2e2; border-color: var(--color-danger); }
+    .deck-card-row .dcr-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .deck-card-row .dcr-icon { font-size: 14px; }
+    .deck-card-row .dcr-remove { font-size: 14px; opacity: 0.5; }
+    .deck-card-row:hover .dcr-remove { opacity: 1; color: var(--color-danger); }
+
+    .deck-footer {
+      padding: 8px 12px;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--color-text-muted);
+      background: #f7fafc;
+    }
+
+    /* ---- Pack / Tienda ---- */
+    .pack-area {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pack-credits-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #fff9db, #fefcbf);
+      border: 1px solid #ecc94b;
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .pack-credits-display .credit-icon { font-size: 24px; }
+    .pack-credits-display .credit-info { flex: 1; }
+    .pack-credits-display .credit-count { font-size: 20px; font-weight: 800; color: var(--color-warning); }
+    .pack-credits-display .credit-label { font-size: 11px; color: var(--color-text-muted); }
+
+    .pack-preview {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pack-preview.visible { display: flex; }
+    .pack-cards-reveal {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .pack-card-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 2px solid var(--color-border);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      animation: pop-in 0.3s ease forwards;
+      opacity: 0;
+    }
+    @keyframes pop-in {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .pack-card-chip.abundante   { border-color: var(--rarity-abundante); }
+    .pack-card-chip.frecuente   { border-color: var(--rarity-frecuente); }
+    .pack-card-chip.rara        { border-color: var(--rarity-rara); }
+    .pack-card-chip.excepcional { border-color: var(--rarity-excepcional); background: #f5efff; }
+
+    /* ---- Canje de duplicados ---- */
+    .exchange-area { display: flex; flex-direction: column; gap: 10px; }
+    .exchange-card-select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+    .exchange-card-select:focus { border-color: var(--color-primary); }
+    .exchange-result {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f0fff4;
+      border: 1px solid #9ae6b4;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-success);
+      animation: pop-in 0.3s ease;
+    }
+    .exchange-result.visible { display: flex; }
+    .exchange-result.error {
+      background: #fff5f5;
+      border-color: #feb2b2;
+      color: var(--color-danger);
+    }
+
+    /* ---- Action bar (move selected) ---- */
+    .action-bar {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 14px;
+      background: #eef2ff;
+      border-top: 1px solid var(--color-border);
+    }
+    .action-bar.visible { display: flex; }
+    .action-bar .action-label { font-size: 13px; font-weight: 700; color: var(--color-primary); flex: 1; }
+
+    .action-deck-select {
+      padding: 6px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--color-border);
+      font-family: inherit;
+      font-size: 12px;
+      background: #fff;
+      outline: none;
+    }
+    .action-deck-select:focus { border-color: var(--color-primary); }
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 200;
+    }
+    .toast {
+      padding: 10px 18px;
+      border-radius: 10px;
+      background: var(--color-text);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      animation: slide-in 0.25s ease;
+      max-width: 280px;
+    }
+    .toast.success { background: var(--color-success); }
+    .toast.error   { background: var(--color-danger); }
+    @keyframes slide-in {
+      from { transform: translateX(60px); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+
+    /* ---- Section heading ---- */
+    .section-heading {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--color-text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header class="app-header">
+  <a href="../index.html">← Menú</a>
+  <h1>🃏 Área de Mazo</h1>
+  <span class="header-badge" id="header-stats">Cargando…</span>
+</header>
+
+<!-- ===== Main layout ===== -->
+<div class="page-body">
+
+  <!-- ===== COLECCIÓN (left column) ===== -->
+  <section>
+    <div class="section-heading">📦 Mi Colección</div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title" id="collection-count-label">0 cartas</span>
+        <div class="filter-bar">
+          <input type="search" id="filter-search" placeholder="Buscar…" />
+          <select id="filter-rarity">
+            <option value="">Todas las rarezas</option>
+            <option value="abundante">Abundante</option>
+            <option value="frecuente">Frecuente</option>
+            <option value="rara">Rara</option>
+            <option value="excepcional">Excepcional</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Action bar (shown when a card is selected) -->
+      <div class="action-bar" id="action-bar">
+        <span class="action-label" id="action-label">Carta seleccionada</span>
+        <select id="action-deck-select" class="action-deck-select">
+          <option value="1">→ Mazo 1</option>
+          <option value="2">→ Mazo 2</option>
+          <option value="3">→ Mazo 3</option>
+        </select>
+        <button class="btn btn-primary btn-sm" id="btn-move-to-deck">Mover al mazo</button>
+        <button class="btn btn-ghost btn-sm" id="btn-cancel-selection">✕ Cancelar</button>
+      </div>
+
+      <!-- Card grid -->
+      <div class="panel-body">
+        <div class="card-grid" id="collection-grid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SIDEBAR (right column) ===== -->
+  <aside class="sidebar">
+
+    <!-- ===== MAZOS ===== -->
+    <div>
+      <div class="section-heading">🗂️ Mis Mazos</div>
+      <div id="deck-slots">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- ===== SOBRES / TIENDA ===== -->
+    <div>
+      <div class="section-heading">🎁 Abrir Sobre</div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="pack-area">
+            <div class="pack-credits-display">
+              <span class="credit-icon">🎫</span>
+              <div class="credit-info">
+                <div class="credit-count" id="pack-credits">0</div>
+                <div class="credit-label">créditos de sobre disponibles</div>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" id="btn-open-pack">
+              🎁 Abrir Sobre
+            </button>
+
+            <!-- Reveal de cartas obtenidas -->
+            <div class="pack-preview" id="pack-preview">
+              <div style="font-size:13px; font-weight:700; color:#4a5568;">✨ ¡Cartas obtenidas!</div>
+              <div class="pack-cards-reveal" id="pack-reveal-chips"></div>
+              <button class="btn btn-ghost btn-sm" id="btn-close-pack-preview">Listo</button>
+            </div>
+
+            <p style="font-size:11px; color:#718096; line-height:1.5;">
+              Cada sobre contiene <strong>5 cartas</strong> aleatorias con probabilidad ponderada por rareza.
+              Gana créditos completando partidas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CANJE DE DUPLICADOS ===== -->
+    <div>
+      <div class="section-heading">🔄 Canjear Duplicados</div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="exchange-area">
+            <p style="font-size:12px; color:#718096; line-height:1.5;">
+              Por cada <strong>5 copias</strong> de la misma carta puedes obtener
+              <strong>1 carta nueva</strong> que aún no tengas.
+            </p>
+
+            <select class="exchange-card-select" id="exchange-select">
+              <option value="">— Selecciona una carta —</option>
+            </select>
+
+            <button class="btn btn-success" id="btn-exchange" disabled>
+              🔄 Canjear (5 copias → 1 carta nueva)
+            </button>
+
+            <div class="exchange-result" id="exchange-result"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- ===== Toast container ===== -->
+<div class="toast-container" id="toast-container"></div>
+
+<script type="module">
+import {
+  deckManager,
+  CARD_CATALOG,
+  CATALOG_INDEX,
+  MAX_DECKS,
+  DUPLICATES_FOR_EXCHANGE,
+} from './js/deck-manager.js';
+
+// ============================================================
+// Emoji map por rareza (visual placeholder para cartas sin imagen)
+// ============================================================
+const RARITY_EMOJI = {
+  abundante:   '🟢',
+  frecuente:   '🔵',
+  rara:        '🔴',
+  excepcional: '🟣',
+};
+
+const DECK_ICONS = ['🗂️', '⚔️', '🧠'];
+
+// ============================================================
+// Estado local de UI
+// ============================================================
+let selectedCardId = null;  // carta seleccionada en colección
+
+// ============================================================
+// Utilidades
+// ============================================================
+function pluralize(count, singular, plural) {
+  return count === 1 ? singular : plural;
+}
+
+function toast(msg, type = '') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+function rarityLabel(r) {
+  const map = { abundante: 'Abundante', frecuente: 'Frecuente', rara: 'Rara', excepcional: 'Excepcional' };
+  return map[r] || r;
+}
+
+// ============================================================
+// Renderizado de la colección
+// ============================================================
+function renderCollection() {
+  const grid = document.getElementById('collection-grid');
+  const countLabel = document.getElementById('collection-count-label');
+  const searchVal = document.getElementById('filter-search').value.toLowerCase();
+  const rarityVal = document.getElementById('filter-rarity').value;
+
+  let cards = deckManager.getCollectionCards();
+
+  if (searchVal) {
+    cards = cards.filter(c => c.title.toLowerCase().includes(searchVal) || c.cardId.includes(searchVal));
+  }
+  if (rarityVal) {
+    cards = cards.filter(c => c.rarity === rarityVal);
+  }
+
+  // Sort: excepcional > rara > frecuente > abundante, then alpha
+  const rarityOrder = { excepcional: 0, rara: 1, frecuente: 2, abundante: 3 };
+  cards.sort((a, b) => (rarityOrder[a.rarity] ?? 4) - (rarityOrder[b.rarity] ?? 4) || a.title.localeCompare(b.title));
+
+  grid.innerHTML = '';
+
+  if (cards.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">🃏</div>
+        <p>No hay cartas en tu colección.<br>¡Abre un sobre para comenzar!</p>
+      </div>`;
+    countLabel.textContent = '0 cartas';
+    return;
+  }
+
+  const totalUnique = Object.keys(deckManager.state.collection).length;
+  const totalCards  = Object.values(deckManager.state.collection).reduce((s, e) => s + e.count, 0);
+  countLabel.textContent = `${totalUnique} únicas · ${totalCards} total`;
+
+  cards.forEach(card => {
+    const tile = document.createElement('div');
+    tile.className = 'card-tile' + (selectedCardId === card.cardId ? ' selected' : '');
+    tile.dataset.cardId = card.cardId;
+
+    const hasDupe = card.count >= DUPLICATES_FOR_EXCHANGE;
+    tile.innerHTML = `
+      <span class="card-emoji">${RARITY_EMOJI[card.rarity] || '🃏'}</span>
+      <div class="card-name">${card.title}</div>
+      <span class="card-count ${hasDupe ? 'has-dupe' : ''}">×${card.count}</span>
+      <div class="rarity-strip ${card.rarity}"></div>`;
+
+    tile.addEventListener('click', () => toggleCardSelection(card.cardId));
+    grid.appendChild(tile);
+  });
+}
+
+function toggleCardSelection(cardId) {
+  if (selectedCardId === cardId) {
+    selectedCardId = null;
+  } else {
+    selectedCardId = cardId;
+  }
+  updateActionBar();
+  renderCollection();
+}
+
+function updateActionBar() {
+  const bar = document.getElementById('action-bar');
+  const label = document.getElementById('action-label');
+  if (selectedCardId) {
+    const info = CATALOG_INDEX[selectedCardId];
+    label.textContent = `Seleccionada: ${info?.title || selectedCardId}`;
+    bar.classList.add('visible');
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
+// ============================================================
+// Renderizado de mazos
+// ============================================================
+function renderDecks() {
+  const container = document.getElementById('deck-slots');
+  container.innerHTML = '';
+
+  deckManager.state.decks.forEach((deck, i) => {
+    const cards = deckManager.getDeckCards(deck.id);
+
+    const slot = document.createElement('div');
+    slot.className = 'deck-slot';
+    slot.style.marginBottom = '12px';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'deck-slot-header';
+    header.innerHTML = `
+      <div class="deck-slot-title-area">
+        <span class="deck-slot-icon">${DECK_ICONS[i] || '🗂️'}</span>
+        <input
+          class="deck-slot-name"
+          type="text"
+          value="${escapeHtml(deck.name)}"
+          maxlength="30"
+          title="Haz clic para renombrar"
+          data-deck-id="${deck.id}"
+        />
+      </div>
+      <div class="deck-mode-toggle">
+        <button class="mode-btn ${deck.mode === 'pairs'  ? 'active' : ''}" data-deck-id="${deck.id}" data-mode="pairs">Pares</button>
+        <button class="mode-btn ${deck.mode === 'kombat' ? 'active' : ''}" data-deck-id="${deck.id}" data-mode="kombat">Kombat</button>
+      </div>`;
+    slot.appendChild(header);
+
+    // Card list
+    const list = document.createElement('div');
+    list.className = 'deck-card-list';
+
+    if (cards.length === 0) {
+      list.innerHTML = `<div style="font-size:12px; color:#a0aec0; text-align:center; padding:8px 0;">
+        Sin cartas · selecciona una de la colección y muévela aquí
+      </div>`;
+    } else {
+      cards.forEach(card => {
+        const row = document.createElement('div');
+        row.className = 'deck-card-row';
+        row.title = 'Clic para devolver a la colección';
+        row.innerHTML = `
+          <span class="dcr-icon">${RARITY_EMOJI[card.rarity] || '🃏'}</span>
+          <span class="dcr-name">${escapeHtml(card.title)}</span>
+          <span class="rarity-badge ${card.rarity}">${rarityLabel(card.rarity)}</span>
+          <span class="dcr-remove" title="Quitar del mazo">✕</span>`;
+        row.addEventListener('click', () => {
+          deckManager.moveToCollection(card.cardId, deck.id);
+          toast(`${card.title} devuelta a la colección`);
+          render();
+        });
+        list.appendChild(row);
+      });
+    }
+    slot.appendChild(list);
+
+    // Footer
+    const footer = document.createElement('div');
+    footer.className = 'deck-footer';
+    footer.innerHTML = `<span>${cards.length} ${pluralize(cards.length, 'carta', 'cartas')}</span>
+      <span>${deck.mode === 'pairs' ? '🧠 Pares' : '⚔️ Kombat'}</span>`;
+    slot.appendChild(footer);
+
+    container.appendChild(slot);
+  });
+
+  // Rename listeners
+  container.querySelectorAll('.deck-slot-name').forEach(input => {
+    input.addEventListener('change', () => {
+      const deckId = parseInt(input.dataset.deckId, 10);
+      deckManager.renameDeck(deckId, input.value);
+      render();
+    });
+  });
+
+  // Mode toggle listeners
+  container.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const deckId = parseInt(btn.dataset.deckId, 10);
+      deckManager.setDeckMode(deckId, btn.dataset.mode);
+      render();
+    });
+  });
+}
+
+// ============================================================
+// Créditos de sobre
+// ============================================================
+function renderPackCredits() {
+  document.getElementById('pack-credits').textContent = deckManager.state.packCredits;
+  document.getElementById('btn-open-pack').disabled = deckManager.state.packCredits < 1;
+}
+
+// ============================================================
+// Select de canje
+// ============================================================
+function renderExchangeSelect() {
+  const sel = document.getElementById('exchange-select');
+  const exchangeable = deckManager.getExchangeableDuplicates();
+
+  // Preserve current selection
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— Selecciona una carta —</option>';
+
+  exchangeable.forEach(e => {
+    const info = CATALOG_INDEX[e.cardId];
+    const opt = document.createElement('option');
+    opt.value = e.cardId;
+    const copies = deckManager.collectionCount(e.cardId);
+    opt.textContent = `${info?.title || e.cardId} (×${copies} → ${e.availableToExchange} ${pluralize(e.availableToExchange, 'canje', 'canjes')})`;
+    sel.appendChild(opt);
+  });
+
+  if (prev && exchangeable.find(e => e.cardId === prev)) sel.value = prev;
+  document.getElementById('btn-exchange').disabled = !sel.value;
+}
+
+// ============================================================
+// Header stats
+// ============================================================
+function renderHeaderStats() {
+  const state = deckManager.state;
+  const totalUnique = Object.keys(state.collection).length;
+  const totalInDecks = state.decks.reduce((s, d) => s + d.cards.length, 0);
+  document.getElementById('header-stats').textContent =
+    `${totalUnique} únicas · ${totalInDecks} en mazos · ${CARD_CATALOG.length} disponibles`;
+}
+
+// ============================================================
+// Render principal
+// ============================================================
+function render() {
+  renderCollection();
+  renderDecks();
+  renderPackCredits();
+  renderExchangeSelect();
+  renderHeaderStats();
+}
+
+// ============================================================
+// Utilidad XSS
+// ============================================================
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.appendChild(document.createTextNode(str));
+  return d.innerHTML;
+}
+
+// ============================================================
+// Event listeners
+// ============================================================
+
+// Filtros
+document.getElementById('filter-search').addEventListener('input', renderCollection);
+document.getElementById('filter-rarity').addEventListener('change', renderCollection);
+
+// Mover selección a mazo
+document.getElementById('btn-move-to-deck').addEventListener('click', () => {
+  if (!selectedCardId) return;
+  const deckId = parseInt(document.getElementById('action-deck-select').value, 10);
+  const info = CATALOG_INDEX[selectedCardId];
+  const ok = deckManager.moveToDeck(selectedCardId, deckId);
+  if (ok) {
+    toast(`${info?.title || selectedCardId} movida al Mazo ${deckId}`, 'success');
+    selectedCardId = null;
+    render();
+  } else {
+    toast('No hay copias disponibles en la colección', 'error');
+  }
+});
+
+// Cancelar selección
+document.getElementById('btn-cancel-selection').addEventListener('click', () => {
+  selectedCardId = null;
+  updateActionBar();
+  renderCollection();
+});
+
+// Abrir sobre
+document.getElementById('btn-open-pack').addEventListener('click', () => {
+  const result = deckManager.openPack();
+  if (!result.success) {
+    toast('No tienes créditos de sobre 😢', 'error');
+    return;
+  }
+
+  // Mostrar cartas obtenidas
+  const preview = document.getElementById('pack-preview');
+  const chips   = document.getElementById('pack-reveal-chips');
+  chips.innerHTML = '';
+
+  result.cards.forEach((cardId, idx) => {
+    const info = CATALOG_INDEX[cardId] ?? { title: cardId, rarity: 'abundante' };
+    const chip = document.createElement('div');
+    chip.className = `pack-card-chip ${info.rarity}`;
+    chip.style.animationDelay = `${idx * 0.12}s`;
+    chip.innerHTML = `<span>${RARITY_EMOJI[info.rarity] || '🃏'}</span> ${escapeHtml(info.title)}`;
+    chips.appendChild(chip);
+  });
+
+  preview.classList.add('visible');
+  render();
+});
+
+// Cerrar preview de sobre
+document.getElementById('btn-close-pack-preview').addEventListener('click', () => {
+  document.getElementById('pack-preview').classList.remove('visible');
+});
+
+// Canje: habilitar botón al seleccionar carta
+document.getElementById('exchange-select').addEventListener('change', function () {
+  document.getElementById('btn-exchange').disabled = !this.value;
+  document.getElementById('exchange-result').classList.remove('visible', 'error');
+});
+
+// Canje: ejecutar
+document.getElementById('btn-exchange').addEventListener('click', () => {
+  const sourceId = document.getElementById('exchange-select').value;
+  if (!sourceId) return;
+
+  const result = deckManager.exchangeDuplicates(sourceId);
+  const resEl  = document.getElementById('exchange-result');
+  resEl.classList.remove('visible', 'error');
+
+  if (result.success) {
+    const newInfo = CATALOG_INDEX[result.newCardId] ?? { title: result.newCardId, rarity: 'abundante' };
+    resEl.innerHTML = `✅ ¡Obtuviste: <span style="margin:0 6px">${RARITY_EMOJI[newInfo.rarity]} ${escapeHtml(newInfo.title)}</span>!`;
+    resEl.classList.add('visible');
+    toast(`¡Nueva carta: ${newInfo.title}!`, 'success');
+  } else {
+    const msgs = {
+      not_enough_copies: 'No tienes 5 copias de esa carta.',
+      collection_complete: '¡Ya tienes todas las cartas del catálogo! 🎉',
+    };
+    resEl.textContent = msgs[result.reason] || 'Error al canjear.';
+    resEl.classList.add('visible', 'error');
+  }
+
+  render();
+});
+
+// ============================================================
+// Bootstrap
+// ============================================================
+deckManager.load();
+render();
+</script>
+
+</body>
+</html>
