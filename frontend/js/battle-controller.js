@@ -250,7 +250,7 @@ export class BattleController {
     const readyToStart = this.playerReady && this.opponentReady;
     const hasGame = !!this.game;
     const ongoing = hasGame && this.game.status === 'ongoing';
-    const busy = this.isPlayingRound;
+    const busy = this.isPlayingRound || this.isAutoPlaying;
 
     if (readyBtn) {
       readyBtn.disabled = this.playerPrep.length < 5 || hasGame;
@@ -280,8 +280,12 @@ export class BattleController {
     if (this.game) return;
     if (this.playerPrep.length !== 5 || this.opponentPrep.length !== 5) return;
 
+    const totalPlayerCards = this.playerPrep.length + this.fullPlayerDeck.length;
+    const totalOpponentCards = this.opponentPrep.length + this.opponentDrawPile.length;
     this.game = new BattleGame(this.playerPrep, this.opponentPrep, {
-      environment: 'neutral'
+      environment: 'neutral',
+      totalPlayerCards,
+      totalOpponentCards
     });
 
     // Configuramos mazos vivos y pilas de robo
@@ -399,19 +403,22 @@ export class BattleController {
       }
     }
 
+    this.isPlayingRound = false;
     this.renderer.setLoading(false);
     this.renderer.setButtonsEnabled(this.game.status === 'ongoing');
     this.updateReadyStates();
-    this.isPlayingRound = false;
   }
 
   /**
    * Auto-play entire battle
    */
   async autoBattle() {
-    if (!this.game || this.game.status !== 'ongoing') return;
-
+    if (this.isAutoPlaying) return; // prevent double-start
     this.isAutoPlaying = true;
+    if (!this.game || this.game.status !== 'ongoing') {
+      this.isAutoPlaying = false;
+      return;
+    }
     this.renderer.setButtonsEnabled(false);
     this.updateReadyStates();
 

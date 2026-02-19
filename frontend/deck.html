@@ -216,6 +216,24 @@
       background: var(--color-warning);
     }
 
+    /* Tags de modo de juego en colección */
+    .card-tags {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .card-mode-tag {
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 4px;
+      line-height: 1;
+    }
+
+    .tag-pairs  { background: rgba(56, 161, 105, 0.15); }
+    .tag-kombat { background: rgba(229, 62, 62, 0.12); }
+
     /* Rareza — franja inferior */
     .rarity-strip {
       height: 4px;
@@ -345,6 +363,9 @@
       color: var(--color-text-muted);
       background: #f7fafc;
     }
+
+    .deck-count-ok  { color: var(--color-success); font-weight: 700; }
+    .deck-count-low { color: var(--color-warning);  font-weight: 700; }
 
     /* ---- Pack / Tienda ---- */
     .pack-area {
@@ -530,9 +551,9 @@
       <div class="action-bar" id="action-bar">
         <span class="action-label" id="action-label">Carta seleccionada</span>
         <select id="action-deck-select" class="action-deck-select">
-          <option value="1">→ Mazo 1</option>
-          <option value="2">→ Mazo 2</option>
-          <option value="3">→ Mazo 3</option>
+          <option value="1">→ Mazo Pairs 🧠</option>
+          <option value="2">→ Mazo Kombat ⚔️</option>
+          <option value="3">→ Mazo Extra 🗂️</option>
         </select>
         <button class="btn btn-primary btn-sm" id="btn-move-to-deck">Mover al mazo</button>
         <button class="btn btn-ghost btn-sm" id="btn-cancel-selection">✕ Cancelar</button>
@@ -713,10 +734,14 @@ function renderCollection() {
     tile.dataset.cardId = card.cardId;
 
     const hasDupe = card.count >= DUPLICATES_FOR_EXCHANGE;
+    const tags = deckManager.getCardTags(card.cardId);
+    const MODE_TAG = { pairs: '<span class="card-mode-tag tag-pairs">🧠</span>', kombat: '<span class="card-mode-tag tag-kombat">⚔️</span>' };
+    const tagHtml = tags.map(t => MODE_TAG[t] || '').join('');
     tile.innerHTML = `
       <span class="card-emoji">${RARITY_EMOJI[card.rarity] || '🃏'}</span>
       <div class="card-name">${card.title}</div>
       <span class="card-count ${hasDupe ? 'has-dupe' : ''}">×${card.count}</span>
+      ${tagHtml ? `<div class="card-tags">${tagHtml}</div>` : ''}
       <div class="rarity-strip ${card.rarity}"></div>`;
 
     tile.addEventListener('click', () => toggleCardSelection(card.cardId));
@@ -812,7 +837,9 @@ function renderDecks() {
     // Footer
     const footer = document.createElement('div');
     footer.className = 'deck-footer';
-    footer.innerHTML = `<span>${cards.length} ${pluralize(cards.length, 'carta', 'cartas')}</span>
+    const deckTarget = 40;
+    const countClass = cards.length >= deckTarget ? 'deck-count-ok' : 'deck-count-low';
+    footer.innerHTML = `<span class="${countClass}">${cards.length}/${deckTarget} ${pluralize(cards.length, 'carta', 'cartas')}</span>
       <span>${deck.mode === 'pairs' ? '🧠 Pares' : '⚔️ Kombat'}</span>`;
     slot.appendChild(footer);
 
@@ -876,9 +903,10 @@ function renderExchangeSelect() {
 function renderHeaderStats() {
   const state = deckManager.state;
   const totalUnique = Object.keys(state.collection).length;
-  const totalInDecks = state.decks.reduce((s, d) => s + d.cards.length, 0);
+  const pairsDecks  = state.decks.filter(d => d.mode === 'pairs').reduce((s, d) => s + d.cards.length, 0);
+  const kombatDecks = state.decks.filter(d => d.mode === 'kombat').reduce((s, d) => s + d.cards.length, 0);
   document.getElementById('header-stats').textContent =
-    `${totalUnique} únicas · ${totalInDecks} en mazos · ${CARD_CATALOG.length} disponibles`;
+    `${totalUnique} en colección · 🧠 ${pairsDecks} Pairs · ⚔️ ${kombatDecks} Kombat`;
 }
 
 // ============================================================
@@ -916,7 +944,8 @@ document.getElementById('btn-move-to-deck').addEventListener('click', () => {
   const info = CATALOG_INDEX[selectedCardId];
   const ok = deckManager.moveToDeck(selectedCardId, deckId);
   if (ok) {
-    toast(`${info?.title || selectedCardId} movida al Mazo ${deckId}`, 'success');
+    const deck = deckManager.getDeck(deckId);
+    toast(`${info?.title || selectedCardId} movida a ${deck?.name || 'Mazo ' + deckId}`, 'success');
     selectedCardId = null;
     render();
   } else {

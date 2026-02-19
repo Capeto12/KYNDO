@@ -15,6 +15,17 @@ export class BattleUIRenderer {
   }
 
   /**
+   * Scoped querySelector helper - prefers battleContainer, falls back to document
+   * @param {string} id - Element ID (without #)
+   * @returns {Element|null}
+   */
+  _qs(id) {
+    return this.battleContainer
+      ? this.battleContainer.querySelector('#' + id)
+      : document.getElementById(id);
+  }
+
+  /**
    * Create and mount battle interface
    */
   mountBattle() {
@@ -25,18 +36,19 @@ export class BattleUIRenderer {
             <div class="compact-row"><span>Energia:</span><span id="energyValue">0%</span></div>
             <div class="energy-bar"><div id="energyFill" class="energy-fill"></div></div>
             <div class="compact-row" style="margin-top:4px;">
-              <span>Carac.</span>
-              <select id="charSelect" class="select-char">
-                <option value="P">P</option>
-                <option value="S">S</option>
-                <option value="W">W</option>
-                <option value="H">H</option>
-                <option value="A">A</option>
-                <option value="AD">AD</option>
-                <option value="C">C</option>
-                <option value="E">E</option>
-                <option value="SD">SD</option>
-                <option value="R">R</option>
+              <span>Factor:</span>
+              <select id="charSelect" class="select-char" title="Factor a destacar">
+                <option value="">— Ver factor —</option>
+                <option value="P">Predación (P)</option>
+                <option value="S">Velocidad (S)</option>
+                <option value="W">Anatomía (W)</option>
+                <option value="H">Estrategia (H)</option>
+                <option value="A">Agresividad (A)</option>
+                <option value="AD">Adaptabilidad (AD)</option>
+                <option value="C">Camuflaje (C)</option>
+                <option value="E">Evasión (E)</option>
+                <option value="SD">Def. Social (SD)</option>
+                <option value="R">Robustez (R)</option>
               </select>
             </div>
             <button id="readyBtn" class="btn-primary btn-ready" disabled>READY</button>
@@ -125,10 +137,16 @@ export class BattleUIRenderer {
 
     this.playerDeckListEl.innerHTML = deck
       .map((card, index) => {
+        const imgHtml = card.image
+          ? `<img src="${card.image}" alt="${card.name}" class="card-thumb">`
+          : '<span class="card-thumb-placeholder">🃏</span>';
         return `
           <div class="staging-card" data-index="${index}" draggable="true">
-            <div><strong>${card.name}</strong></div>
-            <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+            ${imgHtml}
+            <div class="card-thumb-info">
+              <div><strong>${card.name}</strong></div>
+              <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+            </div>
           </div>
         `;
       })
@@ -139,12 +157,20 @@ export class BattleUIRenderer {
     const prepEl = this.battleContainer.querySelector('#playerPrepList');
     if (!prepEl) return;
     prepEl.innerHTML = prepDeck
-      .map((card, index) => `
-        <div class="prep-card" data-index="${index}" draggable="true">
-          <div><strong>${card.name}</strong></div>
-          <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
-        </div>
-      `)
+      .map((card, index) => {
+        const imgHtml = card.image
+          ? `<img src="${card.image}" alt="${card.name}" class="card-thumb">`
+          : '<span class="card-thumb-placeholder">🃏</span>';
+        return `
+          <div class="prep-card" data-index="${index}" draggable="true">
+            ${imgHtml}
+            <div class="card-thumb-info">
+              <div><strong>${card.name}</strong></div>
+              <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+            </div>
+          </div>
+        `;
+      })
       .join('');
   }
 
@@ -157,11 +183,11 @@ export class BattleUIRenderer {
   }
 
   revealOpponentCard(card) {
-    const oppReveal = document.getElementById('opponentReveal');
+    const oppReveal = this._qs('opponentReveal');
     if (!oppReveal || !card) return;
     oppReveal.innerHTML = `
       <h5>${card.name}</h5>
-      <div class="meta">ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+      <div class="meta">⚔️ ${card.calculateAttack()} · 🛡️ ${card.calculateDefense()}</div>
       <div style="margin-top:6px; display:flex; gap:6px; align-items:center;">
         <img src="${card.image}" alt="${card.name}" style="width:56px; height:56px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.15);">
         <span class="badge">${card.rarity || ''}</span>
@@ -173,7 +199,7 @@ export class BattleUIRenderer {
    * Display card in arena
    */
   displayCard(card, slot) {
-    const slotElement = document.getElementById(slot);
+    const slotElement = this._qs(slot) || document.getElementById(slot);
     if (!slotElement) return;
 
     const html = `
@@ -203,7 +229,7 @@ export class BattleUIRenderer {
    * Reset player slot to empty droppable state
    */
   resetPlayerSlot() {
-    const slotElement = document.getElementById('playerCardSlot');
+    const slotElement = this._qs('playerCardSlot');
     if (!slotElement) return;
     slotElement.innerHTML = '<div class="empty-slot">Arrastra aquí tu carta para esta ronda</div>';
   }
@@ -244,8 +270,8 @@ export class BattleUIRenderer {
     const playerPercent = (playerHealth / maxHealth) * 100;
     const opponentPercent = (opponentHealth / maxHealth) * 100;
 
-    const playerBar = document.getElementById('playerHealthBar');
-    const opponentBar = document.getElementById('opponentHealthBar');
+    const playerBar = this._qs('playerHealthBar');
+    const opponentBar = this._qs('opponentHealthBar');
 
     if (playerBar) {
       playerBar.style.width = `${playerPercent}%`;
@@ -257,9 +283,8 @@ export class BattleUIRenderer {
       opponentBar.classList.toggle('low-health', opponentHealth <= maxHealth * 0.25);
     }
 
-    // Update health values
-    const playerValue = document.getElementById('playerHealthValue');
-    const opponentValue = document.getElementById('opponentHealthValue');
+    const playerValue = this._qs('playerHealthValue');
+    const opponentValue = this._qs('opponentHealthValue');
 
     if (playerValue) playerValue.textContent = `${Math.max(0, playerHealth)}/${maxHealth}`;
     if (opponentValue) opponentValue.textContent = `${Math.max(0, opponentHealth)}/${maxHealth}`;
@@ -269,12 +294,12 @@ export class BattleUIRenderer {
    * Show round result
    */
   displayRoundResult(roundData) {
-    const resultDiv = document.getElementById('roundResult');
-    const messageDiv = document.getElementById('resultMessage');
-    const damageDealtDiv = document.getElementById('damageDealt');
-    const damageTakenDiv = document.getElementById('damageTaken');
-    const winnerSlot = document.getElementById('winnerSlot');
-    const oppReveal = document.getElementById('opponentReveal');
+    const resultDiv = this._qs('roundResult');
+    const messageDiv = this._qs('resultMessage');
+    const damageDealtDiv = this._qs('damageDealt');
+    const damageTakenDiv = this._qs('damageTaken');
+    const winnerSlot = this._qs('winnerSlot');
+    const oppReveal = this._qs('opponentReveal');
 
     if (!resultDiv) return;
 
@@ -282,13 +307,13 @@ export class BattleUIRenderer {
     let damageClass = '';
 
     if (roundData.winner === 'player') {
-      message = `✅ ¡Victoria en ronda ${roundData.round}!`;
+      message = `✅ ¡Ronda ${roundData.roundInGame}/${roundData.roundsPerGame} · Game ${roundData.gameNumber} ganada!`;
       damageClass = 'victory';
     } else if (roundData.winner === 'opponent') {
-      message = `❌ Derrota en ronda ${roundData.round}`;
+      message = `❌ Ronda ${roundData.roundInGame}/${roundData.roundsPerGame} · Game ${roundData.gameNumber} perdida`;
       damageClass = 'defeat';
     } else {
-      message = `⚔️ Empate en ronda ${roundData.round}`;
+      message = `⚔️ Ronda ${roundData.roundInGame}/${roundData.roundsPerGame} · Game ${roundData.gameNumber} empatada`;
       damageClass = 'draw';
     }
 
@@ -299,42 +324,40 @@ export class BattleUIRenderer {
     damageTakenDiv.textContent = `-${roundData.opponentDamage}`;
 
     if (winnerSlot) {
-      winnerSlot.innerHTML = '';
-      if (roundData.winner === 'player') {
-        winnerSlot.innerHTML = `
-          <div class="arena-card">
+      const playerWinner = roundData.winner === 'player';
+      const oppWinner = roundData.winner === 'opponent';
+      winnerSlot.innerHTML = `
+        <div class="arena-duel">
+          <div class="arena-card ${playerWinner ? 'arena-winner' : oppWinner ? 'arena-loser' : ''}">
             <img src="${roundData.playerCardImage}" alt="${roundData.playerCard}">
             <div class="card-info">
               <h4>${roundData.playerCard}</h4>
               <div class="card-stats">
-                <div class="attack-stat">ATQ ${roundData.playerAttack}</div>
-                <div class="defense-stat">DEF ${roundData.playerDefense}</div>
+                <div class="attack-stat">⚔️ ${roundData.playerAttack}</div>
+                <div class="defense-stat">🛡️ ${roundData.playerDefense}</div>
               </div>
-              <div class="result-badge">WIN</div>
+              ${playerWinner ? '<div class="result-badge">WIN</div>' : oppWinner ? '<div class="result-badge result-badge--loss">LOSS</div>' : '<div class="result-badge result-badge--draw">DRAW</div>'}
             </div>
-          </div>`;
-      } else if (roundData.winner === 'opponent') {
-        winnerSlot.innerHTML = `
-          <div class="arena-card">
+          </div>
+          <div class="arena-vs-badge">${roundData.winner === 'draw' ? '🤝' : '⚡'}</div>
+          <div class="arena-card ${oppWinner ? 'arena-winner' : playerWinner ? 'arena-loser' : ''}">
             <img src="${roundData.opponentCardImage}" alt="${roundData.opponentCard}">
             <div class="card-info">
               <h4>${roundData.opponentCard}</h4>
               <div class="card-stats">
-                <div class="attack-stat">ATQ ${roundData.opponentAttack}</div>
-                <div class="defense-stat">DEF ${roundData.opponentDefense}</div>
+                <div class="attack-stat">⚔️ ${roundData.opponentAttack}</div>
+                <div class="defense-stat">🛡️ ${roundData.opponentDefense}</div>
               </div>
-              <div class="result-badge">WIN</div>
+              ${oppWinner ? '<div class="result-badge">WIN</div>' : playerWinner ? '<div class="result-badge result-badge--loss">LOSS</div>' : '<div class="result-badge result-badge--draw">DRAW</div>'}
             </div>
-          </div>`;
-      } else {
-        winnerSlot.innerHTML = '<div class="battle-card"><div class="card-info"><h4>Empate</h4><div class="card-stats"><div class="attack-stat">ATQ = DEF</div></div><div class="result-badge" style="background:#fbbf24;color:#78350f;">DRAW</div></div></div>';
-      }
+          </div>
+        </div>`;
     }
 
     if (oppReveal) {
       oppReveal.innerHTML = `
         <h5>${roundData.opponentCard}</h5>
-        <div class="meta">ATQ ${roundData.opponentAttack} · DEF ${roundData.opponentDefense}</div>
+        <div class="meta">⚔️ ${roundData.opponentAttack} · 🛡️ ${roundData.opponentDefense}</div>
         <div style="margin-top:6px; display:flex; gap:6px; align-items:center;">
           <img src="${roundData.opponentCardImage}" alt="${roundData.opponentCard}" style="width:56px; height:56px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.15);">
           <span class="badge">${roundData.opponentRarity || ''}</span>
@@ -354,9 +377,9 @@ export class BattleUIRenderer {
    * Update round counter and stats
    */
   updateStats(totalRounds, playerWins, draws) {
-    const roundsEl = document.getElementById('roundsPlayed');
-    const winsEl = document.getElementById('playerWins');
-    const drawsEl = document.getElementById('draws');
+    const roundsEl = this._qs('roundsPlayed');
+    const winsEl = this._qs('playerWins');
+    const drawsEl = this._qs('draws');
 
     if (roundsEl) roundsEl.textContent = totalRounds;
     if (winsEl) winsEl.textContent = playerWins;
@@ -367,19 +390,19 @@ export class BattleUIRenderer {
    * Update round number display
    */
   updateRoundNumber(gameNumber, totalGames, roundInGame, roundsPerGame, playerGameWins, opponentGameWins, drawGames) {
-    const roundEl = document.getElementById('roundNumber');
+    const roundEl = this._qs('roundNumber');
     if (roundEl) {
       roundEl.textContent = `Game ${gameNumber}/${totalGames} · Ronda ${roundInGame}/${roundsPerGame}`;
     }
 
-    const pGames = document.getElementById('playerGameWins');
-    const oGames = document.getElementById('opponentGameWins');
-    const dGames = document.getElementById('drawGameWins');
+    const pGames = this._qs('playerGameWins');
+    const oGames = this._qs('opponentGameWins');
+    const dGames = this._qs('drawGameWins');
     if (pGames) pGames.textContent = playerGameWins;
     if (oGames) oGames.textContent = opponentGameWins;
     if (dGames) dGames.textContent = drawGames;
 
-    // Header HUD (si existe)
+    // Header HUD (si existe, buscar en document ya que está fuera del battle container)
     const hudGame = document.getElementById('battle-hud-game');
     const hudGamesTotal = document.getElementById('battle-hud-gamesTotal');
     const hudRound = document.getElementById('battle-hud-round');
@@ -397,8 +420,8 @@ export class BattleUIRenderer {
    * Show battle end screen
    */
   showBattleEnd(summary) {
-    const resultDiv = document.getElementById('roundResult');
-    const messageDiv = document.getElementById('resultMessage');
+    const resultDiv = this._qs('roundResult');
+    const messageDiv = this._qs('resultMessage');
 
     if (!resultDiv) return;
 
@@ -428,8 +451,7 @@ export class BattleUIRenderer {
    * Enable/disable battle buttons
    */
   setButtonsEnabled(enabled) {
-    const autoBattleBtn = document.getElementById('autoBattleBtn');
-
+    const autoBattleBtn = this._qs('autoBattleBtn');
     if (autoBattleBtn) autoBattleBtn.disabled = !enabled;
   }
 
@@ -437,8 +459,8 @@ export class BattleUIRenderer {
    * Show loading state
    */
   setLoading(isLoading) {
-    const battleBtn = document.getElementById('battleBtn');
-    const autoBattleBtn = document.getElementById('autoBattleBtn');
+    const battleBtn = this._qs('battleBtn');
+    const autoBattleBtn = this._qs('autoBattleBtn');
     if (battleBtn) {
       if (!battleBtn.dataset.defaultLabel) {
         battleBtn.dataset.defaultLabel = battleBtn.textContent || 'Ronda';
