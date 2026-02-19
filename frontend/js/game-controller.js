@@ -21,7 +21,8 @@ import {
   FocusOverlay,
   ResultOverlay,
   BoardRenderer,
-  showResultWithDelay
+  showResultWithDelay,
+  showRewardNotification
 } from './ui-renderer.js';
 import { progressStorage } from './storage.js';
 import {
@@ -30,6 +31,7 @@ import {
   validateRequiredElements,
   ValidationError
 } from './error-handler.js';
+import { checkStreakReward, getGradePassReward } from './rewards.js';
 
 /**
  * Controlador principal del juego Memory
@@ -223,6 +225,15 @@ export class MemoryGameController {
     // Actualizar HUD
     this.hudRenderer.update(this.gameState.getState());
 
+    // Comprobar si la racha actual genera una recompensa de carta
+    if (result.isMatch) {
+      const streakReward = checkStreakReward(this.gameState.streak);
+      if (streakReward) {
+        progressStorage.addReward(streakReward);
+        showRewardNotification(MESSAGES.REWARD_STREAK_CARD);
+      }
+    }
+
     // Verificar fin de nivel
     this.checkEndOfLevel();
   }
@@ -264,6 +275,11 @@ export class MemoryGameController {
    */
   handlePrimaryButton(passed) {
     if (passed) {
+      // Otorgar recompensa por pasar el grado antes de subir
+      const gradeReward = getGradePassReward(this.currentGrade);
+      progressStorage.addReward(gradeReward);
+      showRewardNotification(MESSAGES.REWARD_GRADE_PASS_PACK);
+
       // Subir de grado
       this.currentGrade = getNextGrade(this.currentGrade);
       this.saveGrade();

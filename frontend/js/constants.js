@@ -67,7 +67,13 @@ export const MESSAGES = {
   // Errores
   ERROR_INIT: 'Error al cargar el juego. Por favor, recarga la página.',
   ERROR_STORAGE: 'Error al guardar el progreso',
-  ERROR_LOAD: 'Error al cargar el progreso'
+  ERROR_LOAD: 'Error al cargar el progreso',
+
+  // Recompensas
+  REWARD_STREAK_CARD: '¡Racha! Ganaste una carta nueva 🎴',
+  REWARD_GRADE_PASS_PACK: '¡Grado superado! Ganaste un paquete de cartas 🎁',
+  REWARD_KOMBAT_SET_CARD: '¡Set ganado! Ganaste una carta de Kombat 🃏',
+  REWARD_KOMBAT_MATCH_PACK: '¡Victoria! Ganaste un paquete de 5 cartas 🏆'
 };
 
 /**
