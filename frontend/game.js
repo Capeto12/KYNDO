@@ -372,7 +372,7 @@ class UIManager {
     
     if (passed) {
       this.resultTitle.textContent = 'Nivel superado';
-      this.resultSub.textContent = 'Eficiencia confirmada. El tablero sube de grado.';
+      this.resultSub.textContent = 'Eficiencia confirmada. El tablero sube de grado. 🎁 ¡Ganaste un sobre de 5 cartas!';
       this.btnPrimary.textContent = 'Continuar';
       this.btnSecondary.textContent = 'Reintentar (opcional)';
     } else {
@@ -681,6 +681,10 @@ class MemoryGame {
     this.ui.hideResult();
     
     if (passed) {
+      // Otorgar crédito de sobre al pasar el grado
+      this.addPackCredit();
+      this.showRewardNotification('🎁 ¡Sobre ganado! Visita "Mis Cartas" para abrirlo.');
+
       // Subir de grado si es posible
       const nextGrade = this.state.memoryGrade + 1;
       if (GRADE_CONFIG[nextGrade]) {
@@ -690,6 +694,43 @@ class MemoryGame {
     }
     
     this.startRun();
+  }
+
+  /**
+   * Agrega un crédito de sobre al almacenamiento del área de mazos.
+   */
+  addPackCredit() {
+    const DECK_KEY = 'kyndo_decks_v1';
+    try {
+      const raw = localStorage.getItem(DECK_KEY);
+      if (raw) {
+        const state = JSON.parse(raw);
+        if (typeof state.packCredits === 'number') {
+          state.packCredits += 1;
+          localStorage.setItem(DECK_KEY, JSON.stringify(state));
+        }
+      }
+    } catch (e) {
+      console.warn('No se pudo agregar crédito de sobre:', e);
+    }
+  }
+
+  /**
+   * Muestra una notificación temporal de recompensa al jugador.
+   * @param {string} message - Mensaje a mostrar
+   * @param {number} [durationMs=4000] - Duración en ms
+   */
+  showRewardNotification(message, durationMs = 4000) {
+    const el = document.createElement('div');
+    el.className = 'reward-notification';
+    el.textContent = message;
+    document.body.appendChild(el);
+    void el.offsetHeight; // forzar reflow para activar transición CSS
+    el.classList.add('reward-notification--visible');
+    setTimeout(() => {
+      el.classList.remove('reward-notification--visible');
+      el.addEventListener('transitionend', () => el.remove(), { once: true });
+    }, durationMs);
   }
 
   /**
