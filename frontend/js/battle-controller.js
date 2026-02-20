@@ -610,12 +610,11 @@ export class DemoBattleController extends BattleController {
   }
 
   buildOpponentDeck(playerDeck) {
-    return playerDeck.map((card, idx) => {
-      const bump = (idx % 4) + 1; // modest difficulty bump
-      const rarityShift = ['abundante', 'frecuente', 'rara', 'excepcional'];
+    const rarityShift = ['abundante', 'frecuente', 'rara', 'excepcional'];
+    return playerDeck.map((card) => {
       const nextRarity = rarityShift[Math.min(rarityShift.length - 1, rarityShift.indexOf(card.rarity) + 1)] || card.rarity;
 
-      const plus = (v) => Math.min(10, v + bump * 0.2);
+      const plus = (v) => Math.min(10, v + 0.5);
 
       return {
         ...card,
