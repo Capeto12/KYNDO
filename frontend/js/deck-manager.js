@@ -71,7 +71,7 @@ export const PACK_SIZE = 5;                // Cartas por sobre
 export const STARTING_PACK_CREDITS = 3;   // Créditos gratis al inicio
 export const DUPLICATES_FOR_EXCHANGE = 5; // Copias extra para canjear 1 carta nueva
 export const STORAGE_KEY = 'kyndo_decks_v1';
-export const STARTING_COPIES_PER_CARD = 2; // Copias iniciales de cada carta para garantizar al menos 80 cartas al inicio (CARD_CATALOG.length × STARTING_COPIES_PER_CARD)
+export const STARTING_COPIES_PER_CARD = 3; // Copias iniciales de cada carta: 2 van a los mazos por defecto (1 Pairs + 1 Kombat), 1 queda en colección disponible
 
 /** Pesos de rareza para apertura aleatoria de sobres */
 const RARITY_WEIGHTS = {
@@ -146,17 +146,27 @@ export class DeckManager {
   _defaultState() {
     // Pre-poblar colección con STARTING_COPIES_PER_CARD copias de cada carta
     // del catálogo (CARD_CATALOG.length × STARTING_COPIES_PER_CARD cartas en total)
-    // para garantizar suficientes cartas para jugar hasta el último grado del Nivel 1
     const collection = {};
     for (const card of CARD_CATALOG) {
       collection[card.cardId] = { cardId: card.cardId, count: STARTING_COPIES_PER_CARD };
     }
+
+    // Pre-poblar Mazo Pairs y Mazo Kombat con las 40 cartas del catálogo (1 copia c/u)
+    // Consume 2 de las STARTING_COPIES_PER_CARD copias iniciales (una por mazo)
+    const defaultCards = CARD_CATALOG.map(c => c.cardId);
+    for (const cardId of defaultCards) {
+      if (collection[cardId]) {
+        collection[cardId].count -= 2; // 1 para pairs + 1 para kombat
+        if (collection[cardId].count <= 0) delete collection[cardId];
+      }
+    }
+
     return {
       collection,
       decks: [
-        { id: 1, name: 'Mazo 1', mode: 'pairs',  cards: [] },
-        { id: 2, name: 'Mazo 2', mode: 'kombat', cards: [] },
-        { id: 3, name: 'Mazo 3', mode: 'pairs',  cards: [] },
+        { id: 1, name: 'Mazo Pairs',  mode: 'pairs',  cards: [...defaultCards] },
+        { id: 2, name: 'Mazo Kombat', mode: 'kombat', cards: [...defaultCards] },
+        { id: 3, name: 'Mazo Extra',  mode: 'pairs',  cards: [] },
       ],
       packCredits: STARTING_PACK_CREDITS,
     };
@@ -407,6 +417,20 @@ export class DeckManager {
   // -------------------------
   // Utilidades de consulta
   // -------------------------
+
+  /**
+   * Devuelve los modos de juego en los que participa una carta (tags).
+   * Una carta puede estar en varios mazos con diferentes modos.
+   * @param {string} cardId
+   * @returns {string[]} Array de modos únicos, e.g. ['pairs', 'kombat']
+   */
+  getCardTags(cardId) {
+    const modes = new Set();
+    for (const deck of this.state.decks) {
+      if (deck.cards.includes(cardId)) modes.add(deck.mode);
+    }
+    return [...modes];
+  }
 
   /**
    * Devuelve las cartas de la colección enriquecidas con info del catálogo
