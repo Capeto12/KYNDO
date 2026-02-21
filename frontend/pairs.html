@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Memoria Aves</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+
+    header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #1f2937;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+
+    .status-bar {
+      margin-top: 4px;
+      font-size: 14px;
+      color: #9ca3af;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .status-bar span {
+      white-space: nowrap;
+    }
+
+    .btn {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: #111827;
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn:hover {
+      background: #1f2937;
+    }
+
+    #board {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 16px;
+      max-width: 960px;
+      margin: 0 auto 40px auto;
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      padding-top: 140%;
+      /* proporciÃƒÂ³n aproximada */
+      perspective: 800px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      transform-style: preserve-3d;
+      transition: transform 0.35s ease;
+      background: #020617;
+    }
+
+    .card.flipped .card-inner,
+    .card.matched .card-inner {
+      transform: rotateY(180deg);
+      cursor: default;
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #1d4ed8, #0f766e);
+      border: 1px solid #38bdf8;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      flex-direction: column;
+      background: #020617;
+      border: 1px solid #1f2937;
+      overflow: hidden;
+    }
+
+    .card-back img {
+      width: 100%;
+      height: 70%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-back-text {
+      padding: 6px 8px 8px 8px;
+      text-align: center;
+    }
+
+    .card-back-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 2px 0;
+    }
+
+    .card-back-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin: 0;
+    }
+
+    .message {
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #bbf7d0;
+      min-height: 18px;
+    }
+
+    .error {
+      text-align: center;
+      margin-top: 20px;
+      color: #f87171;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 12px 12px;
+      }
+
+      #board {
+        padding: 12px;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Juego de Memoria: Aves</h1>
+    <p class="subtitle">Encuentra las parejas de aves. Usando el paquete <code>pack-1.json</code>.</p>
+    <div class="status-bar">
+      <span id="moves">Movimientos: 0</span>
+      <span id="pairs">Parejas encontradas: 0 / 0</span>
+      <button class="btn" id="resetBtn">Reiniciar</button>
+    </div>
+  </header>
+
+  <div class="message" id="message"></div>
+  <div id="board"></div>
+  <p id="error" class="error"></p>
+
+  <script>
+    const JSON_PATH = "../birds/pack-1.json";
+
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+    let moves = 0;
+    let matches = 0;
+    let totalPairs = 0;
+
+    async function loadDeck() {
+      const errorBox = document.getElementById("error");
+      const messageBox = document.getElementById("message");
+      errorBox.textContent = "";
+      messageBox.textContent = "";
+      moves = 0;
+      matches = 0;
+      updateStatus();
+
+      try {
+        const response = await fetch(JSON_PATH);
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status + " " + response.statusText);
+        }
+        const data = await response.json();
+        if (!data.assets || !Array.isArray(data.assets)) {
+          throw new Error("El JSON no tiene 'assets' como arreglo.");
+        }
+
+        // Duplicar las cartas para tener parejas
+        const baseCards = data.assets;
+        totalPairs = baseCards.length;
+        const duplicated = baseCards
+          .concat(baseCards)
+          .map((card, index) => ({
+            id: card.id,
+            title: card.title,
+            image_url: card.image_url,
+            instanceId: index
+          }));
+
+        // Barajar
+        shuffleArray(duplicated);
+
+        renderBoard(duplicated);
+        updateStatus();
+        messageBox.textContent = "Haz clic en dos cartas para buscar una pareja.";
+      } catch (e) {
+        console.error(e);
+        errorBox.textContent =
+          "Error al cargar las cartas: " + e.message;
+      }
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    function renderBoard(deck) {
+      const board = document.getElementById("board");
+      board.innerHTML = "";
+
+      deck.forEach(cardData => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.id = cardData.id;
+        card.dataset.instanceId = cardData.instanceId;
+
+        const inner = document.createElement("div");
+        inner.className = "card-inner";
+
+        const front = document.createElement("div");
+        front.className = "card-face card-front";
+        front.textContent = "NAYRA BIRDS";
+
+        const back = document.createElement("div");
+        back.className = "card-face card-back";
+
+        const img = document.createElement("img");
+        img.src = "../" + cardData.image_url;
+        img.alt = cardData.title;
+
+        const textBox = document.createElement("div");
+        textBox.className = "card-back-text";
+
+        const title = document.createElement("p");
+        title.className = "card-back-title";
+        title.textContent = cardData.title;
+
+        const sub = document.createElement("p");
+        sub.className = "card-back-sub";
+        sub.textContent = "Encuentra su pareja.";
+
+        textBox.appendChild(title);
+        textBox.appendChild(sub);
+        back.appendChild(img);
+        back.appendChild(textBox);
+
+        inner.appendChild(front);
+        inner.appendChild(back);
+        card.appendChild(inner);
+
+        card.addEventListener("click", () => handleCardClick(card));
+        board.appendChild(card);
+      });
+    }
+
+    function handleCardClick(card) {
+      if (lockBoard) return;
+      if (card.classList.contains("flipped") || card.classList.contains("matched")) return;
+
+      card.classList.add("flipped");
+
+      if (!firstCard) {
+        firstCard = card;
+        return;
+      }
+
+      if (card === firstCard) return;
+
+      secondCard = card;
+      moves++;
+      updateStatus();
+
+      const isMatch = firstCard.dataset.id === secondCard.dataset.id;
+
+      if (isMatch) {
+        disableMatchedCards();
+      } else {
+        unflipCardsAfterDelay();
+      }
+    }
+
+    function disableMatchedCards() {
+      firstCard.classList.add("matched");
+      secondCard.classList.add("matched");
+      matches++;
+      updateStatus();
+      resetTurn();
+
+      if (matches === totalPairs) {
+        const messageBox = document.getElementById("message");
+        messageBox.textContent = "¡Excelente! Encontraste todas las parejas en " + moves + " movimientos.";
+      }
+    }
+
+    function unflipCardsAfterDelay() {
+      lockBoard = true;
+      setTimeout(() => {
+        if (firstCard) firstCard.classList.remove("flipped");
+        if (secondCard) secondCard.classList.remove("flipped");
+        resetTurn();
+      }, 800);
+    }
+
+    function resetTurn() {
+      [firstCard, secondCard] = [null, null];
+      lockBoard = false;
+    }
+
+    function updateStatus() {
+      document.getElementById("moves").textContent = "Movimientos: " + moves;
+      document.getElementById("pairs").textContent =
+        "Parejas encontradas: " + matches + " / " + totalPairs;
+    }
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      firstCard = null;
+      secondCard = null;
+      lockBoard = false;
+      loadDeck();
+    });
+
+    document.addEventListener("DOMContentLoaded", loadDeck);
+  </script>
+
+</body>
+
+</html>
