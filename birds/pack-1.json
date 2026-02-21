@@ -1,4 +1,4 @@
-﻿{
+{
   "packId": "birds",
   "title": "Aves de Colombia",
   "version": 1,
@@ -7,202 +7,242 @@
     {
       "id": "guacamaya-roja",
       "title": "Guacamaya Roja",
-      "image_url": "birds/img/guacamaya-roja.webp"
+      "image_url": "birds/img/guacamaya-roja.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "condor-andino",
       "title": "Cóndor Andino",
-      "image_url": "birds/img/condor-andino.webp"
+      "image_url": "birds/img/condor-andino.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "tucan",
       "title": "Tucán",
-      "image_url": "birds/img/tucan.webp"
+      "image_url": "birds/img/tucan.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "colibri",
       "title": "Colibrí",
-      "image_url": "birds/img/colibri.webp"
+      "image_url": "birds/img/colibri.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "garza-blanca",
       "title": "Garza Blanca",
-      "image_url": "birds/img/garza-blanca.webp"
+      "image_url": "birds/img/garza-blanca.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "flamenco",
       "title": "Flamenco",
-      "image_url": "birds/img/flamenco.webp"
+      "image_url": "birds/img/flamenco.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "buho",
       "title": "Búho",
-      "image_url": "birds/img/buho.webp"
+      "image_url": "birds/img/buho.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "picozapato",
       "title": "Picozapato",
-      "image_url": "birds/img/picozapato.webp"
+      "image_url": "birds/img/picozapato.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "martin-pescador",
       "title": "Martín Pescador",
-      "image_url": "birds/img/martin-pescador.webp"
+      "image_url": "birds/img/martin-pescador.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "halcon",
       "title": "Halcón",
-      "image_url": "birds/img/halcon.webp"
+      "image_url": "birds/img/halcon.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "aguila-harpia",
       "title": "Águila Harpía",
-      "image_url": "birds/img/aguila-harpia.webp"
+      "image_url": "birds/img/aguila-harpia.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "quetzal",
       "title": "Quetzal",
-      "image_url": "birds/img/quetzal.webp"
+      "image_url": "birds/img/quetzal.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "pinguino-humboldt",
       "title": "Pingüino de Humboldt",
-      "image_url": "birds/img/pinguino-humboldt.webp"
+      "image_url": "birds/img/pinguino-humboldt.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "pajaro-campana",
       "title": "Pájaro Campana",
-      "image_url": "birds/img/pajaro-campana.webp"
+      "image_url": "birds/img/pajaro-campana.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "gallito-roca",
       "title": "Gallito de las Rocas",
-      "image_url": "birds/img/gallito-roca.webp"
+      "image_url": "birds/img/gallito-roca.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "loro-orejiamarillo",
       "title": "Loro Orejiamarillo",
-      "image_url": "birds/img/loro-orejiamarillo.webp"
+      "image_url": "birds/img/loro-orejiamarillo.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "hoatzin",
       "title": "Hoatzín",
-      "image_url": "birds/img/hoatzin.webp"
+      "image_url": "birds/img/hoatzin.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "pato-crestudo",
       "title": "Pato Crestudo",
-      "image_url": "birds/img/pato-crestudo.webp"
+      "image_url": "birds/img/pato-crestudo.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "tangara-multicolor",
       "title": "Tangara Multicolor",
-      "image_url": "birds/img/tangara-multicolor.webp"
+      "image_url": "birds/img/tangara-multicolor.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "carpintero-real",
       "title": "Carpintero Real",
-      "image_url": "birds/img/carpintero-real.webp"
+      "image_url": "birds/img/carpintero-real.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "espatula-rosada",
       "title": "Espátula Rosada",
-      "image_url": "birds/img/espatula-rosada.webp"
+      "image_url": "birds/img/espatula-rosada.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "ibis-escarlata",
       "title": "Ibis Escarlata",
-      "image_url": "birds/img/ibis-escarlata.webp"
+      "image_url": "birds/img/ibis-escarlata.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "ciguena-jabiru",
       "title": "Cigüeña Jabirú",
-      "image_url": "birds/img/ciguena-jabiru.webp"
+      "image_url": "birds/img/ciguena-jabiru.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "pelicano-pardo",
       "title": "Pelícano Pardo",
-      "image_url": "birds/img/pelicano-pardo.webp"
+      "image_url": "birds/img/pelicano-pardo.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "cormoran",
       "title": "Cormorán",
-      "image_url": "birds/img/cormoran.webp"
+      "image_url": "birds/img/cormoran.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "fragata-magnificente",
       "title": "Fragata Magnificente",
-      "image_url": "birds/img/fragata-magnificente.webp"
+      "image_url": "birds/img/fragata-magnificente.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "piquero-patas-azules",
       "title": "Piquero de Patas Azules",
-      "image_url": "birds/img/piquero-patas-azules.webp"
+      "image_url": "birds/img/piquero-patas-azules.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "limpkin",
       "title": "Carrao",
-      "image_url": "birds/img/limpkin.webp"
+      "image_url": "birds/img/limpkin.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "paujil",
       "title": "Paujil",
-      "image_url": "birds/img/paujil.webp"
+      "image_url": "birds/img/paujil.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "perdiz-crestada",
       "title": "Perdiz Crestada",
-      "image_url": "birds/img/perdiz-crestada.webp"
+      "image_url": "birds/img/perdiz-crestada.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "paloma-coronita",
       "title": "Paloma Coronita",
-      "image_url": "birds/img/paloma-coronita.webp"
+      "image_url": "birds/img/paloma-coronita.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "trogon-enmascarado",
       "title": "Trogón Enmascarado",
-      "image_url": "birds/img/trogon-enmascarado.webp"
+      "image_url": "birds/img/trogon-enmascarado.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "barranquero",
       "title": "Barranquero",
-      "image_url": "birds/img/barranquero.webp"
+      "image_url": "birds/img/barranquero.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "amazilia",
       "title": "Amazilia",
-      "image_url": "birds/img/amazilia.webp"
+      "image_url": "birds/img/amazilia.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "piranga-roja",
       "title": "Piranga Roja",
-      "image_url": "birds/img/piranga-roja.webp"
+      "image_url": "birds/img/piranga-roja.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "oropendola",
       "title": "Oropéndola",
-      "image_url": "birds/img/oropendola.webp"
+      "image_url": "birds/img/oropendola.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "siete-colores",
       "title": "Siete Colores",
-      "image_url": "birds/img/siete-colores.webp"
+      "image_url": "birds/img/siete-colores.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "atrapamoscas",
       "title": "Atrapamoscas",
-      "image_url": "birds/img/atrapamoscas.webp"
+      "image_url": "birds/img/atrapamoscas.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "golondrina",
       "title": "Golondrina",
-      "image_url": "birds/img/golondrina.webp"
+      "image_url": "birds/img/golondrina.webp",
+      "tags": ["pares", "kombat"]
     },
     {
       "id": "canario-coronado",
       "title": "Canario Coronado",
-      "image_url": "birds/img/canario-coronado.webp"
+      "image_url": "birds/img/canario-coronado.webp",
+      "tags": ["pares", "kombat"]
     }
   ],
   "nextPage": null

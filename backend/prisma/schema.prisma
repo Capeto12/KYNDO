@@ -21,6 +21,7 @@ model Card {
   rarity        String   @default("common") // common, rare, epic, legendary
   rarityV2      String?  @map("rarity_v2") // New rarity field for migrations
   packId        String   @default("birds")
+  tags          String[] @default([]) // e.g., ["pares", "kombat"]
   metadata      Json?    // Additional metadata as JSON
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
