@@ -32,7 +32,7 @@ export function formatTime(ms) {
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
-  
+
   if (minutes > 0) {
     return `${minutes}m ${remainingSeconds}s`;
   }
@@ -213,7 +213,7 @@ export function debounce(func, wait) {
  */
 export function throttle(func, limit) {
   let inThrottle;
-  return function(...args) {
+  return function (...args) {
     if (!inThrottle) {
       func.apply(this, args);
       inThrottle = true;
@@ -221,3 +221,48 @@ export function throttle(func, limit) {
     }
   };
 }
+
+/**
+ * ==========================================
+ * THEME (DARK / LIGHT MODE)
+ * ==========================================
+ */
+export const themeManager = {
+  THEME_KEY: 'kyndo_theme_v1',
+
+  init() {
+    const saved = localStorage.getItem(this.THEME_KEY);
+    if (saved === 'dark' || saved === 'light') {
+      this.setTheme(saved);
+    } else {
+      // OSPref fallback
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.setTheme(prefersDark ? 'dark' : 'light');
+    }
+  },
+
+  setTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem(this.THEME_KEY, theme);
+    const event = new CustomEvent('themeChanged', { detail: { theme } });
+    document.dispatchEvent(event);
+  },
+
+  toggle() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const newTheme = current === 'dark' ? 'light' : 'dark';
+    this.setTheme(newTheme);
+    return newTheme;
+  },
+
+  getTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  }
+};
+
+// Auto-init al importar
+themeManager.init();

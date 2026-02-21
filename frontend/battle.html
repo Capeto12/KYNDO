@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
   <!-- Cache bust for latest UI -->
   <link rel="stylesheet" href="./css/styles.css?v=20260202-4">
 </head>
+
 <body style="margin:0; padding:0;">
   <div class="page-shell">
     <header>
@@ -31,6 +33,13 @@
         </div>
 
         <div class="actions-block">
+          <div class="header-links" style="display:flex; align-items:center;">
+            <button id="themeToggle" class="btn-ghost"
+              style="padding:4px 8px; font-size:16px; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border:none; background:none; cursor:pointer;"
+              title="Alternar Modo Oscuro">🌓</button>
+            <button id="btnHistory" class="btn-ghost"
+              style="padding:4px 10px;font-size:11px;min-width:0;margin:0;">Historial</button>
+          </div>
           <div id="user-info">
             <div class="player-info" id="battle-player">
               <div class="player-avatar">👤</div>
@@ -45,6 +54,22 @@
       </div>
     </header>
 
+    <!-- BATTLE HISTORY MODAL -->
+    <div id="historyOverlay"
+      style="position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:900;backdrop-filter:blur(4px);">
+      <div
+        style="background:#fff;width:90vw;max-width:400px;border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.3);display:flex;flex-direction:column;max-height:85vh;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h3 style="margin:0;font-size:18px;color:#1f2937;">Historial de Batallas</h3>
+          <button id="btnHistoryClose"
+            style="background:none;border:none;font-size:20px;cursor:pointer;color:#6b7280;">&times;</button>
+        </div>
+        <div id="historyList" style="flex:1;overflow-y:auto;padding-right:4px;">
+          <!-- Lista insertada por JS -->
+        </div>
+      </div>
+    </div>
+
     <main class="page-main">
       <div id="battleContainer"></div>
     </main>
@@ -56,9 +81,57 @@
 
   <script type="module">
     import { DemoBattleController } from './js/battle-controller.js';
+    import { progressStorage } from './js/storage.js';
 
     const battleContainer = document.getElementById('battleContainer');
     let currentController = null;
+
+    // History UI
+    const btnHistory = document.getElementById('btnHistory');
+    const historyOverlay = document.getElementById('historyOverlay');
+    const btnHistoryClose = document.getElementById('btnHistoryClose');
+    const historyList = document.getElementById('historyList');
+
+    function renderHistory() {
+      const history = progressStorage.loadBattleHistory();
+      if (history.length === 0) {
+        historyList.innerHTML = '<p style="text-align:center;color:#888;padding:20px 0;">A\u00FAn no hay batallas guardadas.</p>';
+        return;
+      }
+      historyList.innerHTML = history.map(h => {
+        const d = new Date(h.date);
+        const dateStr = d.toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' });
+        const timeStr = d.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+
+        let icon = '⚔️', color = '#8b5cf6', bg = '#f3e8ff';
+        if (h.result === 'victoria') { icon = '🏆'; color = '#10b981'; bg = '#f0fdf4'; }
+        else if (h.result === 'derrota') { icon = '❌'; color = '#ef4444'; bg = '#fef2f2'; }
+
+        return `<div style="display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:10px;border-radius:10px;border:1px solid #e5e7eb;background:${bg};margin-bottom:6px;">
+          <span style="font-size:24px;">${icon}</span>
+          <div>
+            <div style="font-weight:700;font-size:13px;text-transform:capitalize;">${h.result}</div>
+            <div style="font-size:11px;color:#6b7280;">${dateStr} ${timeStr} &bull; ${h.roundsPlayed} rondas</div>
+          </div>
+          <div style="font-weight:800;font-size:15px;color:${color};">${h.score}</div>
+        </div>`;
+      }).join('');
+    }
+
+    btnHistory.addEventListener('click', () => {
+      renderHistory();
+      historyOverlay.style.display = 'flex';
+    });
+
+    btnHistoryClose.addEventListener('click', () => {
+      historyOverlay.style.display = 'none';
+    });
+
+    // Theme UI
+    document.getElementById('themeToggle').addEventListener('click', async () => {
+      const { themeManager } = await import('./js/utils.js');
+      themeManager.toggle();
+    });
 
     async function startBattle() {
       battleContainer.innerHTML = '<div style="text-align:center;padding:40px;color:#a0aec0;">Cargando cartas... &#9203;</div>';
@@ -81,4 +154,5 @@
     startBattle();
   </script>
 </body>
+
 </html>

@@ -18,50 +18,51 @@
 // Catálogo de cartas (Pack 1)
 // ===========================
 export const CARD_CATALOG = [
-  { cardId: 'guacamaya-roja',        title: 'Guacamaya Roja',           rarity: 'abundante',   image: '../birds/img/guacamaya-roja.webp' },
-  { cardId: 'condor-andino',         title: 'C\u00f3ndor Andino',            rarity: 'rara',        image: '../birds/img/condor-andino.webp' },
-  { cardId: 'colibri',               title: 'Colobr\u00ed',                  rarity: 'abundante',   image: '../birds/img/colibri.webp' },
-  { cardId: 'tucan',                 title: 'Tuc\u00e1n',                    rarity: 'frecuente',   image: '../birds/img/tucan.webp' },
-  { cardId: 'buho',                  title: 'B\u00faho',                     rarity: 'rara',        image: '../birds/img/buho.webp' },
-  { cardId: 'garza-blanca',          title: 'Garza Blanca',             rarity: 'abundante',   image: '../birds/img/garza-blanca.webp' },
-  { cardId: 'flamenco',              title: 'Flamenco',                 rarity: 'rara',        image: '../birds/img/flamenco.webp' },
-  { cardId: 'picozapato',            title: 'Picozapato',               rarity: 'excepcional', image: '../birds/img/picozapato.webp' },
-  { cardId: 'martin-pescador',       title: 'Mart\u00edn Pescador',          rarity: 'abundante',   image: '../birds/img/martin-pescador.webp' },
-  { cardId: 'halcon',                title: 'Halc\u00f3n',                   rarity: 'rara',        image: '../birds/img/halcon.webp' },
-  { cardId: 'aguila-harpia',         title: '\u00c1guila Harp\u00eda',            rarity: 'excepcional', image: '../birds/img/aguila-harpia.webp' },
-  { cardId: 'quetzal',               title: 'Quetzal',                  rarity: 'excepcional', image: '../birds/img/quetzal.webp' },
-  { cardId: 'pinguino-humboldt',     title: 'Ping\u00fcino de Humboldt',     rarity: 'rara',        image: '../birds/img/pinguino-humboldt.webp' },
-  { cardId: 'pajaro-campana',        title: 'P\u00e1jaro Campana',           rarity: 'frecuente',   image: '../birds/img/pajaro-campana.webp' },
-  { cardId: 'gallito-roca',          title: 'Gallito de las Rocas',     rarity: 'frecuente',   image: '../birds/img/gallito-roca.webp' },
-  { cardId: 'loro-orejiamarillo',    title: 'Loro Orejiamarillo',       rarity: 'excepcional', image: '../birds/img/loro-orejiamarillo.webp' },
-  { cardId: 'hoatzin',               title: 'Hoatz\u00edn',                  rarity: 'rara',        image: '../birds/img/hoatzin.webp' },
-  { cardId: 'pato-crestudo',         title: 'Pato Crestudo',            rarity: 'abundante',   image: '../birds/img/pato-crestudo.webp' },
-  { cardId: 'tangara-multicolor',    title: 'Tangara Multicolor',       rarity: 'abundante',   image: '../birds/img/tangara-multicolor.webp' },
-  { cardId: 'carpintero-real',       title: 'Carpintero Real',          rarity: 'rara',        image: '../birds/img/carpintero-real.webp' },
-  { cardId: 'espatula-rosada',       title: 'Esp\u00e1tula Rosada',          rarity: 'rara',        image: '../birds/img/espatula-rosada.webp' },
-  { cardId: 'ibis-escarlata',        title: 'Ibis Escarlata',           rarity: 'frecuente',   image: '../birds/img/ibis-escarlata.webp' },
-  { cardId: 'ciguena-jabiru',        title: 'Cig\u00fce\u00f1a Jabir\u00fa',           rarity: 'rara',        image: '../birds/img/ciguena-jabiru.webp' },
-  { cardId: 'pelicano-pardo',        title: 'Pel\u00edcano Pardo',           rarity: 'abundante',   image: '../birds/img/pelicano-pardo.webp' },
-  { cardId: 'cormoran',              title: 'Cormor\u00e1n',                 rarity: 'abundante',   image: '../birds/img/cormoran.webp' },
-  { cardId: 'fragata-magnificente',  title: 'Fragata Magnificente',     rarity: 'frecuente',   image: '../birds/img/fragata-magnificente.webp' },
-  { cardId: 'piquero-patas-azules',  title: 'Piquero de Patas Azules',  rarity: 'frecuente',   image: '../birds/img/piquero-patas-azules.webp' },
-  { cardId: 'limpkin',               title: 'Carrao',                   rarity: 'abundante',   image: '../birds/img/limpkin.webp' },
-  { cardId: 'paujil',                title: 'Paujil',                   rarity: 'rara',        image: '../birds/img/paujil.webp' },
-  { cardId: 'perdiz-crestada',       title: 'Perdiz Crestada',          rarity: 'abundante',   image: '../birds/img/perdiz-crestada.webp' },
-  { cardId: 'paloma-coronita',       title: 'Paloma Coronita',          rarity: 'abundante',   image: '../birds/img/paloma-coronita.webp' },
-  { cardId: 'trogon-enmascarado',    title: 'Trog\u00f3n Enmascarado',       rarity: 'rara',        image: '../birds/img/trogon-enmascarado.webp' },
-  { cardId: 'barranquero',           title: 'Barranquero',              rarity: 'abundante',   image: '../birds/img/barranquero.webp' },
-  { cardId: 'amazilia',              title: 'Amazilia',                 rarity: 'abundante',   image: '../birds/img/amazilia.webp' },
-  { cardId: 'piranga-roja',          title: 'Piranga Roja',             rarity: 'abundante',   image: '../birds/img/piranga-roja.webp' },
-  { cardId: 'oropendola',            title: 'Orp\u00e9ndola',               rarity: 'abundante',   image: '../birds/img/oropendola.webp' },
-  { cardId: 'siete-colores',         title: 'Siete Colores',            rarity: 'rara',        image: '../birds/img/siete-colores.webp' },
-  { cardId: 'atrapamoscas',          title: 'Atrapamoscas',             rarity: 'abundante',   image: '../birds/img/atrapamoscas.webp' },
-  { cardId: 'golondrina',            title: 'Golondrina',               rarity: 'abundante',   image: '../birds/img/golondrina.webp' },
-  { cardId: 'canario-coronado',      title: 'Canario Coronado',         rarity: 'abundante',   image: '../birds/img/canario-coronado.webp' },
+  { cardId: 'guacamaya-roja', title: 'Guacamaya Roja', rarity: 'abundante', image: '../birds/img/guacamaya-roja.webp' },
+  { cardId: 'condor-andino', title: 'C\u00f3ndor Andino', rarity: 'rara', image: '../birds/img/condor-andino.webp' },
+  { cardId: 'colibri', title: 'Colobr\u00ed', rarity: 'abundante', image: '../birds/img/colibri.webp' },
+  { cardId: 'tucan', title: 'Tuc\u00e1n', rarity: 'frecuente', image: '../birds/img/tucan.webp' },
+  { cardId: 'buho', title: 'B\u00faho', rarity: 'rara', image: '../birds/img/buho.webp' },
+  { cardId: 'garza-blanca', title: 'Garza Blanca', rarity: 'abundante', image: '../birds/img/garza-blanca.webp' },
+  { cardId: 'flamenco', title: 'Flamenco', rarity: 'rara', image: '../birds/img/flamenco.webp' },
+  { cardId: 'picozapato', title: 'Picozapato', rarity: 'excepcional', image: '../birds/img/picozapato.webp' },
+  { cardId: 'martin-pescador', title: 'Mart\u00edn Pescador', rarity: 'abundante', image: '../birds/img/martin-pescador.webp' },
+  { cardId: 'halcon', title: 'Halc\u00f3n', rarity: 'rara', image: '../birds/img/halcon.webp' },
+  { cardId: 'aguila-harpia', title: '\u00c1guila Harp\u00eda', rarity: 'excepcional', image: '../birds/img/aguila-harpia.webp' },
+  { cardId: 'quetzal', title: 'Quetzal', rarity: 'excepcional', image: '../birds/img/quetzal.webp' },
+  { cardId: 'pinguino-humboldt', title: 'Ping\u00fcino de Humboldt', rarity: 'rara', image: '../birds/img/pinguino-humboldt.webp' },
+  { cardId: 'pajaro-campana', title: 'P\u00e1jaro Campana', rarity: 'frecuente', image: '../birds/img/pajaro-campana.webp' },
+  { cardId: 'gallito-roca', title: 'Gallito de las Rocas', rarity: 'frecuente', image: '../birds/img/gallito-roca.webp' },
+  { cardId: 'loro-orejiamarillo', title: 'Loro Orejiamarillo', rarity: 'excepcional', image: '../birds/img/loro-orejiamarillo.webp' },
+  { cardId: 'hoatzin', title: 'Hoatz\u00edn', rarity: 'rara', image: '../birds/img/hoatzin.webp' },
+  { cardId: 'pato-crestudo', title: 'Pato Crestudo', rarity: 'abundante', image: '../birds/img/pato-crestudo.webp' },
+  { cardId: 'tangara-multicolor', title: 'Tangara Multicolor', rarity: 'abundante', image: '../birds/img/tangara-multicolor.webp' },
+  { cardId: 'carpintero-real', title: 'Carpintero Real', rarity: 'rara', image: '../birds/img/carpintero-real.webp' },
+  { cardId: 'espatula-rosada', title: 'Esp\u00e1tula Rosada', rarity: 'rara', image: '../birds/img/espatula-rosada.webp' },
+  { cardId: 'ibis-escarlata', title: 'Ibis Escarlata', rarity: 'frecuente', image: '../birds/img/ibis-escarlata.webp' },
+  { cardId: 'ciguena-jabiru', title: 'Cig\u00fce\u00f1a Jabir\u00fa', rarity: 'rara', image: '../birds/img/ciguena-jabiru.webp' },
+  { cardId: 'pelicano-pardo', title: 'Pel\u00edcano Pardo', rarity: 'abundante', image: '../birds/img/pelicano-pardo.webp' },
+  { cardId: 'cormoran', title: 'Cormor\u00e1n', rarity: 'abundante', image: '../birds/img/cormoran.webp' },
+  { cardId: 'fragata-magnificente', title: 'Fragata Magnificente', rarity: 'frecuente', image: '../birds/img/fragata-magnificente.webp' },
+  { cardId: 'piquero-patas-azules', title: 'Piquero de Patas Azules', rarity: 'frecuente', image: '../birds/img/piquero-patas-azules.webp' },
+  { cardId: 'limpkin', title: 'Carrao', rarity: 'abundante', image: '../birds/img/limpkin.webp' },
+  { cardId: 'paujil', title: 'Paujil', rarity: 'rara', image: '../birds/img/paujil.webp' },
+  { cardId: 'perdiz-crestada', title: 'Perdiz Crestada', rarity: 'abundante', image: '../birds/img/perdiz-crestada.webp' },
+  { cardId: 'paloma-coronita', title: 'Paloma Coronita', rarity: 'abundante', image: '../birds/img/paloma-coronita.webp' },
+  { cardId: 'trogon-enmascarado', title: 'Trog\u00f3n Enmascarado', rarity: 'rara', image: '../birds/img/trogon-enmascarado.webp' },
+  { cardId: 'barranquero', title: 'Barranquero', rarity: 'abundante', image: '../birds/img/barranquero.webp' },
+  { cardId: 'amazilia', title: 'Amazilia', rarity: 'abundante', image: '../birds/img/amazilia.webp' },
+  { cardId: 'piranga-roja', title: 'Piranga Roja', rarity: 'abundante', image: '../birds/img/piranga-roja.webp' },
+  { cardId: 'oropendola', title: 'Orp\u00e9ndola', rarity: 'abundante', image: '../birds/img/oropendola.webp' },
+  { cardId: 'siete-colores', title: 'Siete Colores', rarity: 'rara', image: '../birds/img/siete-colores.webp' },
+  { cardId: 'atrapamoscas', title: 'Atrapamoscas', rarity: 'abundante', image: '../birds/img/atrapamoscas.webp' },
+  { cardId: 'golondrina', title: 'Golondrina', rarity: 'abundante', image: '../birds/img/golondrina.webp' },
+  { cardId: 'canario-coronado', title: 'Canario Coronado', rarity: 'abundante', image: '../birds/img/canario-coronado.webp' },
 ];
 
-// Índice por cardId para búsqueda rápida
-export const CATALOG_INDEX = Object.fromEntries(CARD_CATALOG.map(c => [c.cardId, c]));
+// Índice por cardId para búsqueda rápida (se actualizará con el sync)
+export let CATALOG_INDEX = Object.fromEntries(CARD_CATALOG.map(c => [c.cardId, c]));
+export let ACTIVE_CATALOG = [...CARD_CATALOG];
 
 // ===========================
 // Constantes
@@ -75,10 +76,10 @@ export const STARTING_COPIES_PER_CARD = 3; // Copias iniciales de cada carta: 2 
 
 /** Pesos de rareza para apertura aleatoria de sobres */
 const RARITY_WEIGHTS = {
-  abundante:   50,
-  frecuente:   25,
-  rara:        20,
-  excepcional:  5,
+  abundante: 50,
+  frecuente: 25,
+  rara: 20,
+  excepcional: 5,
 };
 
 // ===========================
@@ -100,12 +101,42 @@ function randomCardFromCatalog() {
 }
 
 // ===========================
-// DeckManager
 // ===========================
 
 export class DeckManager {
   constructor() {
     this._state = null;
+    this.isSyncing = false;
+  }
+
+  // -------------------------
+  // Sync con Backend
+  // -------------------------
+
+  async syncCatalog() {
+    if (this.isSyncing) return;
+    this.isSyncing = true;
+    try {
+      const response = await fetch('http://localhost:4001/api/search?limit=200');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.results && data.results.length > 0) {
+          ACTIVE_CATALOG = data.results.map(card => ({
+            cardId: card.cardId,
+            title: card.title,
+            rarity: card.rarity || 'abundante', // backend no envía rarity aún, fallback
+            image: card.image_url ? `../${card.image_url}` : '../birds/img/default.webp',
+            tags: card.tags || []
+          }));
+          CATALOG_INDEX = Object.fromEntries(ACTIVE_CATALOG.map(c => [c.cardId, c]));
+          // console.log('[DeckManager] Catálogo sincronizado:', ACTIVE_CATALOG.length, 'cartas');
+        }
+      }
+    } catch (err) {
+      console.warn('[DeckManager] Falló sync con backend, usando fallback local.', err);
+    } finally {
+      this.isSyncing = false;
+    }
   }
 
   // -------------------------
@@ -145,15 +176,15 @@ export class DeckManager {
   /** Estado inicial por defecto */
   _defaultState() {
     // Pre-poblar colección con STARTING_COPIES_PER_CARD copias de cada carta
-    // del catálogo (CARD_CATALOG.length × STARTING_COPIES_PER_CARD cartas en total)
+    // del catálogo (ACTIVE_CATALOG.length × STARTING_COPIES_PER_CARD cartas en total)
     const collection = {};
-    for (const card of CARD_CATALOG) {
+    for (const card of ACTIVE_CATALOG) {
       collection[card.cardId] = { cardId: card.cardId, count: STARTING_COPIES_PER_CARD };
     }
 
     // Pre-poblar Mazo Pairs y Mazo Kombat con las 40 cartas del catálogo (1 copia c/u)
     // Consume 2 de las STARTING_COPIES_PER_CARD copias iniciales (una por mazo)
-    const defaultCards = CARD_CATALOG.map(c => c.cardId);
+    const defaultCards = ACTIVE_CATALOG.map(c => c.cardId);
     for (const cardId of defaultCards) {
       if (collection[cardId]) {
         collection[cardId].count -= 2; // 1 para pairs + 1 para kombat
@@ -164,9 +195,9 @@ export class DeckManager {
     return {
       collection,
       decks: [
-        { id: 1, name: 'Mazo Pairs',  mode: 'pairs',  cards: [...defaultCards] },
+        { id: 1, name: 'Mazo Pairs', mode: 'pairs', cards: [...defaultCards] },
         { id: 2, name: 'Mazo Kombat', mode: 'kombat', cards: [...defaultCards] },
-        { id: 3, name: 'Mazo Extra',  mode: 'pairs',  cards: [] },
+        { id: 3, name: 'Mazo Extra', mode: 'pairs', cards: [] },
       ],
       packCredits: STARTING_PACK_CREDITS,
     };
@@ -337,7 +368,15 @@ export class DeckManager {
     s.packCredits -= 1;
     const cards = [];
     for (let i = 0; i < PACK_SIZE; i++) {
-      const cardId = randomCardFromCatalog();
+      // Usar catálogo activo
+      const totalWeight = ACTIVE_CATALOG.reduce((sum, c) => sum + (RARITY_WEIGHTS[c.rarity] ?? 10), 0);
+      let roll = Math.random() * totalWeight;
+      let cardId = ACTIVE_CATALOG[ACTIVE_CATALOG.length - 1].cardId;
+      for (const c of ACTIVE_CATALOG) {
+        roll -= RARITY_WEIGHTS[c.rarity] ?? 10;
+        if (roll <= 0) { cardId = c.cardId; break; }
+      }
+
       cards.push(cardId);
       if (!s.collection[cardId]) s.collection[cardId] = { cardId, count: 0 };
       s.collection[cardId].count += 1;
@@ -390,7 +429,7 @@ export class DeckManager {
     // Cartas que el jugador NO tiene en absoluto
     const owned = new Set(Object.keys(this.state.collection));
     this.state.decks.forEach(d => d.cards.forEach(c => owned.add(c)));
-    const missing = CARD_CATALOG.filter(c => !owned.has(c.cardId));
+    const missing = ACTIVE_CATALOG.filter(c => !owned.has(c.cardId));
 
     if (missing.length === 0) {
       return { success: false, newCardId: null, reason: 'collection_complete' };

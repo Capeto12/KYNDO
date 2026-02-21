@@ -122,6 +122,42 @@ export class ProgressStorage {
       return false;
     }
   }
+
+  // --- BATTLE HISTORY ---
+
+  /**
+   * Carga el historial de batallas (Kombate)
+   */
+  loadBattleHistory() {
+    try {
+      const data = localStorage.getItem('kyndo_battle_history_v1');
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error('Error cargando historial de batalla', e);
+      return [];
+    }
+  }
+
+  /**
+   * Guarda un nuevo registro en el historial de batallas
+   * { date, result: 'victoria'|'derrota'|'empate', gamesWon, gamesLost, roundsPlayed, score }
+   */
+  saveBattleMatch(matchData) {
+    try {
+      const history = this.loadBattleHistory();
+      history.unshift({
+        ...matchData,
+        date: new Date().toISOString()
+      });
+      // Mantener solo los últimos 50
+      if (history.length > 50) history.length = 50;
+      localStorage.setItem('kyndo_battle_history_v1', JSON.stringify(history));
+      return true;
+    } catch (e) {
+      console.error('Error guardando historial de batalla', e);
+      return false;
+    }
+  }
 }
 
 /**

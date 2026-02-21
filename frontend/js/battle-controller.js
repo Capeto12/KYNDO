@@ -9,6 +9,7 @@ import { BattleUIRenderer, ComparisonView } from './battle-ui.js';
 import { getKombatSetWinReward, getKombatMatchWinReward } from './rewards.js';
 import { progressStorage } from './storage.js';
 import { showRewardNotification } from './ui-renderer.js';
+import { playAttackSound, playDamageSound, playRoundWinSound, playRoundLoseSound, playSetWinFanfare } from './battle-sounds.js';
 import { MESSAGES } from './constants.js';
 
 const PACK_PATH = '../birds/pack-1.json';
@@ -354,6 +355,18 @@ export class BattleController {
       // Show result
       this.renderer.displayRoundResult(roundResult);
 
+      // Play round sounds
+      if (roundResult.winner === 'player') {
+        playAttackSound();
+        setTimeout(playRoundWinSound, 200);
+      } else if (roundResult.winner === 'opponent') {
+        playDamageSound();
+        setTimeout(playRoundLoseSound, 200);
+      } else {
+        playAttackSound();
+        setTimeout(playDamageSound, 100);
+      }
+
       // Alimentar colas (la carta jugada sale del mazo)
       this.refillQueues();
       this.renderer.renderPrepList(this.game.playerDeck);
@@ -382,6 +395,7 @@ export class BattleController {
       const newSetWins = roundResult.playerGameWins - this._lastPlayerGameWins;
       if (newSetWins > 0) {
         this._lastPlayerGameWins = roundResult.playerGameWins;
+        playSetWinFanfare();
         for (let i = 0; i < newSetWins; i++) {
           const setReward = getKombatSetWinReward();
           progressStorage.addReward(setReward);
@@ -445,6 +459,15 @@ export class BattleController {
       showRewardNotification(MESSAGES.REWARD_KOMBAT_MATCH_PACK);
     }
 
+    // Save history
+    progressStorage.saveBattleMatch({
+      result: summary.status === 'playerWon' ? 'victoria' : (summary.status === 'opponentWon' ? 'derrota' : 'empate'),
+      gamesWon: summary.playerGameWins,
+      gamesLost: summary.opponentGameWins,
+      roundsPlayed: summary.totalRounds,
+      score: `${summary.playerGameWins}-${summary.opponentGameWins}-${summary.drawGames}`
+    });
+
     // Calculate and store battle stats
     const battleStats = this.game.getBattleStats();
     return {
@@ -493,7 +516,7 @@ export class BattleController {
   restoreGameState(state) {
     // This is more complex - would require reconstructing the game
     // For now, just log the state
-    console.log('Game state to restore:', state);
+    // console.log('Game state to restore:', state);
   }
 }
 
@@ -551,18 +574,18 @@ export class DemoBattleController extends BattleController {
         image: cleanPath(asset.image_url || asset.imageUrl || ''),
         rarity,
         attackFactors: {
-          P: factorFor(id, 1),
-          S: factorFor(id, 3),
-          W: factorFor(id, 5),
-          H: factorFor(id, 7),
-          A: factorFor(id, 9)
+          P: Math.round((asset.atk || factorFor(id, 1)) * 0.2),
+          S: Math.round((asset.atk || factorFor(id, 3)) * 0.2),
+          W: Math.round((asset.atk || factorFor(id, 5)) * 0.2),
+          H: Math.round((asset.atk || factorFor(id, 7)) * 0.2),
+          A: Math.round((asset.atk || factorFor(id, 9)) * 0.2)
         },
         defenseFactors: {
-          AD: factorFor(id, 2),
-          C: factorFor(id, 4),
-          E: factorFor(id, 6),
-          SD: factorFor(id, 8),
-          R: factorFor(id, 10)
+          AD: Math.round((asset.def || factorFor(id, 2)) * 0.2),
+          C: Math.round((asset.def || factorFor(id, 4)) * 0.2),
+          E: Math.round((asset.def || factorFor(id, 6)) * 0.2),
+          SD: Math.round((asset.def || factorFor(id, 8)) * 0.2),
+          R: Math.round((asset.def || factorFor(id, 10)) * 0.2)
         }
       };
     });
@@ -674,7 +697,7 @@ export class TutorialBattleController extends DemoBattleController {
   showTutorialMessage() {
     if (this.tutorialStep < this.tutorialMessages.length) {
       const msg = this.tutorialMessages[this.tutorialStep];
-      console.log(`${msg.title}: ${msg.content}`);
+      // console.log(`${msg.title}: ${msg.content}`);
       this.tutorialStep++;
       return msg;
     }

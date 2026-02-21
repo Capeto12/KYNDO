@@ -861,6 +861,13 @@
         <div class="panel">
           <div class="panel-body">
             <div class="pack-area">
+              <div style="display:flex; gap:10px; align-items:center;">
+                <button id="themeToggle" class="btn btn-ghost"
+                  style="padding:4px 8px; font-size:16px; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center;"
+                  title="Alternar Modo Oscuro">🌓</button>
+                <span class="header-badge" id="hud-credits">0 🎫</span>
+                <a href="../" class="btn btn-ghost">Volver al Home</a>
+              </div>
               <div class="pack-credits-display">
                 <span class="credit-icon">🎫</span>
                 <div class="credit-info">
@@ -923,13 +930,14 @@
   <div class="toast-container" id="toast-container"></div>
 
   <script type="module">
-    import {
-      deckManager,
-      CARD_CATALOG,
-      CATALOG_INDEX,
-      MAX_DECKS,
-      DUPLICATES_FOR_EXCHANGE,
-    } from './js/deck-manager.js';
+    import { deckManager, CATALOG_INDEX } from './js/deck-manager.js';
+    import { themeManager } from './js/utils.js';
+    import { playPackOpenSound, playRareRevealSound, playCardRevealSound } from './js/battle-sounds.js';
+
+    // Theme logic
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      themeManager.toggle();
+    });
 
     // ============================================================
     // Emoji map por rareza (visual placeholder para cartas sin imagen)
@@ -1250,19 +1258,31 @@
         return;
       }
 
+      playPackOpenSound();
+
       // Mostrar cartas obtenidas
       const preview = document.getElementById('pack-preview');
       const chips = document.getElementById('pack-reveal-chips');
       chips.innerHTML = '';
 
+      let hasRare = false;
+
       result.cards.forEach((cardId, idx) => {
         const info = CATALOG_INDEX[cardId] ?? { title: cardId, rarity: 'abundante' };
+        if (info.rarity === 'rara' || info.rarity === 'excepcional') hasRare = true;
+
         const chip = document.createElement('div');
         chip.className = `pack-card-chip ${info.rarity}`;
         chip.style.animationDelay = `${idx * 0.12}s`;
         chip.innerHTML = `<span>${RARITY_EMOJI[info.rarity] || '🃏'}</span> ${escapeHtml(info.title)}`;
         chips.appendChild(chip);
       });
+
+      if (hasRare) {
+        setTimeout(playRareRevealSound, 300);
+      } else {
+        setTimeout(playCardRevealSound, 300);
+      }
 
       preview.classList.add('visible');
       render();
@@ -1308,8 +1328,12 @@
     // ============================================================
     // Bootstrap
     // ============================================================
-    deckManager.load();
-    render();
+    async function init() {
+      deckManager.load();
+      await deckManager.syncCatalog();
+      render();
+    }
+    init();
   </script>
 
 </body>
