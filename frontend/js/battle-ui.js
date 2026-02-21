@@ -53,13 +53,48 @@ export class BattleUIRenderer {
         .battle-actions-inline { display:flex; gap:6px; margin-top:6px; justify-content: space-between; align-items:center; }
         .battle-btn { flex: 1 1 auto; min-width: 110px; }
         .auto-btn { flex: 0 0 72px; margin-left: auto; }
-        .staging-list, .prep-list, .opponent-prep-list { display: flex; flex-direction: column; gap: 6px; overflow: auto; max-height: 320px; }
-        .staging-card, .prep-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 4px; font-size: 11px; cursor: grab; }
+        /* ── Card pick lists ─ compact pills ─────────────── */
+        .staging-list, .prep-list, .opponent-prep-list { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; max-height: 340px; padding-right: 2px; }
+        .staging-card, .prep-card {
+          display: flex; align-items: center; justify-content: space-between;
+          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+          border-radius: 6px; padding: 5px 8px; font-size: 11px; cursor: grab;
+          transition: background 0.15s, border-color 0.15s;
+          white-space: nowrap; overflow: hidden;
+        }
+        .staging-card:hover, .prep-card:hover { background: rgba(255,255,255,0.1); }
         .staging-card:active, .prep-card:active { cursor: grabbing; }
-        .prep-drop { min-height: 180px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 8px; padding: 6px; }
-        .prep-card:first-child { transform: scale(1.06); border-color: #22d3ee; box-shadow: 0 0 6px rgba(34,211,238,0.4); }
-        .prep-card:first-child::after { content: 'Siguiente'; display: inline-block; margin-left: 6px; padding: 2px 6px; border-radius: 6px; background: rgba(34,211,238,0.2); font-size: 10px; color: #22d3ee; }
-        .back-card { height: 32px; border-radius: 6px; background: linear-gradient(135deg,#1f2937,#111827); border: 1px solid rgba(255,255,255,0.12); }
+        .card-pill-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+        .card-pill-stats { font-size: 10px; opacity: 0.65; flex-shrink: 0; margin-left: 6px; }
+        /* Next attack indicator — color only, no text */
+        .prep-card:first-child {
+          border-left: 3px solid #22d3ee;
+          background: rgba(34,211,238,0.08);
+          font-weight: 700;
+        }
+        .prep-drop { min-height: 160px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 8px; padding: 6px; }
+        .back-card { height: 26px; border-radius: 5px; background: linear-gradient(135deg,#1f2937,#111827); border: 1px solid rgba(255,255,255,0.12); margin-bottom: 3px; }
+        /* ── Winner hero card ───────────────────────────── */
+        .winner-hero { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; }
+        .winner-hero img { width: 100%; max-width: 140px; height: 140px; object-fit: cover; border-radius: 12px; border: 2px solid #10b981; box-shadow: 0 0 16px rgba(16,185,129,0.5); }
+        .winner-hero.defeat img { border-color: #f43f5e; box-shadow: 0 0 14px rgba(244,63,94,0.4); }
+        .winner-hero.draw img { border-color: #fbbf24; box-shadow: 0 0 10px rgba(251,191,36,0.35); }
+        .winner-hero h4 { margin: 0; font-size: 13px; text-align: center; }
+        .winner-hero .result-badge { font-size: 13px; padding: 4px 14px; }
+        /* ── Mobile landscape prompt ────────────────────── */
+        #rotate-prompt {
+          display: none;
+          position: fixed; inset: 0; z-index: 9999;
+          background: #0d1117;
+          align-items: center; justify-content: center; flex-direction: column;
+          gap: 16px; color: #e2e8f0;
+        }
+        #rotate-prompt .rotate-icon { font-size: 56px; animation: rotate-hint 1.4s ease-in-out infinite alternate; }
+        @keyframes rotate-hint { from { transform: rotate(-15deg); } to { transform: rotate(15deg); } }
+        @media (max-width: 640px) and (orientation: portrait) {
+          #rotate-prompt { display: flex; }
+          .battle-container { display: none; }
+        }
         .health-bar-compact { display:flex; gap:10px; align-items:center; font-size: 11px; }
         .health-bar { background: rgba(255,255,255,0.08); height: 12px; border-radius: 8px; overflow: hidden; flex:1; }
         .health-fill { height:100%; transition: width 0.3s ease; }
@@ -103,6 +138,11 @@ export class BattleUIRenderer {
           .cont4.expanded { width: 90vw; max-width: 280px; }
         }
       </style>
+      <div id="rotate-prompt">
+        <div class="rotate-icon">📱</div>
+        <div style="font-size:18px;font-weight:700">Gira tu celular</div>
+        <div style="font-size:13px;opacity:0.65">El arena de Kombat requiere modo horizontal</div>
+      </div>
       <div class="battle-container">
         <div class="battle-grid-8">
           <div class="cont cont1">
@@ -211,8 +251,8 @@ export class BattleUIRenderer {
       .map((card, index) => {
         return `
           <div class="staging-card" data-index="${index}" draggable="true">
-            <div><strong>${card.name}</strong></div>
-            <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+            <span class="card-pill-name">${card.name}</span>
+            <span class="card-pill-stats">${card.calculateAttack()}⚔ ${card.calculateDefense()}🛡</span>
           </div>
         `;
       })
@@ -225,8 +265,8 @@ export class BattleUIRenderer {
     prepEl.innerHTML = prepDeck
       .map((card, index) => `
         <div class="prep-card" data-index="${index}" draggable="true">
-          <div><strong>${card.name}</strong></div>
-          <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+          <span class="card-pill-name">${card.name}</span>
+          <span class="card-pill-stats">${card.calculateAttack()}⚔ ${card.calculateDefense()}🛡</span>
         </div>
       `)
       .join('');
@@ -386,32 +426,27 @@ export class BattleUIRenderer {
       winnerSlot.innerHTML = '';
       if (roundData.winner === 'player') {
         winnerSlot.innerHTML = `
-          <div class="arena-card">
+          <div class="winner-hero">
             <img src="${roundData.playerCardImage}" alt="${roundData.playerCard}">
-            <div class="card-info">
-              <h4>${roundData.playerCard}</h4>
-              <div class="card-stats">
-                <div class="attack-stat">ATQ ${roundData.playerAttack}</div>
-                <div class="defense-stat">DEF ${roundData.playerDefense}</div>
-              </div>
-              <div class="result-badge">WIN</div>
-            </div>
+            <h4>${roundData.playerCard}</h4>
+            <div style="font-size:11px;opacity:0.7">⚔️ ${roundData.playerAttack} · 🛡️ ${roundData.playerDefense}</div>
+            <div class="result-badge" style="background:#10b981;color:#022c22;">🏆 WIN</div>
           </div>`;
       } else if (roundData.winner === 'opponent') {
         winnerSlot.innerHTML = `
-          <div class="arena-card">
+          <div class="winner-hero defeat">
             <img src="${roundData.opponentCardImage}" alt="${roundData.opponentCard}">
-            <div class="card-info">
-              <h4>${roundData.opponentCard}</h4>
-              <div class="card-stats">
-                <div class="attack-stat">ATQ ${roundData.opponentAttack}</div>
-                <div class="defense-stat">DEF ${roundData.opponentDefense}</div>
-              </div>
-              <div class="result-badge">WIN</div>
-            </div>
+            <h4>${roundData.opponentCard}</h4>
+            <div style="font-size:11px;opacity:0.7">⚔️ ${roundData.opponentAttack} · 🛡️ ${roundData.opponentDefense}</div>
+            <div class="result-badge" style="background:#f43f5e;color:#fff;">❌ Derrota</div>
           </div>`;
       } else {
-        winnerSlot.innerHTML = '<div class="battle-card"><div class="card-info"><h4>Empate</h4><div class="card-stats"><div class="attack-stat">ATQ = DEF</div></div><div class="result-badge" style="background:#fbbf24;color:#78350f;">DRAW</div></div></div>';
+        winnerSlot.innerHTML = `
+          <div class="winner-hero draw">
+            <div style="font-size:48px;line-height:1.2">⚔️</div>
+            <h4>Empate</h4>
+            <div class="result-badge" style="background:#fbbf24;color:#78350f;">DRAW</div>
+          </div>`;
       }
     }
 

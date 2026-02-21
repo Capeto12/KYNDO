@@ -31,7 +31,8 @@ const STORAGE_KEY = 'kyndo_memory_v1';
 
 // Ruta del contenido (ajustable según estructura del proyecto)
 // Estructura esperada: frontend/index.html y content/content/birds/pack-1.json
-const CONTENT_PATH = '../content/content/birds/pack-1.json';
+// Ruta del contenido (API del Backend)
+const CONTENT_PATH = 'http://localhost:4001/api/search?q=a&limit=100';
 
 // =========================
 // CARGA DE CONTENIDO
@@ -56,35 +57,35 @@ class ContentManager {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      
-      // Procesar y corregir las rutas de imágenes si es necesario
-      this.birds = data.assets.map(bird => {
-        let imageUrl = bird.image_url;
-        
-        // Corregir ruta duplicada si existe
-        if (imageUrl.includes('content/content/birds/')) {
-          imageUrl = imageUrl.replace('content/content/birds/', '../');
+
+      // Procesar datos de la API (vienen en data.results)
+      this.birds = data.results.map(bird => {
+        let imageUrl = bird.imageUrl || bird.thumbnailPath;
+
+        // Convertir ruta relativa a URL completa del backend
+        if (imageUrl && !imageUrl.startsWith('http')) {
+          imageUrl = `http://localhost:4001/${imageUrl.startsWith('/') ? imageUrl.slice(1) : imageUrl}`;
         }
-        
+
         return {
           id: bird.id,
           title: bird.title,
           imageUrl: imageUrl
         };
       });
-      
+
       this.loaded = true;
       console.log(`✓ Contenido cargado: ${this.birds.length} aves`);
       return true;
     } catch (error) {
       console.warn('⚠ No se pudo cargar el contenido de aves, usando fallback:', error);
       this.loaded = false;
-      
+
       // Notificar al usuario (podría mejorarse con UI toast)
       if (typeof window !== 'undefined' && window.console) {
         console.info('ℹ️ El juego funcionará con contenido de prueba');
       }
-      
+
       return false;
     }
   }
@@ -158,7 +159,7 @@ class GameState {
       }));
     } catch (error) {
       console.warn('Error al guardar progreso:', error);
-      
+
       // Notificar al usuario (podría mejorarse con UI toast)
       if (typeof window !== 'undefined' && window.console) {
         console.info('ℹ️ No se pudo guardar tu progreso. Puede que el almacenamiento local esté deshabilitado.');
@@ -200,19 +201,19 @@ function canonicalPairKey(id1, id2) {
  */
 function buildObjectIds(pairs) {
   const ids = [];
-  
+
   // Crear pares
   for (let i = 0; i < pairs; i++) {
     ids.push(i);
     ids.push(i);
   }
-  
+
   // Mezclar con Fisher-Yates
   for (let i = ids.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [ids[i], ids[j]] = [ids[j], ids[i]];
   }
-  
+
   return ids;
 }
 
@@ -222,7 +223,7 @@ function buildObjectIds(pairs) {
  */
 function getCardContent(objectId, contentManager) {
   const oid = Number(objectId);
-  
+
   // Intentar usar contenido real
   if (contentManager && contentManager.loaded) {
     const bird = contentManager.getBird(oid);
@@ -238,7 +239,7 @@ function getCardContent(objectId, contentManager) {
       };
     }
   }
-  
+
   // Fallback a contenido temporal
   return {
     name: `AVE ${oid + 1}`,
@@ -260,7 +261,7 @@ class UIManager {
     this.overlay = document.getElementById('overlay');
     this.resultOverlay = document.getElementById('resultOverlay');
     this.loading = document.getElementById('loading');
-    
+
     // Referencias DOM - HUD
     this.hudMatches = document.getElementById('hud-matches');
     this.hudPairs = document.getElementById('hud-pairs');
@@ -271,13 +272,13 @@ class UIManager {
     this.hudScore = document.getElementById('hud-score');
     this.hudGrade = document.getElementById('hud-grade');
     this.hud = document.getElementById('hud');
-    
+
     // Referencias DOM - Carta enfocada
     this.focusImage = document.getElementById('focusImage');
     this.focusName = document.getElementById('focusName');
     this.focusAtk = document.getElementById('focusAtk');
     this.focusDef = document.getElementById('focusDef');
-    
+
     // Referencias DOM - Resultado
     this.resultTitle = document.getElementById('resultTitle');
     this.resultSub = document.getElementById('resultSub');
@@ -324,33 +325,33 @@ class UIManager {
    */
   openFocus(card, contentManager) {
     const content = getCardContent(card.dataset.objectId, contentManager);
-    
+
     // Limpiar el contenedor de imagen
     this.focusImage.innerHTML = '';
-    
+
     if (content.useImage && content.imageUrl) {
       // Usar imagen real
       const img = document.createElement('img');
       img.src = content.imageUrl;
       img.alt = content.name;
       img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
-      
+
       // Manejar error de carga
       img.onerror = () => {
         this.focusImage.innerHTML = '';
         this.focusImage.textContent = content.displayText;
       };
-      
+
       this.focusImage.appendChild(img);
     } else {
       // Usar texto de fallback
       this.focusImage.textContent = content.displayText;
     }
-    
+
     this.focusName.textContent = content.name;
     this.focusAtk.textContent = `ATK ${content.atk}`;
     this.focusDef.textContent = `DEF ${content.def}`;
-    
+
     this.overlay.classList.add('active');
   }
 
@@ -369,7 +370,7 @@ class UIManager {
     this.resultAttempts.textContent = `${state.attempts}/${state.maxAttempts}`;
     this.resultScore.textContent = String(state.score);
     this.resultMaxStreak.textContent = String(state.maxStreakSeen);
-    
+
     if (passed) {
       this.resultTitle.textContent = 'Nivel superado';
       this.resultSub.textContent = 'Eficiencia confirmada. El tablero sube de grado.';
@@ -381,11 +382,11 @@ class UIManager {
       this.btnPrimary.textContent = 'Reintentar';
       this.btnSecondary.textContent = 'Cerrar';
     }
-    
+
     this.btnPrimary.style.display = '';
     this.btnSecondary.style.display = '';
     this.resultOverlay.classList.add('active');
-    
+
     this.btnPrimary.onclick = onContinue;
     this.btnSecondary.onclick = onRetry;
   }
@@ -432,24 +433,24 @@ class UIManager {
     card.dataset.state = 'revealed';
     card.classList.remove('hidden');
     card.classList.add('revealed');
-    
+
     // Añadir contenido visual a la carta
     const content = getCardContent(card.dataset.objectId, contentManager);
     card.innerHTML = '';
-    
+
     if (content.useImage && content.imageUrl) {
       // Usar imagen real
       const img = document.createElement('img');
       img.src = content.imageUrl;
       img.alt = content.name;
       img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 6px;';
-      
+
       // Manejar error de carga
       img.onerror = () => {
         card.innerHTML = '';
         card.textContent = content.displayText;
       };
-      
+
       card.appendChild(img);
     } else {
       // Usar texto de fallback
@@ -511,7 +512,7 @@ class MemoryGame {
     this.state = new GameState();
     this.ui = new UIManager();
     this.content = new ContentManager();
-    
+
     // Cargar progreso guardado
     this.state.loadFromStorage();
   }
@@ -521,13 +522,13 @@ class MemoryGame {
    */
   async initialize() {
     this.ui.showLoading();
-    
+
     try {
       await this.content.loadContent();
     } catch (error) {
       console.warn('Error loading content:', error);
     }
-    
+
     this.ui.hideLoading();
     this.setupEventListeners();
     this.startRun();
@@ -540,22 +541,22 @@ class MemoryGame {
     // Limpiar UI y estado
     this.ui.clearBoard();
     this.state.reset();
-    
+
     // Configurar partida según grado actual
     this.state.totalCards = GRADE_CONFIG[this.state.memoryGrade];
     this.state.totalPairs = this.state.totalCards / 2;
     this.state.maxAttempts = Math.ceil(this.state.totalPairs * CONFIG.ATTEMPT_FACTOR);
-    
+
     // Configurar tablero
     this.ui.setupBoardGrid(this.state.totalCards);
-    
+
     // Crear cartas mezcladas
     const objectIds = buildObjectIds(this.state.totalPairs);
-    
+
     for (let i = 0; i < this.state.totalCards; i++) {
       this.ui.createCard(objectIds[i], (ev) => this.handleCardClick(ev));
     }
-    
+
     this.ui.updateHUD(this.state);
   }
 
@@ -564,24 +565,24 @@ class MemoryGame {
    */
   handleCardClick(event) {
     event.stopPropagation();
-    
+
     const card = event.currentTarget;
-    
+
     // Si hay cartas pendientes, limpiarlas primero
     if (this.ui.getPendingCards().length > 0) {
       this.ui.clearPendingCards();
       return; // Este click se consume en la limpieza
     }
-    
+
     // Validaciones
     if (this.state.pendingLock) return;
     if (card.dataset.state !== 'hidden') return;
     if (this.state.revealedCards.length >= 2) return;
-    
+
     // Revelar carta con contenido
     this.ui.revealCard(card, this.content);
     this.state.revealedCards.push(card);
-    
+
     // Mostrar carta enfocada
     this.ui.openFocus(card, this.content);
   }
@@ -592,17 +593,17 @@ class MemoryGame {
   resolvePair(cardA, cardB) {
     // Incrementar intentos
     this.state.attempts += 1;
-    
+
     const idA = Number(cardA.dataset.objectId);
     const idB = Number(cardB.dataset.objectId);
     const isMatch = idA === idB;
-    
+
     if (isMatch) {
       this.handleMatch(cardA, cardB);
     } else {
       this.handleMiss(cardA, cardB);
     }
-    
+
     this.state.revealedCards = [];
     this.ui.updateHUD(this.state);
   }
@@ -612,24 +613,24 @@ class MemoryGame {
    */
   handleMatch(cardA, cardB) {
     this.state.matches += 1;
-    
+
     // Incrementar racha
     this.state.streak += 1;
     if (this.state.streak > this.state.maxStreakSeen) {
       this.state.maxStreakSeen = this.state.streak;
     }
-    
+
     // Puntos base
     this.state.score += 10;
-    
+
     // Bono por racha (acumulativo)
     const stepBonus = CONFIG.STREAK_BASE_BONUS * (this.state.streak - 1);
     this.state.score += stepBonus;
-    
+
     // Actualizar UI
     this.ui.setMatchedCard(cardA);
     this.ui.setMatchedCard(cardB);
-    
+
     // Verificar fin de nivel
     this.checkEndOfLevel();
   }
@@ -640,7 +641,7 @@ class MemoryGame {
   handleMiss(cardA, cardB) {
     // Romper racha
     this.state.streak = 0;
-    
+
     // Penalizar repetición de error
     const key = canonicalPairKey(cardA.dataset.objectId, cardB.dataset.objectId);
     if (this.state.missedPairs.has(key)) {
@@ -650,7 +651,7 @@ class MemoryGame {
     } else {
       this.state.missedPairs.add(key);
     }
-    
+
     // Actualizar UI
     this.ui.setPendingCard(cardA);
     this.ui.setPendingCard(cardB);
@@ -661,9 +662,9 @@ class MemoryGame {
    */
   checkEndOfLevel() {
     if (this.state.matches !== this.state.totalPairs) return;
-    
+
     const passed = this.state.attempts <= this.state.maxAttempts;
-    
+
     setTimeout(() => {
       this.ui.showResult(
         this.state,
@@ -679,7 +680,7 @@ class MemoryGame {
    */
   handleContinue(passed) {
     this.ui.hideResult();
-    
+
     if (passed) {
       // Subir de grado si es posible
       const nextGrade = this.state.memoryGrade + 1;
@@ -688,7 +689,7 @@ class MemoryGame {
         this.state.saveToStorage();
       }
     }
-    
+
     this.startRun();
   }
 
@@ -697,12 +698,12 @@ class MemoryGame {
    */
   handleRetry(passed) {
     this.ui.hideResult();
-    
+
     if (!passed) {
       // Si no pasó, solo cerrar sin reiniciar
       return;
     }
-    
+
     // Si pasó, permitir reintentar
     this.startRun();
   }
@@ -714,13 +715,13 @@ class MemoryGame {
     // Click en overlay cierra el foco y resuelve par si hay 2 cartas
     this.ui.overlay.addEventListener('click', () => {
       this.ui.closeFocus();
-      
+
       if (this.state.revealedCards.length === 2) {
         const [cardA, cardB] = this.state.revealedCards;
         this.resolvePair(cardA, cardB);
       }
     });
-    
+
     // Click en tablero limpia cartas pendientes
     this.ui.board.addEventListener('click', (event) => {
       // Solo si el click es en el fondo del tablero (no en una carta)
@@ -746,7 +747,7 @@ class MemoryGame {
 document.addEventListener('DOMContentLoaded', async () => {
   const game = new MemoryGame();
   await game.initialize();
-  
+
   // Exponer para debugging (solo en desarrollo)
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     window.kyndoGame = game;

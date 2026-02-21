@@ -5,6 +5,11 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import adminCardsRouter from './routes/adminCards';
 import searchRouter from './routes/search';
+import authRouter from './routes/auth';
+import userCardsRouter from './routes/userCards';
+import packsRouter from './routes/packs';
+import importRouter from './routes/import';
+import adminUsersRouter from './routes/adminUsers';
 import { getCardPresentation } from './controllers/cardsController';
 import { getQueueStats } from './queue';
 
@@ -20,6 +25,10 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files (images, thumbnails)
+app.use('/uploads', express.static('uploads'));
+app.use('/thumbnails', express.static('uploads/thumbnails'));
 
 // Health check endpoint
 app.get('/health', (_req: Request, res: Response) => {
@@ -44,8 +53,21 @@ app.get('/api/admin/queue/stats', async (_req: Request, res: Response) => {
 app.get('/api/cards/:id/presentation', getCardPresentation);
 app.use('/api/search', searchRouter);
 
-// Admin API routes
+// Auth routes
+app.use('/api/auth', authRouter);
+
+// User collection
+app.use('/api', userCardsRouter);
+
+// Pack store
+app.use('/api/packs', packsRouter);
+
+// Bird import (admin)
+app.use('/api/admin/import', importRouter);
+
+// Admin routes
 app.use('/api/admin', adminCardsRouter);
+app.use('/api/admin/users', adminUsersRouter);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
