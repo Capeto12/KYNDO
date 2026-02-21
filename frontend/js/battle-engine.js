@@ -207,10 +207,14 @@ export class BattleGame {
     this.environment = options.environment || 'neutral';
 
     this.roundsPerGame = 5;
+    // Use totalPlayerCards/totalOpponentCards hints when provided (e.g. when draw pile
+    // is managed externally by the controller) so maxGames reflects the full deck size.
+    const totalPlayer = options.totalPlayerCards ?? this.playerDeck.length;
+    const totalOpponent = options.totalOpponentCards ?? this.opponentDeck.length;
     this.maxGames = Math.min(
       8,
-      Math.floor(this.playerDeck.length / this.roundsPerGame),
-      Math.floor(this.opponentDeck.length / this.roundsPerGame)
+      Math.floor(totalPlayer / this.roundsPerGame),
+      Math.floor(totalOpponent / this.roundsPerGame)
     );
     this.currentGame = 0;
     this.roundInGame = 0;

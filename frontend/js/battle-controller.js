@@ -6,6 +6,10 @@
 
 import { BattleGame, BattleCard, getSampleDeck } from './battle-engine.js';
 import { BattleUIRenderer, ComparisonView } from './battle-ui.js';
+import { getKombatSetWinReward, getKombatMatchWinReward } from './rewards.js';
+import { progressStorage } from './storage.js';
+import { showRewardNotification } from './ui-renderer.js';
+import { MESSAGES } from './constants.js';
 
 const PACK_PATH = '../content/content/birds/pack-1.json';
 
@@ -25,6 +29,7 @@ export class BattleController {
     this.opponentPrep = [];
     this.playerReady = false;
     this.opponentReady = false;
+    this._lastPlayerGameWins = 0;
   }
 
   /**
@@ -245,7 +250,7 @@ export class BattleController {
     const readyToStart = this.playerReady && this.opponentReady;
     const hasGame = !!this.game;
     const ongoing = hasGame && this.game.status === 'ongoing';
-    const busy = this.isPlayingRound;
+    const busy = this.isPlayingRound || this.isAutoPlaying;
 
     if (readyBtn) {
       readyBtn.disabled = this.playerPrep.length < 5 || hasGame;
@@ -275,8 +280,12 @@ export class BattleController {
     if (this.game) return;
     if (this.playerPrep.length !== 5 || this.opponentPrep.length !== 5) return;
 
+    const totalPlayerCards = this.playerPrep.length + this.fullPlayerDeck.length;
+    const totalOpponentCards = this.opponentPrep.length + this.opponentDrawPile.length;
     this.game = new BattleGame(this.playerPrep, this.opponentPrep, {
-      environment: 'neutral'
+      environment: 'neutral',
+      totalPlayerCards,
+      totalOpponentCards
     });
 
     // Configuramos mazos vivos y pilas de robo
@@ -369,6 +378,17 @@ export class BattleController {
         roundResult.drawGames
       );
 
+      // Detectar sets ganados: recompensar por cada set que ganó el jugador
+      const newSetWins = roundResult.playerGameWins - this._lastPlayerGameWins;
+      if (newSetWins > 0) {
+        this._lastPlayerGameWins = roundResult.playerGameWins;
+        for (let i = 0; i < newSetWins; i++) {
+          const setReward = getKombatSetWinReward();
+          progressStorage.addReward(setReward);
+        }
+        showRewardNotification(MESSAGES.REWARD_KOMBAT_SET_CARD);
+      }
+
       // Refresh deck list state (staging) con las cartas restantes manuales
       this.renderer.renderDeckList(this.fullPlayerDeck, 0);
 
@@ -383,19 +403,22 @@ export class BattleController {
       }
     }
 
+    this.isPlayingRound = false;
     this.renderer.setLoading(false);
     this.renderer.setButtonsEnabled(this.game.status === 'ongoing');
     this.updateReadyStates();
-    this.isPlayingRound = false;
   }
 
   /**
    * Auto-play entire battle
    */
   async autoBattle() {
-    if (!this.game || this.game.status !== 'ongoing') return;
-
+    if (this.isAutoPlaying) return; // prevent double-start
     this.isAutoPlaying = true;
+    if (!this.game || this.game.status !== 'ongoing') {
+      this.isAutoPlaying = false;
+      return;
+    }
     this.renderer.setButtonsEnabled(false);
     this.updateReadyStates();
 
@@ -414,6 +437,13 @@ export class BattleController {
     const summary = this.game.getSummary();
     this.renderer.showBattleEnd(summary);
     this.renderer.setButtonsEnabled(false);
+
+    // Recompensa por ganar la partida completa de Kombat
+    if (summary.status === 'playerWon') {
+      const matchReward = getKombatMatchWinReward();
+      progressStorage.addReward(matchReward);
+      showRewardNotification(MESSAGES.REWARD_KOMBAT_MATCH_PACK);
+    }
 
     // Calculate and store battle stats
     const battleStats = this.game.getBattleStats();
@@ -434,6 +464,7 @@ export class BattleController {
     this.opponentPrep = [];
     this.playerReady = false;
     this.opponentReady = false;
+    this._lastPlayerGameWins = 0;
     if (this.containerElement) {
       this.containerElement.remove();
       this.containerElement = null;

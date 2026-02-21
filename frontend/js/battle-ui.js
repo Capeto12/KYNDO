@@ -15,152 +15,40 @@ export class BattleUIRenderer {
   }
 
   /**
+   * Scoped querySelector helper - prefers battleContainer, falls back to document
+   * @param {string} id - Element ID (without #)
+   * @returns {Element|null}
+   */
+  _qs(id) {
+    return this.battleContainer
+      ? this.battleContainer.querySelector('#' + id)
+      : document.getElementById(id);
+  }
+
+  /**
    * Create and mount battle interface
    */
   mountBattle() {
     const html = `
-      <style>
-        .battle-grid-8 {
-          display: grid;
-          grid-template-columns: minmax(95px, 22%) minmax(80px, 20%) minmax(220px, 42%) minmax(40px, 16%);
-          grid-template-rows: minmax(72px, auto) 1fr;
-          gap: 6px;
-          align-items: stretch;
-          width: 100%;
-        }
-        .cont { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.18); position: relative; overflow: hidden; }
-        .cont h4 { margin: 0 0 4px 0; font-size: 12px; letter-spacing: .3px; display:none; }
-        .cont p { margin: 0; font-size: 11px; opacity: .8; }
-        .cont1 { grid-column: 1 / 3; grid-row: 1; min-width: 90px; }
-        .cont2 { grid-column: 3 / 4; grid-row: 1; min-width: 160px; }
-        .cont3 { grid-column: 4 / 5; grid-row: 1; min-width: 50px; }
-        .cont4 { grid-column: 1 / 2; grid-row: 2; min-height: 280px; max-height: 360px; cursor: pointer; }
-        .cont4.expanded { position: absolute; width: 75vw; max-width: 360px; min-width: 260px; min-height: 340px; z-index: 20; }
-        .cont5 { grid-column: 2 / 3; grid-row: 2; min-height: 260px; max-height: 360px; }
-        .cont6 { grid-column: 3 / 4; grid-row: 2; min-height: 280px; }
-        .cont7 { grid-column: 4 / 5; grid-row: 2; min-height: 120px; }
-        .cont8 { display: none; }
-        .card-slot { min-height: 120px; border: 1px dashed rgba(226,232,240,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 8px; background: rgba(15,23,42,0.6); }
-        .slot-title { display:none; }
-        .energy-bar { background: rgba(255,255,255,0.08); height: 10px; border-radius: 8px; overflow: hidden; margin: 4px 0; }
-        .energy-fill { background: linear-gradient(90deg,#22d3ee,#a855f7); height: 100%; width: 0%; transition: width 0.25s ease; }
-        .compact-row { display: flex; align-items: center; gap: 6px; font-size: 11px; }
-        .select-char { width: 100%; font-size: 11px; padding: 2px 4px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: #e2e8f0; }
-        .btn-ready { width: 100%; margin-top: 4px; }
-        .vs-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; gap:6px; }
-        .badge { padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.08); font-size: 11px; }
-        .badge.attacker { background: #10b981; color: #022c22; font-weight: 700; }
-        .battle-actions-inline { display:flex; gap:6px; margin-top:6px; justify-content: space-between; align-items:center; }
-        .battle-btn { flex: 1 1 auto; min-width: 110px; }
-        .auto-btn { flex: 0 0 72px; margin-left: auto; }
-        /* ── Card pick lists ─ compact pills ─────────────── */
-        .staging-list, .prep-list, .opponent-prep-list { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; max-height: 340px; padding-right: 2px; }
-        .staging-card, .prep-card {
-          display: flex; align-items: center; justify-content: space-between;
-          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
-          border-radius: 6px; padding: 5px 8px; font-size: 11px; cursor: grab;
-          transition: background 0.15s, border-color 0.15s;
-          white-space: nowrap; overflow: hidden;
-        }
-        .staging-card:hover, .prep-card:hover { background: rgba(255,255,255,0.1); }
-        .staging-card:active, .prep-card:active { cursor: grabbing; }
-        .card-pill-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
-        .card-pill-stats { font-size: 10px; opacity: 0.65; flex-shrink: 0; margin-left: 6px; }
-        /* Next attack indicator — color only, no text */
-        .prep-card:first-child {
-          border-left: 3px solid #22d3ee;
-          background: rgba(34,211,238,0.08);
-          font-weight: 700;
-        }
-        .prep-drop { min-height: 160px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 8px; padding: 6px; }
-        .back-card { height: 26px; border-radius: 5px; background: linear-gradient(135deg,#1f2937,#111827); border: 1px solid rgba(255,255,255,0.12); margin-bottom: 3px; }
-        /* ── Winner hero card ───────────────────────────── */
-        .winner-hero { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px; }
-        .winner-hero img { width: 100%; max-width: 140px; height: 140px; object-fit: cover; border-radius: 12px; border: 2px solid #10b981; box-shadow: 0 0 16px rgba(16,185,129,0.5); }
-        .winner-hero.defeat img { border-color: #f43f5e; box-shadow: 0 0 14px rgba(244,63,94,0.4); }
-        .winner-hero.draw img { border-color: #fbbf24; box-shadow: 0 0 10px rgba(251,191,36,0.35); }
-        .winner-hero h4 { margin: 0; font-size: 13px; text-align: center; }
-        .winner-hero .result-badge { font-size: 13px; padding: 4px 14px; }
-        /* ── Mobile landscape prompt ────────────────────── */
-        #rotate-prompt {
-          display: none;
-          position: fixed; inset: 0; z-index: 9999;
-          background: #0d1117;
-          align-items: center; justify-content: center; flex-direction: column;
-          gap: 16px; color: #e2e8f0;
-        }
-        #rotate-prompt .rotate-icon { font-size: 56px; animation: rotate-hint 1.4s ease-in-out infinite alternate; }
-        @keyframes rotate-hint { from { transform: rotate(-15deg); } to { transform: rotate(15deg); } }
-        @media (max-width: 640px) and (orientation: portrait) {
-          #rotate-prompt { display: flex; }
-          .battle-container { display: none; }
-        }
-        .health-bar-compact { display:flex; gap:10px; align-items:center; font-size: 11px; }
-        .health-bar { background: rgba(255,255,255,0.08); height: 12px; border-radius: 8px; overflow: hidden; flex:1; }
-        .health-fill { height:100%; transition: width 0.3s ease; }
-        .player-health { background: linear-gradient(90deg,#10b981,#22c55e); }
-        .opponent-health { background: linear-gradient(90deg,#f43f5e,#ef4444); }
-        .round-result { margin-top: 8px; }
-        .result-badge { margin-top:6px; display:inline-block; padding:4px 8px; background:#10b981; color:#022c22; border-radius:6px; font-weight:700; font-size:11px; }
-        .winner-slot { min-height: 140px; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px; background: rgba(255,255,255,0.04); }
-        .arena-card { display:flex; gap:8px; align-items:center; }
-        .arena-card img { width: 72px; height: 72px; object-fit: cover; border-radius: 10px; border:1px solid rgba(255,255,255,0.1); }
-        .opp-reveal { font-size: 11px; padding:6px; border:1px dashed rgba(255,255,255,0.2); border-radius:8px; background: rgba(255,255,255,0.04); }
-        .opp-reveal h5 { margin:0 0 4px 0; font-size:12px; color:#e2e8f0; }
-        .opp-reveal .meta { opacity:0.7; font-size:10px; }
-        .game-meta { display:flex; flex-direction:column; gap:6px; margin-bottom:6px; }
-        .game-counter { font-weight:700; font-size:12px; }
-        .game-score { font-size:11px; opacity:0.85; }
-         @media (max-width: 768px) {
-          .battle-grid-8 {
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: repeat(3, auto);
-            gap: 6px;
-          }
-          .cont1 { grid-column: 1 / 3; grid-row: 1; }
-          .cont2 { grid-column: 3 / 4; grid-row: 1; }
-          .cont3 { grid-column: 1 / 4; grid-row: 2; }
-          .cont4 { grid-column: 1 / 2; grid-row: 3; min-height: 220px; }
-          .cont5 { grid-column: 2 / 3; grid-row: 3; min-height: 220px; }
-          .cont7 { grid-column: 3 / 4; grid-row: 3; min-height: 220px; }
-          .cont6 { grid-column: 1 / 4; grid-row: 4; }
-         }
-
-        /* Ultra-compact for very small screens */
-        @media (max-width: 414px) {
-          .battle-grid-8 {
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 4px;
-            transform: scale(0.9);
-            transform-origin: top left;
-          }
-          .cont { padding: 6px; }
-          .cont4.expanded { width: 90vw; max-width: 280px; }
-        }
-      </style>
-      <div id="rotate-prompt">
-        <div class="rotate-icon">📱</div>
-        <div style="font-size:18px;font-weight:700">Gira tu celular</div>
-        <div style="font-size:13px;opacity:0.65">El arena de Kombat requiere modo horizontal</div>
-      </div>
       <div class="battle-container">
         <div class="battle-grid-8">
           <div class="cont cont1">
             <div class="compact-row"><span>Energia:</span><span id="energyValue">0%</span></div>
             <div class="energy-bar"><div id="energyFill" class="energy-fill"></div></div>
             <div class="compact-row" style="margin-top:4px;">
-              <span>Carac.</span>
-              <select id="charSelect" class="select-char">
-                <option value="P">P</option>
-                <option value="S">S</option>
-                <option value="W">W</option>
-                <option value="H">H</option>
-                <option value="A">A</option>
-                <option value="AD">AD</option>
-                <option value="C">C</option>
-                <option value="E">E</option>
-                <option value="SD">SD</option>
-                <option value="R">R</option>
+              <span>Factor:</span>
+              <select id="charSelect" class="select-char" title="Factor a destacar">
+                <option value="">— Ver factor —</option>
+                <option value="P">Predación (P)</option>
+                <option value="S">Velocidad (S)</option>
+                <option value="W">Anatomía (W)</option>
+                <option value="H">Estrategia (H)</option>
+                <option value="A">Agresividad (A)</option>
+                <option value="AD">Adaptabilidad (AD)</option>
+                <option value="C">Camuflaje (C)</option>
+                <option value="E">Evasión (E)</option>
+                <option value="SD">Def. Social (SD)</option>
+                <option value="R">Robustez (R)</option>
               </select>
             </div>
             <button id="readyBtn" class="btn-primary btn-ready" disabled>READY</button>
@@ -249,10 +137,16 @@ export class BattleUIRenderer {
 
     this.playerDeckListEl.innerHTML = deck
       .map((card, index) => {
+        const imgHtml = card.image
+          ? `<img src="${card.image}" alt="${card.name}" class="card-thumb">`
+          : '<span class="card-thumb-placeholder">🃏</span>';
         return `
           <div class="staging-card" data-index="${index}" draggable="true">
-            <span class="card-pill-name">${card.name}</span>
-            <span class="card-pill-stats">${card.calculateAttack()}⚔ ${card.calculateDefense()}🛡</span>
+            ${imgHtml}
+            <div class="card-thumb-info">
+              <div><strong>${card.name}</strong></div>
+              <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+            </div>
           </div>
         `;
       })
@@ -263,12 +157,20 @@ export class BattleUIRenderer {
     const prepEl = this.battleContainer.querySelector('#playerPrepList');
     if (!prepEl) return;
     prepEl.innerHTML = prepDeck
-      .map((card, index) => `
-        <div class="prep-card" data-index="${index}" draggable="true">
-          <span class="card-pill-name">${card.name}</span>
-          <span class="card-pill-stats">${card.calculateAttack()}⚔ ${card.calculateDefense()}🛡</span>
-        </div>
-      `)
+      .map((card, index) => {
+        const imgHtml = card.image
+          ? `<img src="${card.image}" alt="${card.name}" class="card-thumb">`
+          : '<span class="card-thumb-placeholder">🃏</span>';
+        return `
+          <div class="prep-card" data-index="${index}" draggable="true">
+            ${imgHtml}
+            <div class="card-thumb-info">
+              <div><strong>${card.name}</strong></div>
+              <div>ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+            </div>
+          </div>
+        `;
+      })
       .join('');
   }
 
@@ -281,11 +183,11 @@ export class BattleUIRenderer {
   }
 
   revealOpponentCard(card) {
-    const oppReveal = document.getElementById('opponentReveal');
+    const oppReveal = this._qs('opponentReveal');
     if (!oppReveal || !card) return;
     oppReveal.innerHTML = `
       <h5>${card.name}</h5>
-      <div class="meta">ATQ ${card.calculateAttack()} · DEF ${card.calculateDefense()}</div>
+      <div class="meta">⚔️ ${card.calculateAttack()} · 🛡️ ${card.calculateDefense()}</div>
       <div style="margin-top:6px; display:flex; gap:6px; align-items:center;">
         <img src="${card.image}" alt="${card.name}" style="width:56px; height:56px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.15);">
         <span class="badge">${card.rarity || ''}</span>
@@ -297,7 +199,7 @@ export class BattleUIRenderer {
    * Display card in arena
    */
   displayCard(card, slot) {
-    const slotElement = document.getElementById(slot);
+    const slotElement = this._qs(slot) || document.getElementById(slot);
     if (!slotElement) return;
 
     const html = `
@@ -327,7 +229,7 @@ export class BattleUIRenderer {
    * Reset player slot to empty droppable state
    */
   resetPlayerSlot() {
-    const slotElement = document.getElementById('playerCardSlot');
+    const slotElement = this._qs('playerCardSlot');
     if (!slotElement) return;
     slotElement.innerHTML = '<div class="empty-slot">Arrastra aquí tu carta para esta ronda</div>';
   }
@@ -368,8 +270,8 @@ export class BattleUIRenderer {
     const playerPercent = (playerHealth / maxHealth) * 100;
     const opponentPercent = (opponentHealth / maxHealth) * 100;
 
-    const playerBar = document.getElementById('playerHealthBar');
-    const opponentBar = document.getElementById('opponentHealthBar');
+    const playerBar = this._qs('playerHealthBar');
+    const opponentBar = this._qs('opponentHealthBar');
 
     if (playerBar) {
       playerBar.style.width = `${playerPercent}%`;
@@ -381,9 +283,8 @@ export class BattleUIRenderer {
       opponentBar.classList.toggle('low-health', opponentHealth <= maxHealth * 0.25);
     }
 
-    // Update health values
-    const playerValue = document.getElementById('playerHealthValue');
-    const opponentValue = document.getElementById('opponentHealthValue');
+    const playerValue = this._qs('playerHealthValue');
+    const opponentValue = this._qs('opponentHealthValue');
 
     if (playerValue) playerValue.textContent = `${Math.max(0, playerHealth)}/${maxHealth}`;
     if (opponentValue) opponentValue.textContent = `${Math.max(0, opponentHealth)}/${maxHealth}`;
@@ -393,12 +294,12 @@ export class BattleUIRenderer {
    * Show round result
    */
   displayRoundResult(roundData) {
-    const resultDiv = document.getElementById('roundResult');
-    const messageDiv = document.getElementById('resultMessage');
-    const damageDealtDiv = document.getElementById('damageDealt');
-    const damageTakenDiv = document.getElementById('damageTaken');
-    const winnerSlot = document.getElementById('winnerSlot');
-    const oppReveal = document.getElementById('opponentReveal');
+    const resultDiv = this._qs('roundResult');
+    const messageDiv = this._qs('resultMessage');
+    const damageDealtDiv = this._qs('damageDealt');
+    const damageTakenDiv = this._qs('damageTaken');
+    const winnerSlot = this._qs('winnerSlot');
+    const oppReveal = this._qs('opponentReveal');
 
     if (!resultDiv) return;
 
@@ -406,13 +307,13 @@ export class BattleUIRenderer {
     let damageClass = '';
 
     if (roundData.winner === 'player') {
-      message = `✅ ¡Victoria en ronda ${roundData.round}!`;
+      message = `✅ ¡Ronda ${roundData.roundInGame}/${roundData.roundsPerGame} · Game ${roundData.gameNumber} ganada!`;
       damageClass = 'victory';
     } else if (roundData.winner === 'opponent') {
-      message = `❌ Derrota en ronda ${roundData.round}`;
+      message = `❌ Ronda ${roundData.roundInGame}/${roundData.roundsPerGame} · Game ${roundData.gameNumber} perdida`;
       damageClass = 'defeat';
     } else {
-      message = `⚔️ Empate en ronda ${roundData.round}`;
+      message = `⚔️ Ronda ${roundData.roundInGame}/${roundData.roundsPerGame} · Game ${roundData.gameNumber} empatada`;
       damageClass = 'draw';
     }
 
@@ -453,7 +354,7 @@ export class BattleUIRenderer {
     if (oppReveal) {
       oppReveal.innerHTML = `
         <h5>${roundData.opponentCard}</h5>
-        <div class="meta">ATQ ${roundData.opponentAttack} · DEF ${roundData.opponentDefense}</div>
+        <div class="meta">⚔️ ${roundData.opponentAttack} · 🛡️ ${roundData.opponentDefense}</div>
         <div style="margin-top:6px; display:flex; gap:6px; align-items:center;">
           <img src="${roundData.opponentCardImage}" alt="${roundData.opponentCard}" style="width:56px; height:56px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.15);">
           <span class="badge">${roundData.opponentRarity || ''}</span>
@@ -473,9 +374,9 @@ export class BattleUIRenderer {
    * Update round counter and stats
    */
   updateStats(totalRounds, playerWins, draws) {
-    const roundsEl = document.getElementById('roundsPlayed');
-    const winsEl = document.getElementById('playerWins');
-    const drawsEl = document.getElementById('draws');
+    const roundsEl = this._qs('roundsPlayed');
+    const winsEl = this._qs('playerWins');
+    const drawsEl = this._qs('draws');
 
     if (roundsEl) roundsEl.textContent = totalRounds;
     if (winsEl) winsEl.textContent = playerWins;
@@ -486,19 +387,19 @@ export class BattleUIRenderer {
    * Update round number display
    */
   updateRoundNumber(gameNumber, totalGames, roundInGame, roundsPerGame, playerGameWins, opponentGameWins, drawGames) {
-    const roundEl = document.getElementById('roundNumber');
+    const roundEl = this._qs('roundNumber');
     if (roundEl) {
       roundEl.textContent = `Game ${gameNumber}/${totalGames} · Ronda ${roundInGame}/${roundsPerGame}`;
     }
 
-    const pGames = document.getElementById('playerGameWins');
-    const oGames = document.getElementById('opponentGameWins');
-    const dGames = document.getElementById('drawGameWins');
+    const pGames = this._qs('playerGameWins');
+    const oGames = this._qs('opponentGameWins');
+    const dGames = this._qs('drawGameWins');
     if (pGames) pGames.textContent = playerGameWins;
     if (oGames) oGames.textContent = opponentGameWins;
     if (dGames) dGames.textContent = drawGames;
 
-    // Header HUD (si existe)
+    // Header HUD (si existe, buscar en document ya que está fuera del battle container)
     const hudGame = document.getElementById('battle-hud-game');
     const hudGamesTotal = document.getElementById('battle-hud-gamesTotal');
     const hudRound = document.getElementById('battle-hud-round');
@@ -516,8 +417,8 @@ export class BattleUIRenderer {
    * Show battle end screen
    */
   showBattleEnd(summary) {
-    const resultDiv = document.getElementById('roundResult');
-    const messageDiv = document.getElementById('resultMessage');
+    const resultDiv = this._qs('roundResult');
+    const messageDiv = this._qs('resultMessage');
 
     if (!resultDiv) return;
 
@@ -547,8 +448,7 @@ export class BattleUIRenderer {
    * Enable/disable battle buttons
    */
   setButtonsEnabled(enabled) {
-    const autoBattleBtn = document.getElementById('autoBattleBtn');
-
+    const autoBattleBtn = this._qs('autoBattleBtn');
     if (autoBattleBtn) autoBattleBtn.disabled = !enabled;
   }
 
@@ -556,8 +456,8 @@ export class BattleUIRenderer {
    * Show loading state
    */
   setLoading(isLoading) {
-    const battleBtn = document.getElementById('battleBtn');
-    const autoBattleBtn = document.getElementById('autoBattleBtn');
+    const battleBtn = this._qs('battleBtn');
+    const autoBattleBtn = this._qs('autoBattleBtn');
     if (battleBtn) {
       if (!battleBtn.dataset.defaultLabel) {
         battleBtn.dataset.defaultLabel = battleBtn.textContent || 'Ronda';

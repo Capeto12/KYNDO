@@ -13,54 +13,59 @@
 
 <body>
 
-  <div class="page-shell">
-    <header>
-      <div class="header-bar">
-        <a class="brand-link" href="../index.html">
-          <div class="brand-block">
-            <h1 class="brand-title">Kindo</h1>
-            <div class="brand-subtitle">Pairs</div>
-          </div>
-        </a>
-
-        <div class="hud-block" aria-label="Estadísticas del juego">
-          <div class="hud-row hud-meta">
-            <span>Nivel <span id="hud-level">1</span></span>
-            <span>Grado <span id="hud-grade">1</span></span>
-          </div>
-          <div class="hud-row">
-            <span>🧠 <span id="hud-matches">0</span>/<span id="hud-pairs">0</span></span>
-            <span>🔁 <span id="hud-attempts">0</span>/<span id="hud-maxAttempts">0</span></span>
-            <span>❌ <span id="hud-errors">0</span></span>
-            <span>🔥 <span id="hud-streak">0</span></span>
-            <span>⭐ <span id="hud-score">0</span></span>
-          </div>
+<div class="page-shell">
+  <header>
+    <div class="header-bar">
+      <a class="brand-link" href="../index.html">
+        <div class="brand-block">
+          <h1 class="brand-title">Kindo</h1>
+          <div class="brand-subtitle">Pairs</div>
         </div>
+      </a>
 
-        <div class="actions-block">
-          <div id="user-info">
-            <div class="player-info" id="current-player">
-              <div class="player-avatar">👤</div>
-              <div class="player-name">Jugador</div>
-            </div>
-            <div class="player-info" id="opponent-player" style="display: none;">
-              <div class="player-avatar">👤</div>
-              <div class="player-name">Oponente</div>
-            </div>
+      <div class="hud-block" aria-label="Estadísticas del juego">
+        <div class="hud-row hud-meta">
+          <span>Nivel <span id="hud-level">1</span></span>
+          <span>Grado <span id="hud-grade">1</span></span>
+        </div>
+        <div class="hud-row">
+          <span>Pares <span id="hud-matches">0</span>/<span id="hud-pairs">0</span></span>
+          <span>Intentos <span id="hud-attempts">0</span>/<span id="hud-maxAttempts">0</span></span>
+        </div>
+        <div class="hud-row">
+          <span>Errores <span id="hud-errors">0</span></span>
+          <span>Racha <span id="hud-streak">0</span></span>
+          <span class="hud-score-highlight">Puntos <span id="hud-score">0</span></span>
+        </div>
+      </div>
+
+      <div class="actions-block">
+        <div class="header-links">
+          <a href="deck.html">🃏 Mis Cartas</a>
+        </div>
+        <div id="user-info">
+          <div class="player-info" id="current-player">
+            <div class="player-avatar">👤</div>
+            <div class="player-name">Jugador</div>
+          </div>
+          <div class="player-info" id="opponent-player" style="display: none;">
+            <div class="player-avatar">👤</div>
+            <div class="player-name">Oponente</div>
           </div>
         </div>
       </div>
-      <div id="loading">
-        Cargando contenido... ⏳
-      </div>
-    </header>
+    </div>
+    <div id="loading">
+      Cargando contenido... ⏳
+    </div>
+  </header>
 
-    <section id="board"></section>
+  <section id="board"></section>
 
-    <footer>
-      <a href="../">Volver al Home</a>
-    </footer>
-  </div>
+  <footer>
+    <a href="../">Volver al Home</a>
+  </footer>
+</div>
 
   <!-- Overlay de foco (carta grande) -->
   <div id="overlay">

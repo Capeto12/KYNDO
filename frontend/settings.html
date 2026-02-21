@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KYNDO - Configuración</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+    :root {
+      --color-primary: #667eea;
+      --color-primary-dark: #764ba2;
+      --color-danger: #e53e3e;
+      --color-danger-dark: #c53030;
+      --color-success: #38a169;
+      --color-success-dark: #276749;
+      --color-warning: #d69e2e;
+      --color-warning-dark: #b7791f;
+      --color-text: #2d3748;
+      --color-text-muted: #718096;
+      --color-border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 16px rgba(0,0,0,0.10);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--color-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* ---- Header ---- */
+    .app-header {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .back-link {
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-link:hover { color: var(--color-primary-dark); }
+    .app-header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--color-text);
+      flex: 1;
+    }
+
+    /* ---- Main card ---- */
+    .settings-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      max-width: 600px;
+      width: 100%;
+    }
+
+    /* ---- Section ---- */
+    .section {
+      margin-bottom: 28px;
+    }
+    .section:last-child { margin-bottom: 0; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    /* ---- Estado actual ---- */
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 0;
+    }
+    .status-item {
+      background: #f7fafc;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 12px;
+      text-align: center;
+    }
+    .status-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--color-primary);
+      line-height: 1;
+    }
+    .status-label {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+
+    /* ---- Reset actions ---- */
+    .action-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .action-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .action-info { flex: 1; }
+    .action-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 3px;
+    }
+    .action-desc {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    /* ---- Buttons ---- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .btn:active { transform: none; box-shadow: none; }
+    .btn-warning  { background: var(--color-warning);  color: #fff; }
+    .btn-warning:hover  { background: var(--color-warning-dark); }
+    .btn-danger   { background: var(--color-danger);   color: #fff; }
+    .btn-danger:hover   { background: var(--color-danger-dark); }
+    .btn-success  { background: var(--color-success);  color: #fff; }
+    .btn-success:hover  { background: var(--color-success-dark); }
+    .btn-nuke {
+      background: linear-gradient(135deg, #e53e3e 0%, #7b1fa2 100%);
+      color: #fff;
+      width: 100%;
+      justify-content: center;
+      padding: 13px;
+      font-size: 15px;
+      border-radius: var(--radius);
+      margin-top: 8px;
+    }
+    .btn-nuke:hover { opacity: 0.9; }
+
+    /* ---- Toast ---- */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 999;
+    }
+    .toast {
+      background: #2d3748;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: slideUp 0.3s ease;
+    }
+    .toast.success { background: var(--color-success); }
+    .toast.danger  { background: var(--color-danger); }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .settings-card { padding: 20px 16px; }
+      .action-row { flex-direction: column; gap: 10px; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-header">
+    <a class="back-link" href="../index.html">← Menú Principal</a>
+    <h1>⚙️ Configuración</h1>
+  </div>
+
+  <div class="settings-card">
+
+    <!-- Estado actual -->
+    <div class="section">
+      <div class="section-title">Estado Actual del Jugador</div>
+      <div class="status-grid">
+        <div class="status-item">
+          <div class="status-value" id="status-grade">—</div>
+          <div class="status-label">Grado Memoria</div>
+        </div>
+        <div class="status-item">
+          <div class="status-value" id="status-games">—</div>
+          <div class="status-label">Partidas Totales</div>
+        </div>
+        <div class="status-item">
+          <div class="status-value" id="status-cards">—</div>
+          <div class="status-label">Cartas en Colección</div>
+        </div>
+        <div class="status-item">
+          <div class="status-value" id="status-decks">—</div>
+          <div class="status-label">Cartas en Mazos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reinicio de pruebas -->
+    <div class="section">
+      <div class="section-title">Reiniciar para Pruebas</div>
+
+      <div class="action-row">
+        <div class="action-info">
+          <div class="action-title">🎓 Reiniciar Nivel de Memoria</div>
+          <div class="action-desc">Vuelve al Grado 1 y borra las recompensas acumuladas. El mazo y las estadísticas quedan intactos.</div>
+        </div>
+        <button class="btn btn-warning" id="btn-reset-grade">Reiniciar Nivel</button>
+      </div>
+
+      <div class="action-row">
+        <div class="action-info">
+          <div class="action-title">📊 Reiniciar Estadísticas</div>
+          <div class="action-desc">Borra el historial de partidas, puntajes y logros. No afecta el nivel ni el mazo.</div>
+        </div>
+        <button class="btn btn-warning" id="btn-reset-stats">Reiniciar Stats</button>
+      </div>
+
+      <div class="action-row">
+        <div class="action-info">
+          <div class="action-title">🃏 Reiniciar Colección de Mazos</div>
+          <div class="action-desc">Restaura la colección inicial (2 copias de cada una de las 40 cartas) y vacía los mazos. No afecta el nivel ni las estadísticas.</div>
+        </div>
+        <button class="btn btn-danger" id="btn-reset-decks">Reiniciar Mazos</button>
+      </div>
+    </div>
+
+    <!-- Reinicio total -->
+    <div class="section">
+      <div class="section-title">Reinicio Total</div>
+      <p style="font-size:13px; color:var(--color-text-muted); margin-bottom:10px; line-height:1.6;">
+        Borra <strong>todo</strong> el progreso: nivel, estadísticas y colección de mazos.
+        El juego quedará como si fuera la primera vez.
+      </p>
+      <button class="btn btn-nuke" id="btn-reset-all">🗑️ Reiniciar TODO el Progreso</button>
+    </div>
+
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    // ============================================================
+    // Claves de LocalStorage
+    // ============================================================
+    const KEYS = {
+      grade:  'kyndo_memory_v1',
+      stats:  'kyndo_memory_v1_stats',
+      decks:  'kyndo_decks_v1',
+    };
+
+    // ============================================================
+    // Leer estado actual
+    // ============================================================
+    function loadStatus() {
+      // Grado
+      try {
+        const gradeData = JSON.parse(localStorage.getItem(KEYS.grade) || '{}');
+        document.getElementById('status-grade').textContent =
+          typeof gradeData.memoryGrade === 'number' ? gradeData.memoryGrade : 1;
+      } catch { document.getElementById('status-grade').textContent = 1; }
+
+      // Partidas totales
+      try {
+        const statsData = JSON.parse(localStorage.getItem(KEYS.stats) || '{}');
+        document.getElementById('status-games').textContent =
+          typeof statsData.totalGames === 'number' ? statsData.totalGames : 0;
+      } catch { document.getElementById('status-games').textContent = 0; }
+
+      // Cartas en colección y mazos
+      try {
+        const deckData = JSON.parse(localStorage.getItem(KEYS.decks) || '{}');
+        const collection = deckData.collection || {};
+        const collectionTotal = Object.values(collection).reduce((sum, entry) => sum + (entry.count || 0), 0);
+        document.getElementById('status-cards').textContent = collectionTotal;
+
+        const decks = deckData.decks || [];
+        const deckTotal = decks.reduce((sum, deck) => sum + (deck.cards ? deck.cards.length : 0), 0);
+        document.getElementById('status-decks').textContent = deckTotal;
+      } catch {
+        document.getElementById('status-cards').textContent = 0;
+        document.getElementById('status-decks').textContent = 0;
+      }
+    }
+
+    // ============================================================
+    // Toast helper
+    // ============================================================
+    function toast(msg, type = '') {
+      const el = document.createElement('div');
+      el.className = 'toast ' + type;
+      el.textContent = msg;
+      document.getElementById('toast-container').appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    // ============================================================
+    // Acciones de reinicio
+    // ============================================================
+    document.getElementById('btn-reset-grade').addEventListener('click', () => {
+      if (!confirm('¿Reiniciar el Nivel de Memoria al Grado 1? Se borrarán las recompensas acumuladas.')) return;
+      localStorage.removeItem(KEYS.grade);
+      toast('✅ Nivel de Memoria reiniciado al Grado 1', 'success');
+      loadStatus();
+    });
+
+    document.getElementById('btn-reset-stats').addEventListener('click', () => {
+      if (!confirm('¿Borrar todas las estadísticas históricas?')) return;
+      localStorage.removeItem(KEYS.stats);
+      toast('✅ Estadísticas reiniciadas', 'success');
+      loadStatus();
+    });
+
+    document.getElementById('btn-reset-decks').addEventListener('click', () => {
+      if (!confirm('¿Reiniciar la colección de mazos? Se restaurarán las 40 cartas iniciales y se vaciarán los mazos.')) return;
+      localStorage.removeItem(KEYS.decks);
+      toast('✅ Colección de mazos reiniciada (40 cartas × 2 copias)', 'success');
+      loadStatus();
+    });
+
+    document.getElementById('btn-reset-all').addEventListener('click', () => {
+      if (!confirm('⚠️ ¿Reiniciar TODO el progreso?\n\nEsto borrará: nivel, estadísticas y colección de mazos.\n\nEsta acción no se puede deshacer.')) return;
+      localStorage.removeItem(KEYS.grade);
+      localStorage.removeItem(KEYS.stats);
+      localStorage.removeItem(KEYS.decks);
+      toast('🗑️ Todo el progreso ha sido reiniciado', 'danger');
+      loadStatus();
+    });
+
+    // ============================================================
+    // Init
+    // ============================================================
+    loadStatus();
+  </script>
+
+</body>
+</html>
