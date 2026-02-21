@@ -14,7 +14,8 @@ import {
   computeColumns,
   buildObjectIds,
   isValidGrade,
-  getNextGrade
+  getNextGrade,
+  canonicalPairKey
 } from './game-engine.js';
 import {
   HUDRenderer,
@@ -32,6 +33,7 @@ import {
   ValidationError
 } from './error-handler.js';
 import { checkStreakReward, getGradePassReward } from './rewards.js';
+import { deckManager } from './deck-manager.js';
 
 /**
  * Controlador principal del juego Memory
@@ -41,7 +43,7 @@ export class MemoryGameController {
     // Estado del juego
     this.gameState = null;
     this.currentGrade = this.loadGrade();
-    
+
     // Renderizadores de UI
     this.hudRenderer = new HUDRenderer({
       matches: elements.hudMatches,
@@ -126,7 +128,7 @@ export class MemoryGameController {
   startRun() {
     // Crear nuevo estado de juego
     this.gameState = new MemoryGameState(this.currentGrade);
-    
+
     // Resetear UI
     this.boardRenderer.clear();
     this.revealedCards = [];
@@ -136,13 +138,30 @@ export class MemoryGameController {
     const columns = computeColumns(this.gameState.totalCards);
     this.boardRenderer.setupGrid(columns);
 
-    // Generar y crear cartas
-    const objectIds = buildObjectIds(this.gameState.totalPairs);
-    
+    // Obtener cartas desde el mazo o generar aleatorias
+    let objectIds = [];
+    const pairsDeck = deckManager.getDeck(1); // Deck 1 is 'Mazo Pairs'
+
+    if (pairsDeck && pairsDeck.cards.length >= this.gameState.totalPairs) {
+      // Usar cartas del mazo (primeras N necesarias)
+      const deckCardIds = pairsDeck.cards.slice(0, this.gameState.totalPairs);
+      // Duplicar y barajar
+      objectIds = [...deckCardIds, ...deckCardIds];
+      for (let i = objectIds.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [objectIds[i], objectIds[j]] = [objectIds[j], objectIds[i]];
+      }
+      console.log("Iniciando con mazo personalizado:", pairsDeck.name);
+    } else {
+      // Fallback a IDs numéricos aleatorios
+      objectIds = buildObjectIds(this.gameState.totalPairs);
+      console.log("Iniciando con cartas aleatorias (mazo insuficiente o no cargado)");
+    }
+
     for (let i = 0; i < this.gameState.totalCards; i++) {
       const cardId = `card-${i}`;
-      const objectId = objectIds[i];
-      
+      const objectId = objectIds[i]; // Aquí objectId podría ser el cardId (string) del catálogo
+
       this.boardRenderer.createCard(
         cardId,
         objectId,
@@ -198,10 +217,10 @@ export class MemoryGameController {
    */
   resolvePair() {
     const [cardA, cardB] = this.revealedCards;
-    
+
     const objectIdA = this.boardRenderer.getCardObjectId(cardA);
     const objectIdB = this.boardRenderer.getCardObjectId(cardB);
-    
+
     const cardIdA = this.boardRenderer.getCardId(cardA);
     const cardIdB = this.boardRenderer.getCardId(cardB);
 
@@ -244,7 +263,7 @@ export class MemoryGameController {
    */
   clearPendingCards() {
     const pending = this.boardRenderer.getPendingCards();
-    
+
     if (pending.length === 2) {
       pending.forEach(card => {
         const cardId = this.boardRenderer.getCardId(card);
@@ -252,7 +271,7 @@ export class MemoryGameController {
       });
       return true;
     }
-    
+
     return false;
   }
 
@@ -264,7 +283,7 @@ export class MemoryGameController {
 
     const passed = this.gameState.didPassLevel();
     const state = this.gameState.getState();
-    
+
     // Mostrar resultado con delay cognitivo
     showResultWithDelay(this.resultOverlay, state, passed);
   }
@@ -284,7 +303,7 @@ export class MemoryGameController {
       this.currentGrade = getNextGrade(this.currentGrade);
       this.saveGrade();
     }
-    
+
     // Reiniciar partida con el grado actual (o incrementado)
     this.startRun();
   }
@@ -312,7 +331,7 @@ export function initGame() {
       board: document.getElementById(DOM_IDS.BOARD),
       overlay: document.getElementById(DOM_IDS.OVERLAY),
       resultOverlay: document.getElementById(DOM_IDS.RESULT_OVERLAY),
-      
+
       // HUD
       hudMatches: document.getElementById(DOM_IDS.HUD.MATCHES),
       hudPairs: document.getElementById(DOM_IDS.HUD.PAIRS),
@@ -321,13 +340,13 @@ export function initGame() {
       hudStreak: document.getElementById(DOM_IDS.HUD.STREAK),
       hudScore: document.getElementById(DOM_IDS.HUD.SCORE),
       hudGrade: document.getElementById(DOM_IDS.HUD.GRADE),
-      
+
       // Focus overlay
       focusImage: document.getElementById(DOM_IDS.FOCUS.IMAGE),
       focusName: document.getElementById(DOM_IDS.FOCUS.NAME),
       focusAtk: document.getElementById(DOM_IDS.FOCUS.ATK),
       focusDef: document.getElementById(DOM_IDS.FOCUS.DEF),
-      
+
       // Result overlay
       resultTitle: document.getElementById(DOM_IDS.RESULT.TITLE),
       resultSub: document.getElementById(DOM_IDS.RESULT.SUBTITLE),
@@ -345,13 +364,13 @@ export function initGame() {
       'hudMatches', 'hudPairs', 'hudAttempts', 'hudMaxAttempts',
       'hudStreak', 'hudScore', 'hudGrade'
     ];
-    
+
     validateRequiredElements(elements, requiredElements);
 
     // Crear controlador e iniciar juego
     const controller = new MemoryGameController(elements);
     controller.startRun();
-    
+
     return controller;
   } catch (error) {
     errorHandler.handleError(error);
