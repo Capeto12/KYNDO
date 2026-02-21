@@ -433,18 +433,21 @@ footer {
 
 #overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.7);
   display: none;
-  align-items: center;
-  justify-content: center;
   z-index: 100;
   backdrop-filter: blur(6px);
-  animation: fadeIn 150ms ease;
 }
 
 #overlay.active {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 150ms ease;
 }
 
 @keyframes fadeIn {
@@ -470,6 +473,8 @@ footer {
   overflow: hidden;
   box-shadow: var(--shadow-2);
   animation: scaleIn 200ms ease;
+  flex-shrink: 0;
+  margin: auto;
 }
 
 @keyframes scaleIn {
