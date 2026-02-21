@@ -151,11 +151,9 @@ export class MemoryGameController {
         const j = Math.floor(Math.random() * (i + 1));
         [objectIds[i], objectIds[j]] = [objectIds[j], objectIds[i]];
       }
-      console.log("Iniciando con mazo personalizado:", pairsDeck.name);
     } else {
       // Fallback a IDs numéricos aleatorios
       objectIds = buildObjectIds(this.gameState.totalPairs);
-      console.log("Iniciando con cartas aleatorias (mazo insuficiente o no cargado)");
     }
 
     for (let i = 0; i < this.gameState.totalCards; i++) {
