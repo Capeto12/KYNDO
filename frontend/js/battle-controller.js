@@ -11,7 +11,7 @@ import { progressStorage } from './storage.js';
 import { showRewardNotification } from './ui-renderer.js';
 import { MESSAGES } from './constants.js';
 
-const PACK_PATH = '../content/content/birds/pack-1.json';
+const PACK_PATH = '../birds/pack-1.json';
 
 export class BattleController {
   constructor() {

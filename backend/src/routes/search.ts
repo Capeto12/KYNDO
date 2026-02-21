@@ -12,36 +12,44 @@ const router = Router();
  */
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const searchTerm = req.query.q as string;
+    const searchTerm = req.query.q as string || '';
+    const tagsParam = req.query.tags as string;
     const limit = Math.min(
       parseInt(req.query.limit as string) || 20,
       100
     );
 
-    if (!searchTerm || searchTerm.trim() === '') {
-      return res.status(400).json({
-        error: 'Search term "q" is required',
-      });
+    // Build the query
+    const whereClause: any = {};
+
+    if (searchTerm.trim() !== '') {
+      whereClause.OR = [
+        {
+          title: {
+            contains: searchTerm,
+            mode: 'insensitive',
+          },
+        },
+        {
+          description: {
+            contains: searchTerm,
+            mode: 'insensitive',
+          },
+        },
+      ];
     }
 
-    // Search cards by title (case-insensitive partial match)
+    if (tagsParam) {
+      // Tags comma-separated, e.g., ?tags=pares,kombat
+      const searchTags = tagsParam.split(',').map(t => t.trim());
+      whereClause.tags = {
+        hasSome: searchTags
+      };
+    }
+
+    // Search cards
     const cards = await prisma.card.findMany({
-      where: {
-        OR: [
-          {
-            title: {
-              contains: searchTerm,
-              mode: 'insensitive',
-            },
-          },
-          {
-            description: {
-              contains: searchTerm,
-              mode: 'insensitive',
-            },
-          },
-        ],
-      },
+      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
       select: {
         id: true,
         cardId: true,

@@ -112,6 +112,87 @@ export async function patchCard(req: Request, res: Response) {
 }
 
 /**
+ * POST /api/admin/cards
+ * Upsert a card by cardId (create or update)
+ */
+export async function upsertCard(req: Request, res: Response) {
+  try {
+    const { cardId, title, imageUrl, packId, tags, rarity } = req.body;
+
+    if (!cardId || !title) {
+      return res.status(400).json({ error: 'cardId and title are required' });
+    }
+
+    const existing = await prisma.card.findUnique({ where: { cardId } });
+
+    if (existing) {
+      const updated = await prisma.card.update({
+        where: { cardId },
+        data: {
+          title,
+          ...(imageUrl !== undefined && { imageUrl }),
+          ...(packId !== undefined && { packId }),
+          ...(tags !== undefined && { tags }),
+          ...(rarity !== undefined && { rarity }),
+        },
+      });
+      return res.json({ created: false, card: updated });
+    } else {
+      const created = await prisma.card.create({
+        data: {
+          cardId,
+          title,
+          imageUrl: imageUrl || null,
+          packId: packId || 'birds',
+          tags: tags || [],
+          rarity: rarity || 'abundante',
+        },
+      });
+      return res.json({ created: true, card: created });
+    }
+  } catch (error) {
+    console.error('Error upserting card:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+}
+
+/**
+ * PATCH /api/admin/cards/:cardId/tags
+ * Update tags array for a card identified by cardId string
+ */
+export async function patchCardTags(req: Request, res: Response) {
+  try {
+    const { cardId } = req.params;
+    const { tags } = req.body;
+
+    if (!Array.isArray(tags)) {
+      return res.status(400).json({ error: 'tags must be an array of strings' });
+    }
+
+    const card = await prisma.card.findUnique({ where: { cardId } });
+    if (!card) {
+      return res.status(404).json({ error: `Card '${cardId}' not found` });
+    }
+
+    const updated = await prisma.card.update({
+      where: { cardId },
+      data: { tags },
+    });
+
+    return res.json({ success: true, card: updated });
+  } catch (error) {
+    console.error('Error updating card tags:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+}
+
+/**
  * GET /api/cards/:id/presentation
  * Get card with presentation rules (public endpoint)
  */

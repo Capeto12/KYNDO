@@ -50,6 +50,7 @@
                     </div>
                 </div>
                 <a href="deck.html" class="btn btn-ghost" style="margin-top:8px;font-size:13px;">&#127183; Mis Cartas</a>
+                <button class="btn btn-ghost" id="btnHistory" style="margin-top:8px;font-size:13px;">&#128196; Partidas</button>
             </div>
         </div>
         <div id="loading">
@@ -78,6 +79,17 @@
     </div>
 </div>
 
+<!-- Overlay historial de partidas -->
+<div id="historyOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.72);display:none;align-items:center;justify-content:center;z-index:300;padding:16px;backdrop-filter:blur(6px);">
+  <div style="width:min(560px,94vw);background:rgba(255,255,255,0.97);border-radius:18px;padding:20px 18px 14px;box-shadow:0 8px 30px rgba(0,0,0,0.2);max-height:80vh;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <strong style="font-size:16px;">&#128196; Mis Partidas</strong>
+      <button id="btnHistoryClose" style="border:0;background:none;font-size:20px;cursor:pointer;color:#555;">&times;</button>
+    </div>
+    <div id="historyList" style="overflow-y:auto;flex:1;font-size:13px;"></div>
+  </div>
+</div>
+
 <!-- Overlay fin de grado -->
 <div id="resultOverlay">
     <div class="result-card">
@@ -100,6 +112,38 @@
 
 <!-- Motor del juego -->
 <script>
+// ===========================
+// WEB AUDIO — SONIDOS
+// ===========================
+const _audioCtx = (() => {
+    try { return new (window.AudioContext || window.webkitAudioContext)(); } catch { return null; }
+})();
+
+function playTone(freq, duration, type = 'sine', gain = 0.18) {
+    if (!_audioCtx) return;
+    const osc = _audioCtx.createOscillator();
+    const gainNode = _audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(_audioCtx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, _audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(gain, _audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, _audioCtx.currentTime + duration);
+    osc.start();
+    osc.stop(_audioCtx.currentTime + duration);
+}
+
+function soundMatch() {
+    playTone(523, 0.12); // C5
+    setTimeout(() => playTone(659, 0.12), 100); // E5
+    setTimeout(() => playTone(784, 0.2), 200);  // G5
+}
+
+function soundError() {
+    playTone(200, 0.15, 'sawtooth', 0.12);
+    setTimeout(() => playTone(160, 0.2, 'sawtooth', 0.1), 140);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
 
     // ===========================
@@ -123,9 +167,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Persistencia simple (local)
     const STORAGE_KEY = 'kyndo_memory_v1';
+    const HISTORY_KEY = 'kyndo_history_v1';
     const saved = (() => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } })();
     let memoryGrade = typeof saved.memoryGrade === 'number' ? saved.memoryGrade : 1;
     if (!gradeConfig[memoryGrade]) memoryGrade = 1;
+
+    function saveMatchToHistory(entry) {
+        const history = (() => { try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; } })();
+        history.unshift(entry);
+        if (history.length > 50) history.length = 50; // máx 50 entradas
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+
+    function getHistory() {
+        try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+    }
 
     // ===========================
     // CARGA DE CARTAS REALES
@@ -147,6 +203,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const board = document.getElementById('board');
     const overlay = document.getElementById('overlay');
     const resultOverlay = document.getElementById('resultOverlay');
+    const historyOverlay = document.getElementById('historyOverlay');
+    const historyList = document.getElementById('historyList');
+    const btnHistory = document.getElementById('btnHistory');
+    const btnHistoryClose = document.getElementById('btnHistoryClose');
 
     const hudMatches = document.getElementById('hud-matches');
     const hudPairs = document.getElementById('hud-pairs');
@@ -266,6 +326,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         resultScore.textContent = `${score}`;
         resultMaxStreak.textContent = `${maxStreakSeen}`;
 
+        // Guardar en historial
+        saveMatchToHistory({
+            date: new Date().toISOString(),
+            grade: memoryGrade,
+            pairs: matches,
+            totalPairs,
+            attempts,
+            maxAttempts,
+            score,
+            maxStreak: maxStreakSeen,
+            passed
+        });
+
         if (passed) {
             resultTitle.textContent = '\uD83C\uDF89 \u00A1Nivel Superado! \uD83C\uDF89';
             resultSub.textContent = '\u00A1Excelente trabajo! Has demostrado gran habilidad. El tablero avanza al siguiente grado.';
@@ -360,6 +433,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             a.classList.add('matched');
             b.classList.add('matched');
 
+            soundMatch();
             revealedCards = [];
             updateHUD();
             checkEndOfLevel();
@@ -367,6 +441,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // NO MATCH — racha se rompe
+        soundError();
         streak = 0;
 
         const key = canonicalPairKey(aId, bId);
@@ -419,6 +494,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.dataset.state = 'hidden';
             card.dataset.objectId = String(objectIds[i]);
 
+            // Inner structure for 3D flip
+            const cardInner = document.createElement('div');
+            cardInner.className = 'card-inner';
+            const cardBackFace = document.createElement('div');
+            cardBackFace.className = 'card-back-face';
+            cardBackFace.textContent = 'K';
+            const cardFrontFace = document.createElement('div');
+            cardFrontFace.className = 'card-front-face';
+            cardInner.appendChild(cardBackFace);
+            cardInner.appendChild(cardFrontFace);
+            card.appendChild(cardInner);
+
             card.addEventListener('click', (ev) => {
                 ev.stopPropagation();
                 if (pendingLock) return;
@@ -434,6 +521,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 card.dataset.state = 'revealed';
                 card.classList.remove('hidden');
                 card.classList.add('revealed');
+
+                // Show thumbnail on front face
+                const oid = Number(card.dataset.objectId);
+                const cardData = getCardData(oid);
+                const frontFace = card.querySelector('.card-front-face');
+                if (cardData && cardData.image_url && frontFace) {
+                    frontFace.style.backgroundImage = `url('../${cardData.image_url}')`;
+                }
 
                 revealedCards.push(card);
                 openFocusFor(card);
@@ -460,6 +555,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (ev.target === board) {
             clearPendingCards();
         }
+    });
+
+    // Historial de partidas
+    function renderHistory() {
+        const history = getHistory();
+        if (history.length === 0) {
+            historyList.innerHTML = '<p style="text-align:center;color:#888;padding:20px 0;">Aún no hay partidas guardadas.</p>';
+            return;
+        }
+        const grades = { true: '&#10003;', false: '&#10007;' };
+        historyList.innerHTML = history.map((h, i) => {
+            const d = new Date(h.date);
+            const dateStr = d.toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric' });
+            const timeStr = d.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+            const color = h.passed ? '#10b981' : '#ef4444';
+            return `<div style="display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;border:1px solid #e5e7eb;background:${h.passed ? '#f0fdf4' : '#fff5f5'};margin-bottom:6px;">
+              <span style="font-size:20px;">${h.passed ? '&#127881;' : '&#128561;'}</span>
+              <div>
+                <div style="font-weight:700;font-size:13px;">Grado ${h.grade} — ${h.pairs}/${h.totalPairs} pares</div>
+                <div style="font-size:11px;color:#6b7280;">${dateStr} ${timeStr} &bull; ${h.attempts} intentos &bull; racha ${h.maxStreak}</div>
+              </div>
+              <div style="font-weight:800;font-size:15px;color:${color};">${h.score} pts</div>
+            </div>`;
+        }).join('');
+    }
+
+    btnHistory.addEventListener('click', () => {
+        renderHistory();
+        historyOverlay.style.display = 'flex';
+    });
+
+    btnHistoryClose.addEventListener('click', () => {
+        historyOverlay.style.display = 'none';
+    });
+
+    historyOverlay.addEventListener('click', (ev) => {
+        if (ev.target === historyOverlay) historyOverlay.style.display = 'none';
     });
 
     // Arranque

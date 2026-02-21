@@ -13,6 +13,7 @@
     "prisma:migrate:deploy": "prisma migrate deploy",
     "bulk:promote": "ts-node scripts/bulk_promote.ts",
     "seed": "ts-node seeds/seed_dev.ts",
+    "seed:birds": "ts-node seeds/seed_birds.ts",
     "backfill": "ts-node scripts/backfill_rarity_v2.ts",
     "export:json": "ts-node scripts/export_sqlite_to_json.ts"
   },

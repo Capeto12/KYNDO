@@ -257,6 +257,16 @@
       transition: all 0.2s;
       position: relative;
       user-select: none;
+      overflow: hidden;
+    }
+
+    .card-tile-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      border-radius: 6px;
+      display: block;
+      margin-bottom: 4px;
     }
 
     .card-tile:hover {
@@ -1005,10 +1015,14 @@
         const tags = deckManager.getCardTags(card.cardId);
         const MODE_TAG = { pairs: '<span class="card-mode-tag tag-pairs">🧠</span>', kombat: '<span class="card-mode-tag tag-kombat">⚔️</span>' };
         const tagHtml = tags.map(t => MODE_TAG[t] || '').join('');
+        const imgHtml = card.image
+          ? `<img src="${card.image}" alt="${card.title}" class="card-tile-img" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          : '';
         tile.innerHTML = `
-      <span class="card-emoji">${RARITY_EMOJI[card.rarity] || '🃏'}</span>
+      ${imgHtml}
+      <span class="card-emoji" ${card.image ? 'style="display:none"' : ''}>${RARITY_EMOJI[card.rarity] || '&#127183;'}</span>
       <div class="card-name">${card.title}</div>
-      <span class="card-count ${hasDupe ? 'has-dupe' : ''}">×${card.count}</span>
+      <span class="card-count ${hasDupe ? 'has-dupe' : ''}">&#215;${card.count}</span>
       ${tagHtml ? `<div class="card-tags">${tagHtml}</div>` : ''}
       <div class="rarity-strip ${card.rarity}"></div>`;
 

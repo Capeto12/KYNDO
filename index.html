@@ -1,197 +1,284 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
   <meta charset="UTF-8">
   <title>Kindo - Menú Principal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      margin: 0;
       font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      color: #333;
+      color: #1a1a2e;
       min-height: 100vh;
+    }
+
+    /* ── Header ──────────────────────────── */
+    header {
+      background: #ffffff;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+      padding: 12px 24px;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 20px;
+      justify-content: space-between;
+      gap: 16px;
     }
 
-    main {
-      background: white;
-      border-radius: 16px;
-      padding: 40px 32px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-      max-width: 500px;
-      width: 100%;
-    }
-
-    h1 {
-      margin: 0 0 12px;
-      font-size: 48px;
+    .brand-title {
+      font-size: 34px;
       font-weight: 800;
-      color: #4a4a4a;
-      text-align: center;
-      letter-spacing: 2px;
+      color: #2d2d2d;
+      letter-spacing: 1px;
     }
 
-    .subtitle {
-      text-align: center;
-      color: #666;
-      margin-bottom: 32px;
-      font-size: 16px;
+    .brand-sub {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #6b7280;
+      background: rgba(0,0,0,0.05);
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 10px;
     }
 
-    .menu-options {
+    .header-links {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .header-links a {
+      color: #4a5568;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.04);
+      transition: background 0.2s;
+    }
+
+    .header-links a:hover { background: rgba(0,0,0,0.09); }
+
+    /* ── Hero ────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 48px 20px 32px;
+    }
+
+    .hero h2 {
+      font-size: clamp(22px, 5vw, 38px);
+      font-weight: 800;
+      color: #1a1a2e;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: #6b7280;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── Game Cards ──────────────────────── */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    .game-card {
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-decoration: none;
+      color: inherit;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
-      background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-      border-radius: 12px;
-      text-decoration: none;
-      color: #333;
-      transition: all 0.3s ease;
+      transition: transform 200ms ease, box-shadow 200ms ease;
       border: 2px solid transparent;
     }
 
-    .menu-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-      border-color: #667eea;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+    .game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 32px rgba(0,0,0,0.18);
+      border-color: rgba(102,126,234,0.4);
     }
 
-    .menu-icon {
-      font-size: 32px;
-      width: 50px;
-      height: 50px;
+    .game-card-preview {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+      background: #e5e7eb;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 12px;
-      transition: all 0.3s ease;
     }
 
-    .menu-item:hover .menu-icon {
-      background: rgba(255, 255, 255, 0.2);
+    .game-card-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 300ms ease;
     }
 
-    .menu-content {
+    .game-card:hover .game-card-preview img {
+      transform: scale(1.06);
+    }
+
+    .preview-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55));
+    }
+
+    .preview-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 28px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 10px;
+      padding: 4px 8px;
+    }
+
+    .game-card-body {
+      padding: 16px 18px 20px;
       flex: 1;
     }
 
-    .menu-title {
-      font-weight: 700;
+    .game-card-title {
       font-size: 18px;
-      margin-bottom: 4px;
+      font-weight: 800;
+      color: #1a1a2e;
+      margin-bottom: 6px;
     }
 
-    .menu-description {
+    .game-card-desc {
       font-size: 13px;
-      opacity: 0.8;
+      color: #6b7280;
+      line-height: 1.5;
     }
 
-    .divider {
-      height: 1px;
-      background: rgba(0, 0, 0, 0.1);
-      margin: 24px 0;
+    .game-card-cta {
+      margin-top: 14px;
+      display: inline-block;
+      padding: 8px 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    .secondary-link {
+    /* ── Secondary links ─────────────────── */
+    .secondary-links {
       text-align: center;
-      padding: 12px;
+      padding: 0 20px 40px;
     }
 
-    .secondary-link a {
+    .secondary-links a {
+      display: inline-block;
       color: #667eea;
-      text-decoration: none;
       font-weight: 600;
-      transition: color 0.2s;
+      font-size: 14px;
+      text-decoration: none;
+      margin: 0 12px;
+      padding: 6px 0;
     }
 
-    .secondary-link a:hover {
-      color: #764ba2;
-      text-decoration: underline;
-    }
+    .secondary-links a:hover { text-decoration: underline; }
 
     @media (max-width: 480px) {
-      h1 {
-        font-size: 36px;
-      }
-
-      main {
-        padding: 28px 20px;
-      }
-
-      .menu-icon {
-        font-size: 24px;
-        width: 40px;
-        height: 40px;
-      }
-
-      .menu-title {
-        font-size: 16px;
-      }
+      .hero { padding: 32px 16px 20px; }
+      .games-grid { padding: 0 12px 32px; gap: 14px; }
+      .game-card-preview { height: 140px; }
     }
   </style>
 </head>
 
 <body>
-  <main>
-    <h1>Kindo</h1>
-    <p class="subtitle">Juego cognitivo de cartas</p>
 
-    <div class="menu-options">
-      <a href="./frontend/index.html" class="menu-item">
-        <div class="menu-icon">🧠</div>
-        <div class="menu-content">
-          <div class="menu-title">1. Jugar Pares</div>
-          <div class="menu-description">Modo clásico de memoria</div>
-        </div>
-      </a>
-
-      <a href="./frontend/battle.html" class="menu-item">
-        <div class="menu-icon">⚔️</div>
-        <div class="menu-content">
-          <div class="menu-title">2. Jugar Batalla / Kombate</div>
-          <div class="menu-description">Compara tus cartas vs oponente</div>
-        </div>
-      </a>
-
-      <a href="./frontend/deck.html" class="menu-item">
-        <div class="menu-icon">🃏</div>
-        <div class="menu-content">
-          <div class="menu-title">3. Área de Mazo</div>
-          <div class="menu-description">Colección, mazos y sobres de cartas</div>
-        </div>
-      </a>
-
-      <a href="./frontend/settings.html" class="menu-item">
-        <div class="menu-icon">⚙️</div>
-        <div class="menu-content">
-          <div class="menu-title">Configuración</div>
-          <div class="menu-description">Reinicia nivel, estadísticas o colección para pruebas</div>
-        </div>
-      </a>
+  <header>
+    <div class="header-inner">
+      <div style="display:flex;align-items:baseline;">
+        <span class="brand-title">Kindo</span>
+        <span class="brand-sub">Juego de Cartas</span>
+      </div>
+      <div class="header-links">
+        <a href="./admin/index.html">&#9881;&#65039; Admin</a>
+      </div>
     </div>
+  </header>
 
-    <div class="divider"></div>
+  <section class="hero">
+    <h2>Elige tu modo de juego</h2>
+    <p>Explora el mundo de las aves con cartas coleccionables. Entrena tu memoria, combate y colecciona.</p>
+  </section>
 
-    <div class="secondary-link">
-      <a href="./frontend/search.html">🔍 Buscador de Cartas</a>
-    </div>
-  </main>
+  <div class="games-grid">
+
+    <a href="./frontend/index.html" class="game-card">
+      <div class="game-card-preview">
+        <img src="./birds/img/colibri.webp" alt="Pares" loading="lazy">
+        <div class="preview-overlay"></div>
+        <div class="preview-badge">&#129504;</div>
+      </div>
+      <div class="game-card-body">
+        <div class="game-card-title">Kindo Pairs</div>
+        <div class="game-card-desc">Modo clásico de memoria. Encuentra los pares de cartas antes de agotar tus intentos. Progresa a través de 5 grados de dificultad.</div>
+        <span class="game-card-cta">Jugar &#x2192;</span>
+      </div>
+    </a>
+
+    <a href="./frontend/battle.html" class="game-card">
+      <div class="game-card-preview">
+        <img src="./birds/img/aguila-harpia.webp" alt="Kombate" loading="lazy" onerror="this.src='./birds/img/halcon.webp'">
+        <div class="preview-overlay"></div>
+        <div class="preview-badge">&#9876;&#65039;</div>
+      </div>
+      <div class="game-card-body">
+        <div class="game-card-title">Kindo Kombate</div>
+        <div class="game-card-desc">Enfrenta tus cartas a un oponente en duelos de ataque y defensa. 8 juegos, 5 rondas cada uno. ¿Quién tiene el mazo más fuerte?</div>
+        <span class="game-card-cta">Combatir &#x2192;</span>
+      </div>
+    </a>
+
+    <a href="./frontend/deck.html" class="game-card">
+      <div class="game-card-preview">
+        <img src="./birds/img/guacamaya-roja.webp" alt="Mis Cartas" loading="lazy">
+        <div class="preview-overlay"></div>
+        <div class="preview-badge">&#127183;</div>
+      </div>
+      <div class="game-card-body">
+        <div class="game-card-title">Mis Cartas</div>
+        <div class="game-card-desc">Explora tu colección completa de 40 aves. Consulta stats de ataque y defensa, rareza, y cómo usar cada carta en el juego.</div>
+        <span class="game-card-cta">Ver colección &#x2192;</span>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="secondary-links">
+    <a href="./frontend/settings.html">&#9881;&#65039; Configuración</a>
+    <a href="./admin/index.html">&#128196; Panel Admin</a>
+  </div>
+
 </body>
 
 </html>

@@ -614,6 +614,7 @@
                     <h2>🃏 Cartas</h2>
                     <p>Gestiona el catálogo completo de cartas</p>
                 </div>
+                <button class="btn btn-primary" onclick="importBirdsPack()" id="btn-import">&#128025; Importar Pack de Aves</button>
             </div>
 
             <div class="card">
@@ -887,6 +888,53 @@
         function searchCards() {
             const q = document.getElementById('cards-search').value.trim() || 'a';
             loadCards(q);
+        }
+
+        // ── Import Birds Pack ─────────────────────────
+        async function importBirdsPack() {
+            const btn = document.getElementById('btn-import');
+            btn.disabled = true;
+            btn.textContent = '⏳ Importando...';
+            try {
+                // Load pack from local file (relative to admin/)
+                const packRes = await fetch('../birds/pack-1.json');
+                if (!packRes.ok) throw new Error('No se pudo cargar birds/pack-1.json');
+                const pack = await packRes.json();
+                const assets = pack.assets || [];
+
+                let created = 0, updated = 0, errors = 0;
+
+                for (const asset of assets) {
+                    try {
+                        const tags = asset.tags || ['pares', 'kombat'];
+                        const res = await fetch(`${API}/api/admin/cards`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                cardId: asset.id,
+                                title: asset.title,
+                                imageUrl: asset.image_url,
+                                packId: 'birds',
+                                tags
+                            })
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.created) created++; else updated++;
+                        } else {
+                            errors++;
+                        }
+                    } catch { errors++; }
+                }
+
+                toast(`Importación completa: ${created} creadas, ${updated} actualizadas, ${errors} errores`, errors > 0 ? 'error' : 'success');
+                loadCards('');
+            } catch (e) {
+                toast(`Error: ${e.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🐦 Importar Pack de Aves';
+            }
         }
 
         document.getElementById('cards-search').addEventListener('keypress', e => {
