@@ -1,511 +1,103 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Kindo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Kindo - Juego cognitivo de memoria con sistema de progresión" />
-  
+
   <!-- Estilos -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
 
-<div class="page-shell">
-  <header>
-    <div class="header-bar">
-      <a class="brand-link" href="../index.html">
-        <div class="brand-block">
-          <h1 class="brand-title">Kindo</h1>
-          <div class="brand-subtitle">Pairs</div>
-        </div>
-      </a>
-
-      <div class="hud-block" aria-label="Estadísticas del juego">
-        <div class="hud-row hud-meta">
-          <span>Nivel <span id="hud-level">1</span></span>
-          <span>Grado <span id="hud-grade">1</span></span>
-        </div>
-        <div class="hud-row">
-          <span>🧠 <span id="hud-matches">0</span>/<span id="hud-pairs">0</span></span>
-          <span>🔁 <span id="hud-attempts">0</span>/<span id="hud-maxAttempts">0</span></span>
-          <span>❌ <span id="hud-errors">0</span></span>
-          <span>🔥 <span id="hud-streak">0</span></span>
-          <span>⭐ <span id="hud-score">0</span></span>
-        </div>
-      </div>
-
-      <div class="actions-block">
-        <div id="user-info">
-          <div class="player-info" id="current-player">
-            <div class="player-avatar">👤</div>
-            <div class="player-name">Jugador</div>
+  <div class="page-shell">
+    <header>
+      <div class="header-bar">
+        <a class="brand-link" href="../index.html">
+          <div class="brand-block">
+            <h1 class="brand-title">Kindo</h1>
+            <div class="brand-subtitle">Pairs</div>
           </div>
-          <div class="player-info" id="opponent-player" style="display: none;">
-            <div class="player-avatar">👤</div>
-            <div class="player-name">Oponente</div>
+        </a>
+
+        <div class="hud-block" aria-label="Estadísticas del juego">
+          <div class="hud-row hud-meta">
+            <span>Nivel <span id="hud-level">1</span></span>
+            <span>Grado <span id="hud-grade">1</span></span>
+          </div>
+          <div class="hud-row">
+            <span>🧠 <span id="hud-matches">0</span>/<span id="hud-pairs">0</span></span>
+            <span>🔁 <span id="hud-attempts">0</span>/<span id="hud-maxAttempts">0</span></span>
+            <span>❌ <span id="hud-errors">0</span></span>
+            <span>🔥 <span id="hud-streak">0</span></span>
+            <span>⭐ <span id="hud-score">0</span></span>
           </div>
         </div>
+
+        <div class="actions-block">
+          <div id="user-info">
+            <div class="player-info" id="current-player">
+              <div class="player-avatar">👤</div>
+              <div class="player-name">Jugador</div>
+            </div>
+            <div class="player-info" id="opponent-player" style="display: none;">
+              <div class="player-avatar">👤</div>
+              <div class="player-name">Oponente</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div id="loading">
-      Cargando contenido... ⏳
-    </div>
-  </header>
+      <div id="loading">
+        Cargando contenido... ⏳
+      </div>
+    </header>
 
-  <section id="board"></section>
+    <section id="board"></section>
 
-  <footer>
-    <a href="../">Volver al Home</a>
-  </footer>
-</div>
+    <footer>
+      <a href="../">Volver al Home</a>
+    </footer>
+  </div>
 
-<!-- Overlay de foco (carta grande) -->
-<div id="overlay">
-  <div class="focused-card">
-    <div class="card-front">
-      <div class="card-image" id="focusImage">KYNDO</div>
-      <div class="card-name" id="focusName">—</div>
-      <div class="card-stats">
-        <span id="focusAtk">ATK —</span>
-        <span id="focusDef">DEF —</span>
+  <!-- Overlay de foco (carta grande) -->
+  <div id="overlay">
+    <div class="focused-card">
+      <div class="card-front">
+        <div class="card-image" id="focusImage">KYNDO</div>
+        <div class="card-name" id="focusName">—</div>
+        <div class="card-stats">
+          <span id="focusAtk">ATK —</span>
+          <span id="focusDef">DEF —</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Overlay fin de grado -->
-<div id="resultOverlay">
-  <div class="result-card">
-    <div class="result-title" id="resultTitle">—</div>
-    <div class="result-sub" id="resultSub">—</div>
+  <!-- Overlay fin de grado -->
+  <div id="resultOverlay">
+    <div class="result-card">
+      <div class="result-title" id="resultTitle">—</div>
+      <div class="result-sub" id="resultSub">—</div>
 
-    <div class="result-grid">
-      <div class="result-row"><b>Pares</b><span id="resultPairs">—</span></div>
-      <div class="result-row"><b>Intentos</b><span id="resultAttempts">—</span></div>
-      <div class="result-row"><b>Puntaje</b><span id="resultScore">—</span></div>
-      <div class="result-row"><b>Racha máx.</b><span id="resultMaxStreak">—</span></div>
-    </div>
+      <div class="result-grid">
+        <div class="result-row"><b>Pares</b><span id="resultPairs">—</span></div>
+        <div class="result-row"><b>Intentos</b><span id="resultAttempts">—</span></div>
+        <div class="result-row"><b>Puntaje</b><span id="resultScore">—</span></div>
+        <div class="result-row"><b>Racha máx.</b><span id="resultMaxStreak">—</span></div>
+      </div>
 
-    <div style="margin-top:6px;">
-      <button class="btn btn-primary" id="btnPrimary">Continuar</button>
-      <button class="btn btn-ghost" id="btnSecondary">Reintentar</button>
+      <div style="margin-top:6px;">
+        <button class="btn btn-primary" id="btnPrimary">Continuar</button>
+        <button class="btn btn-ghost" id="btnSecondary">Reintentar</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Motor del juego -->
-<script src="game.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-  // =========================
-  // ✅ PARÁMETROS DE BALANCE (EDITABLES)
-  // =========================
-  const STREAK_BASE_BONUS = 5;              // controla qué tan fuertes son los bonos de racha (5 = lo que definiste)
-  const REPEAT_MISS_EXTRA_ATTEMPTS = 1;     // +1 intento extra al repetir un par fallado
-  const REPEAT_MISS_POINT_PENALTY = 2;      // -2 puntos al repetir un par fallado
-  const ATTEMPT_FACTOR = 2.2;               // maxAttempts = totalPairs * factor (Nivel 1)
-
-  // =========================
-  // ✅ CONFIG DE GRADO (EDITABLE)
-  // =========================
-  const gradeConfig = {
-    1: 20,
-    2: 30,
-    3: 42,
-    4: 56,
-    5: 72
-  };
-
-  // Persistencia simple (por ahora local)
-  const STORAGE_KEY = 'kyndo_memory_v1';
-  const saved = (() => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } })();
-  let memoryGrade = typeof saved.memoryGrade === 'number' ? saved.memoryGrade : 1;
-  if (!gradeConfig[memoryGrade]) memoryGrade = 1;
-
-  // =========================
-  // DOM
-  // =========================
-  const board = document.getElementById('board');
-  const overlay = document.getElementById('overlay');
-  const resultOverlay = document.getElementById('resultOverlay');
-
-  const hudMatches = document.getElementById('hud-matches');
-  const hudPairs = document.getElementById('hud-pairs');
-  const hudAttempts = document.getElementById('hud-attempts');
-  const hudMaxAttempts = document.getElementById('hud-maxAttempts');
-  const hudErrors = document.getElementById('hud-errors');
-  const hudStreak = document.getElementById('hud-streak');
-  const hudScore = document.getElementById('hud-score');
-  const hudGrade = document.getElementById('hud-grade');
-
-  const focusImage = document.getElementById('focusImage');
-  const focusName = document.getElementById('focusName');
-  const focusAtk = document.getElementById('focusAtk');
-  const focusDef = document.getElementById('focusDef');
-
-  const resultTitle = document.getElementById('resultTitle');
-  const resultSub = document.getElementById('resultSub');
-  const resultPairs = document.getElementById('resultPairs');
-  const resultAttempts = document.getElementById('resultAttempts');
-  const resultScore = document.getElementById('resultScore');
-  const resultMaxStreak = document.getElementById('resultMaxStreak');
-  const btnPrimary = document.getElementById('btnPrimary');
-  const btnSecondary = document.getElementById('btnSecondary');
-
-  // =========================
-  // Estado de partida
-  // =========================
-  let totalCards = 0;
-  let totalPairs = 0;
-  let maxAttempts = 0;
-
-  let score = 0;
-  let matches = 0;
-  let attempts = 0;
-
-  let streak = 0;
-  let maxStreakSeen = 0;
-  let seriousErrors = 0; // Track serious errors (repeat pair openings)
-
-  let revealedCards = []; // max 2
-  let pendingLock = false; // evita clicks raros mientras overlay está activo
-
-  // Memoria de errores (pares fallados)
-  // clave canónica: "minId-maxId"
-  const missedPairs = new Set();
-
-  // =========================
-  // Helpers
-  // =========================
-  function clampNonNegative(n) { return n < 0 ? 0 : n; }
-
-  function updateHUD() {
-    hudMatches.textContent = String(matches);
-    hudPairs.textContent = String(totalPairs);
-    hudAttempts.textContent = String(attempts);
-    hudMaxAttempts.textContent = String(maxAttempts);
-    hudErrors.textContent = String(seriousErrors);
-    hudStreak.textContent = String(streak);
-    hudScore.textContent = String(score);
-    hudGrade.textContent = String(memoryGrade);
-  }
-
-  function canonicalPairKey(id1, id2) {
-    const a = Number(id1), b = Number(id2);
-    return a < b ? `${a}-${b}` : `${b}-${a}`;
-  }
-
-  function computeColumns(cards) {
-    return Math.ceil(Math.sqrt(cards));
-  }
-
-  function buildObjectIds(pairs) {
-    const ids = [];
-    for (let i = 0; i < pairs; i++) { ids.push(i); ids.push(i); }
-    // Fisher–Yates
-    for (let i = ids.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [ids[i], ids[j]] = [ids[j], ids[i]];
-    }
-    return ids;
-  }
-
-  function openFocusFor(card) {
-    // Contenido mínimo para pruebas (visible + recordable)
-    const oid = Number(card.dataset.objectId);
-
-    // "contenido" ficticio para prueba
-    const fakeName = `AVE ${oid + 1}`;
-    const fakeAtk = 10 + (oid % 9);
-    const fakeDef = 10 + ((oid + 3) % 9);
-
-    focusImage.textContent = `🜁 ${oid + 1}`;
-    focusName.textContent = fakeName;
-    focusAtk.textContent = `ATK ${fakeAtk}`;
-    focusDef.textContent = `DEF ${fakeDef}`;
-
-    overlay.classList.add('active');
-  }
-
-  function closeFocus() {
-    overlay.classList.remove('active');
-  }
-
-  function showResultOverlay(passed) {
-    const pairsText = `${matches}/${totalPairs}`;
-    const attemptsText = `${attempts}/${maxAttempts}`;
-    const scoreText = `${score}`;
-    const maxStreakText = `${maxStreakSeen}`;
-
-    resultPairs.textContent = pairsText;
-    resultAttempts.textContent = attemptsText;
-    resultScore.textContent = scoreText;
-    resultMaxStreak.textContent = maxStreakText;
-
-    if (passed) {
-      resultTitle.textContent = '🎉 ¡Nivel Superado! 🎉';
-      resultSub.textContent = '¡Excelente trabajo! Has demostrado gran habilidad. El tablero avanza al siguiente grado.';
-      btnPrimary.textContent = '➜ Continuar al Siguiente Nivel';
-      btnPrimary.style.display = '';
-      btnSecondary.textContent = 'Reintentar (opcional)';
-      btnSecondary.style.display = '';
-      // Add celebration class for extra effects
-      resultOverlay.classList.add('celebration');
-    } else {
-      resultTitle.textContent = 'Nivel completado, pero no superado';
-      resultSub.textContent = 'Te pasaste del máximo de intentos. Para subir, debes completarlo dentro del límite.';
-      btnPrimary.textContent = 'Reintentar';
-      btnPrimary.style.display = '';
-      btnSecondary.textContent = 'Cerrar';
-      btnSecondary.style.display = '';
-      resultOverlay.classList.remove('celebration');
-    }
-
-    resultOverlay.classList.add('active');
-
-    btnPrimary.onclick = () => {
-      resultOverlay.classList.remove('active');
-      resultOverlay.classList.remove('celebration');
-      if (passed) {
-        // sube grado
-        const oldGrade = memoryGrade;
-        const next = memoryGrade + 1;
-        memoryGrade = gradeConfig[next] ? next : memoryGrade; // si no existe, se queda
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ memoryGrade }));
-        
-        // Show grade advancement animation if grade actually changed
-        if (memoryGrade > oldGrade) {
-          hudGrade.classList.add('grade-up');
-          setTimeout(() => hudGrade.classList.remove('grade-up'), 1000);
-        }
-      }
-      startRun(); // reinicia con grado actual (o incrementado)
-    };
-
-    btnSecondary.onclick = () => {
-      resultOverlay.classList.remove('active');
-      if (!passed) {
-        // cerrar solo deja ver el tablero terminado (sin avanzar)
-        // Si quiere reintentar, usa el botón principal
-        return;
-      }
-      // en "pasado": reintentar opcional
-      startRun();
-    };
-  }
-
-  function checkEndOfLevel() {
-    if (matches !== totalPairs) return;
-
-    const passed = attempts <= maxAttempts;
-    // pequeña pausa cognitiva
-    setTimeout(() => showResultOverlay(passed), 350);
-  }
-
-  // =========================
-  // ⚡ LIMPIEZA DE PENDING (CRÍTICO)
-  // =========================
-  function clearPendingCards() {
-    const pending = board.querySelectorAll('.card.pending');
-    if (pending.length === 2) {
-      pending.forEach(card => {
-        card.dataset.state = 'hidden';
-        card.classList.remove('pending');
-        card.classList.add('hidden');
-      });
-      return true; // se limpiaron
-    }
-    return false; // no había nada que limpiar
-  }
-
-  // =========================
-  // Motor de intento (resolver 2 cartas)
-  // =========================
-  function resolvePair(a, b) {
-    // 1 intento normal siempre que se evalúa una pareja
-    attempts += 1;
-
-    const aId = Number(a.dataset.objectId);
-    const bId = Number(b.dataset.objectId);
-
-    const isMatch = aId === bId;
-
-    if (isMatch) {
-      // MATCH
-      matches += 1;
-
-      // racha
-      streak += 1;
-      if (streak > maxStreakSeen) maxStreakSeen = streak;
-
-      // puntos base
-      score += 10;
-
-      // bono acumulativo por racha (tu sistema), parametrizable
-      // bono del "paso" actual = STREAK_BASE_BONUS * (streak - 1)
-      // (para racha 1 => 0)
-      const stepBonus = STREAK_BASE_BONUS * (streak - 1);
-      score += stepBonus;
-
-      a.dataset.state = 'matched';
-      b.dataset.state = 'matched';
-      a.classList.remove('revealed');
-      b.classList.remove('revealed');
-      a.classList.add('matched');
-      b.classList.add('matched');
-
-      revealedCards = [];
-      updateHUD();
-      checkEndOfLevel();
-      return;
-    }
-
-    // NO MATCH
-    // racha se rompe
-    streak = 0;
-
-    // castigo por repetir el mismo par fallado (desde la primera repetición)
-    const key = canonicalPairKey(aId, bId);
-    if (missedPairs.has(key)) {
-      attempts += REPEAT_MISS_EXTRA_ATTEMPTS; // +1 intento extra
-      score = clampNonNegative(score - REPEAT_MISS_POINT_PENALTY); // -2 pts
-      seriousErrors += 1; // Increment serious errors counter
-    } else {
-      missedPairs.add(key);
-    }
-
-    // pasar a pending
-    [a, b].forEach(card => {
-      card.dataset.state = 'pending';
-      card.classList.remove('revealed');
-      card.classList.add('pending');
-    });
-
-    revealedCards = [];
-    updateHUD();
-  }
-
-  // =========================
-  // Run (crear tablero por grado)
-  // =========================
-  function startRun() {
-    // reset UI/estado
-    board.innerHTML = '';
-    missedPairs.clear();
-    revealedCards = [];
-    pendingLock = false;
-
-    score = 0;
-    matches = 0;
-    attempts = 0;
-    streak = 0;
-    maxStreakSeen = 0;
-    seriousErrors = 0;
-
-    totalCards = gradeConfig[memoryGrade];
-    totalPairs = totalCards / 2;
-    maxAttempts = Math.ceil(totalPairs * ATTEMPT_FACTOR);
-
-    // grid dinámico (bloque)
-    const columns = computeColumns(totalCards);
-    board.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-
-    // crear ids mezclados
-    const objectIds = buildObjectIds(totalPairs);
-
-    // crear cartas
-    for (let i = 0; i < totalCards; i++) {
-      const card = document.createElement('div');
-      card.className = 'card hidden';
-      card.dataset.state = 'hidden';
-      card.dataset.objectId = String(objectIds[i]);
-
-      card.addEventListener('click', (ev) => {
-        ev.stopPropagation();
-        if (pendingLock) return;
-
-        // ⚡ CRÍTICO: si hay 2 pending, limpiarlas PRIMERO
-        if (clearPendingCards()) {
-          return; // este click se usó para limpiar, no para abrir
-        }
-
-        // Si la carta no está oculta, ignorar
-        if (card.dataset.state !== 'hidden') return;
-        
-        // Si ya hay 2 reveladas, ignorar
-        if (revealedCards.length >= 2) return;
-
-        // Revelar carta
-        card.dataset.state = 'revealed';
-        card.classList.remove('hidden');
-        card.classList.add('revealed');
-
-        revealedCards.push(card);
-
-        // abrir foco siempre
-        openFocusFor(card);
-      });
-
-      board.appendChild(card);
-    }
-
-    updateHUD();
-  }
-
-  // =========================
-  // Eventos globales
-  // =========================
-  overlay.addEventListener('click', () => {
-    // cerrar foco
-    closeFocus();
-
-    // si ya hay dos reveladas, resolver
-    if (revealedCards.length === 2) {
-      const [a, b] = revealedCards;
-      resolvePair(a, b);
-    }
-  });
-
-  // ⚡ Click en el tablero (fuera de cartas) también limpia pending
-  board.addEventListener('click', (ev) => {
-    if (ev.target === board) {
-      clearPendingCards();
-    }
-  });
-
-  // Arranque
-  startRun();
-
-});
-</script>
-
+  <!-- Motor del juego -->
+  <script src="game.js"></script>
 </body>
+
 </html>
-```
-
----
-
-## ✅ Cambios implementados
-
-### 1. **Nueva función `clearPendingCards()`**
-Centraliza la lógica de limpieza y retorna `true` si limpió algo.
-
-### 2. **Prioridad en el click de carta**
-Antes de hacer cualquier cosa, verifica si hay pending y las limpia. Si las limpió, ese click se "consume" en la limpieza.
-
-### 3. **Click en tablero vacío**
-También limpia pending si clickeas el fondo del board.
-
----
-
-## 🎮 Flujo garantizado
-```
-Abrir carta 1 → overlay → click cierra
-Abrir carta 2 → overlay → click cierra
-→ Evaluación automática
-→ Si falla: 2 cartas quedan pending
-→ Click en cualquier carta o tablero → limpia pending
-→ Juego continúa sin bloqueos

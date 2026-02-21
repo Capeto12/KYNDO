@@ -4,6 +4,24 @@ import { requireAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
+// GET /api/admin/stats — global counts
+router.get('/stats', requireAdmin, async (_req: AuthRequest, res: Response) => {
+    try {
+        const [userCount, cardCount, packCount] = await Promise.all([
+            prisma.user.count(),
+            prisma.card.count(),
+            prisma.pack.count(),
+        ]);
+        return res.json({
+            users: userCount,
+            cards: cardCount,
+            packs: packCount,
+        });
+    } catch {
+        return res.status(500).json({ error: 'Error al obtener estadísticas' });
+    }
+});
+
 // GET /api/admin/users — list all users
 router.get('/', requireAdmin, async (_req: AuthRequest, res: Response) => {
     try {

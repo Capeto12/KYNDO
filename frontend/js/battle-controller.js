@@ -486,13 +486,13 @@ export class DemoBattleController extends BattleController {
 
   async loadPackDeck() {
     try {
-      const response = await fetch(PACK_PATH);
+      const response = await fetch('http://localhost:4001/api/search?q=a&limit=200');
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
-      if (!data.assets || !data.assets.length) return [];
-      return this.buildDeckFromPack(data.assets, data.count || 40);
+      if (!data.results || !data.results.length) return [];
+      return this.buildDeckFromPack(data.results, 40);
     } catch (err) {
-      console.warn('No se pudo cargar pack de tienda para batalla:', err);
+      console.warn('No se pudo cargar pack de tienda desde API para batalla:', err);
       return [];
     }
   }
@@ -500,10 +500,9 @@ export class DemoBattleController extends BattleController {
   buildDeckFromPack(assets, size = 40) {
     const rarityList = ['abundante', 'frecuente', 'rara', 'excepcional'];
     const cleanPath = (p = '') => {
-      return p
-        .replace('content/content/birds/content/birds/', '../content/birds/')
-        .replace('content/content/birds/', '../content/birds/')
-        .replace('content/birds/', '../content/birds/');
+      if (!p) return '';
+      if (p.startsWith('http')) return p;
+      return `http://localhost:4001/${p.startsWith('/') ? p.slice(1) : p}`;
     };
 
     const factorFor = (id, salt) => {
@@ -589,7 +588,7 @@ export class DemoBattleController extends BattleController {
       return {
         ...card,
         cardId: `${card.cardId}-opp`,
-        name: `${card.name} (AI)` ,
+        name: `${card.name} (AI)`,
         rarity: nextRarity,
         attackFactors: {
           P: plus(card.attackFactors.P || 0),
