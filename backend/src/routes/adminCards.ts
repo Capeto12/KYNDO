@@ -1,15 +1,11 @@
-import { Router } from 'express';
-import { validateAdminKey, patchCard, upsertCard, patchCardTags } from '../controllers/cardsController';
+﻿import { Router } from 'express';
+import { patchCard, upsertCard, patchCardTags } from '../controllers/cardsController';
+import { requireAdminOrKey } from '../middleware/auth';
 
 const router = Router();
 
-// Admin routes require admin key validation
-router.patch('/cards/:id', validateAdminKey, patchCard);
-
-// Upsert a card by cardId (no auth — local admin panel only)
-router.post('/cards', upsertCard);
-
-// Update tags by cardId (no auth — local admin panel only)
-router.patch('/cards/:cardId/tags', patchCardTags);
+router.patch('/cards/:id', requireAdminOrKey, patchCard);
+router.post('/cards', requireAdminOrKey, upsertCard);
+router.patch('/cards/:cardId/tags', requireAdminOrKey, patchCardTags);
 
 export default router;

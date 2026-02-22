@@ -1,6 +1,6 @@
-import express, { Request, Response } from 'express';
+﻿import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import adminCardsRouter from './routes/adminCards';
@@ -12,16 +12,38 @@ import importRouter from './routes/import';
 import adminUsersRouter from './routes/adminUsers';
 import { getCardPresentation } from './controllers/cardsController';
 import { getQueueStats } from './queue';
+import { requireAdmin, AuthRequest } from './middleware/auth';
+import { config } from './config/env';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+const corsOptions: CorsOptions = {
+  origin(origin, callback) {
+    if (config.corsOrigins === '*') {
+      callback(null, true);
+      return;
+    }
+
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    if (config.corsOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error('CORS origin denied'));
+  },
+};
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -39,12 +61,12 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
-// Queue stats endpoint (admin only in production)
-app.get('/api/admin/queue/stats', async (_req: Request, res: Response) => {
+// Queue stats endpoint (admin only)
+app.get('/api/admin/queue/stats', requireAdmin, async (_req: AuthRequest, res: Response) => {
   try {
     const stats = await getQueueStats();
     res.json(stats);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch queue stats' });
   }
 });
@@ -75,19 +97,19 @@ app.use((_req: Request, res: Response) => {
 });
 
 // Error handler
-app.use((err: Error, _req: Request, res: Response, _next: any) => {
+app.use((err: Error, _req: Request, res: Response, _next: unknown) => {
   console.error('Unhandled error:', err);
   res.status(500).json({
     error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? err.message : undefined,
+    message: config.nodeEnv === 'development' ? err.message : undefined,
   });
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 KYNDO Backend API running on port ${PORT}`);
-  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+app.listen(config.port, () => {
+  console.log(`KYNDO Backend API running on port ${config.port}`);
+  console.log(`Environment: ${config.nodeEnv}`);
+  console.log(`Health check: http://localhost:${config.port}/health`);
 });
 
 export default app;

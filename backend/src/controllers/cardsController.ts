@@ -1,46 +1,17 @@
-import { Request, Response, NextFunction } from 'express';
+﻿import { Request, Response } from 'express';
 import prisma from '../prismaClient';
 import { enqueueCardUpdate } from '../queue';
 
-/**
- * Middleware to validate admin key
- */
-export function validateAdminKey(req: Request, res: Response, next: NextFunction): void {
-  const adminKey = req.headers['x-admin-key'];
-  const expectedKey = process.env.ADMIN_KEY;
-
-  if (!expectedKey) {
-    res.status(500).json({ error: 'Admin key not configured on server' });
-    return;
-  }
-
-  if (!adminKey || adminKey !== expectedKey) {
-    res.status(401).json({ error: 'Unauthorized: Invalid admin key' });
-    return;
-  }
-
-  next();
-}
-
-/**
- * PATCH /api/admin/cards/:id
- * Update card properties (especially rarity)
- */
 export async function patchCard(req: Request, res: Response) {
   try {
     const { id } = req.params;
     const { rarity, rarityV2, title, metadata } = req.body;
 
-    // Find the card
-    const card = await prisma.card.findUnique({
-      where: { id },
-    });
-
+    const card = await prisma.card.findUnique({ where: { id } });
     if (!card) {
       return res.status(404).json({ error: 'Card not found' });
     }
 
-    // Prepare update data
     const updateData: any = {};
     const changes: Record<string, any> = {};
 
@@ -64,18 +35,16 @@ export async function patchCard(req: Request, res: Response) {
       changes.metadata = { old: card.metadata, new: metadata };
     }
 
-    // Update the card
     const updatedCard = await prisma.card.update({
       where: { id },
       data: updateData,
     });
 
-    // Create audit log
     await prisma.auditLog.create({
       data: {
         cardId: id,
         action: 'update_card',
-        performedBy: 'admin', // In production, use actual admin user ID
+        performedBy: 'admin',
         changes,
         metadata: {
           timestamp: new Date().toISOString(),
@@ -84,7 +53,6 @@ export async function patchCard(req: Request, res: Response) {
       },
     });
 
-    // Enqueue thumbnail regeneration if rarity changed
     if (rarity !== undefined || rarityV2 !== undefined) {
       await enqueueCardUpdate({
         cardId: updatedCard.cardId,
@@ -111,10 +79,6 @@ export async function patchCard(req: Request, res: Response) {
   }
 }
 
-/**
- * POST /api/admin/cards
- * Upsert a card by cardId (create or update)
- */
 export async function upsertCard(req: Request, res: Response) {
   try {
     const { cardId, title, imageUrl, packId, tags, rarity } = req.body;
@@ -137,19 +101,19 @@ export async function upsertCard(req: Request, res: Response) {
         },
       });
       return res.json({ created: false, card: updated });
-    } else {
-      const created = await prisma.card.create({
-        data: {
-          cardId,
-          title,
-          imageUrl: imageUrl || null,
-          packId: packId || 'birds',
-          tags: tags || [],
-          rarity: rarity || 'abundante',
-        },
-      });
-      return res.json({ created: true, card: created });
     }
+
+    const created = await prisma.card.create({
+      data: {
+        cardId,
+        title,
+        imageUrl: imageUrl || null,
+        packId: packId || 'birds',
+        tags: tags || [],
+        rarity: rarity || 'abundante',
+      },
+    });
+    return res.json({ created: true, card: created });
   } catch (error) {
     console.error('Error upserting card:', error);
     return res.status(500).json({
@@ -159,10 +123,6 @@ export async function upsertCard(req: Request, res: Response) {
   }
 }
 
-/**
- * PATCH /api/admin/cards/:cardId/tags
- * Update tags array for a card identified by cardId string
- */
 export async function patchCardTags(req: Request, res: Response) {
   try {
     const { cardId } = req.params;
@@ -192,24 +152,16 @@ export async function patchCardTags(req: Request, res: Response) {
   }
 }
 
-/**
- * GET /api/cards/:id/presentation
- * Get card with presentation rules (public endpoint)
- */
 export async function getCardPresentation(req: Request, res: Response) {
   try {
     const { id } = req.params;
 
-    // Find card by cardId (the unique identifier like "guacamaya-roja")
-    const card = await prisma.card.findUnique({
-      where: { cardId: id },
-    });
+    const card = await prisma.card.findUnique({ where: { cardId: id } });
 
     if (!card) {
       return res.status(404).json({ error: 'Card not found' });
     }
 
-    // Get presentation rule for this rarity
     const presentationRule = await prisma.presentationRule.findUnique({
       where: { rarity: card.rarity },
     });
