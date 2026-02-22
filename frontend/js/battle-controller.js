@@ -632,32 +632,14 @@ export class DemoBattleController extends BattleController {
   }
 
   buildOpponentDeck(playerDeck) {
-    return playerDeck.map((card, idx) => {
-      const bump = (idx % 4) + 1; // modest difficulty bump
-      const rarityShift = ['abundante', 'frecuente', 'rara', 'excepcional'];
-      const nextRarity = rarityShift[Math.min(rarityShift.length - 1, rarityShift.indexOf(card.rarity) + 1)] || card.rarity;
-
-      const plus = (v) => Math.min(10, v + bump * 0.2);
-
+    // Create a shuffled version of the player deck without any artificial stat bumps.
+    // In a real scenario, this would load a different user's deck.
+    const shuffled = [...playerDeck].sort(() => Math.random() - 0.5);
+    return shuffled.map((card) => {
       return {
         ...card,
         cardId: `${card.cardId}-opp`,
-        name: `${card.name} (AI)`,
-        rarity: nextRarity,
-        attackFactors: {
-          P: plus(card.attackFactors.P || 0),
-          S: plus(card.attackFactors.S || 0),
-          W: plus(card.attackFactors.W || 0),
-          H: plus(card.attackFactors.H || 0),
-          A: plus(card.attackFactors.A || 0)
-        },
-        defenseFactors: {
-          AD: plus(card.defenseFactors.AD || 0),
-          C: plus(card.defenseFactors.C || 0),
-          E: plus(card.defenseFactors.E || 0),
-          SD: plus(card.defenseFactors.SD || 0),
-          R: plus(card.defenseFactors.R || 0)
-        }
+        name: `${card.name} (Rival)`
       };
     });
   }
