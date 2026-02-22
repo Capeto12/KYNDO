@@ -59,7 +59,7 @@ async function main() {
   console.log('Loading pack from:', PACK_PATH);
   const raw = fs.readFileSync(PACK_PATH, 'utf-8');
   const pack = JSON.parse(raw);
-  const assets: Array<{ id: string; title: string; image_url: string; tags?: string[] }> = pack.assets || [];
+  const assets: Array<{ id: string; title: string; image_url: string; tags?: string[]; atk?: number; def?: number }> = pack.assets || [];
 
   console.log(`Found ${assets.length} cards. Upserting into DB...`);
 
@@ -80,6 +80,8 @@ async function main() {
           imageUrl: asset.image_url,
           rarity,
           tags,
+          atk: asset.atk || 0,
+          def: asset.def || 0,
           packId: 'birds',
         },
       });
@@ -92,6 +94,8 @@ async function main() {
           imageUrl: asset.image_url,
           rarity,
           tags,
+          atk: asset.atk || 0,
+          def: asset.def || 0,
           packId: 'birds',
         },
       });

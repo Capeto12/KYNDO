@@ -42,14 +42,34 @@
                 <div class="actions-block">
                     <div id="user-info">
                         <div class="player-info" id="current-player">
-                            <div class="player-avatar">&#128100;</div>
-                            <div class="player-name">Jugador</div>
+                            <div class="player-avatar" id="avatar-img">&#128100;</div>
+                            <div class="player-name" id="player-display-name">Jugador</div>
+                            <button id="btnLogout" class="btn btn-ghost"
+                                style="display:none; padding:2px 6px; font-size:10px; margin-left:8px; height:auto; color:#ef4444;">Salir</button>
                         </div>
                         <div class="player-info" id="opponent-player" style="display: none;">
                             <div class="player-avatar">&#128100;</div>
                             <div class="player-name">Oponente</div>
                         </div>
                     </div>
+                    <button id="btnGoogleLogin" class="btn btn-primary"
+                        style="margin-top:8px;font-size:12px;display:flex;align-items:center;gap:6px;background:#4285F4;color:white;border:none;">
+                        <svg width="14" height="14" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"
+                                fill="#4285F4" />
+                            <path
+                                d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"
+                                fill="#34A853" />
+                            <path
+                                d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.487.366 2.9 1.012 4.148l2.952-2.442z"
+                                fill="#FBBC05" />
+                            <path
+                                d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.443 2.038.957 4.962l2.952 2.332C4.672 5.164 6.656 3.58 9 3.58z"
+                                fill="#EA4335" />
+                        </svg>
+                        Entrar con Google
+                    </button>
                     <button id="themeToggle" class="btn btn-ghost"
                         style="padding:4px 8px; font-size:16px; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; margin-top:8px;"
                         title="Alternar Modo Oscuro">🌓</button>
@@ -701,6 +721,82 @@
                 const { themeManager } = await import('./js/utils.js');
                 themeManager.toggle();
             });
+
+            // Google Auth
+            const btnGoogleLogin = document.getElementById('btnGoogleLogin');
+            const btnLogout = document.getElementById('btnLogout');
+            const playerDisplayName = document.getElementById('player-display-name');
+            const avatarImg = document.getElementById('avatar-img');
+
+            function updateAuthUI() {
+                const user = JSON.parse(localStorage.getItem('kyndo_user') || 'null');
+                if (user) {
+                    btnGoogleLogin.style.display = 'none';
+                    btnLogout.style.display = 'inline-block';
+                    playerDisplayName.textContent = user.displayName || user.email.split('@')[0];
+                    if (user.avatarUrl) {
+                        avatarImg.innerHTML = `<img src="${user.avatarUrl}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                    }
+                    if (user.pairsGrade) {
+                        document.getElementById('hud-grade').textContent = user.pairsGrade;
+                    }
+                } else {
+                    btnGoogleLogin.style.display = 'flex';
+                    btnLogout.style.display = 'none';
+                    playerDisplayName.textContent = 'Jugador';
+                    avatarImg.innerHTML = '&#128100;';
+                }
+            }
+
+            btnLogout.addEventListener('click', () => {
+                localStorage.removeItem('kyndo_token');
+                localStorage.removeItem('kyndo_user');
+                updateAuthUI();
+                window.location.reload();
+            });
+
+            btnGoogleLogin.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('http://localhost:4001/api/auth/google/url');
+                    const { url } = await response.json();
+                    window.location.href = url;
+                } catch (err) {
+                    console.error('Error al obtener URL de Google:', err);
+                }
+            });
+
+            async function handleAuthCallback() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                if (code) {
+                    try {
+                        // Limpiar la URL de inmediato para que no se vea el código
+                        window.history.replaceState({}, document.title, window.location.pathname);
+
+                        const response = await fetch('http://localhost:4001/api/auth/google/callback', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ code })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            localStorage.setItem('kyndo_token', data.token);
+                            localStorage.setItem('kyndo_user', JSON.stringify(data.user));
+                            updateAuthUI();
+                            // Recargar catálogo si es necesario
+                            const { deckManager } = await import('./js/deck-manager.js');
+                            await deckManager.syncCatalog();
+                        }
+                    } catch (err) {
+                        console.error('Error en el callback de Google:', err);
+                    }
+                }
+            }
+
+            // Inicializar Auth
+            handleAuthCallback();
+            updateAuthUI();
 
             // Arranque
             startRun();

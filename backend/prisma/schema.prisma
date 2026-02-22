@@ -22,6 +22,24 @@ model Card {
   rarityV2      String?  @map("rarity_v2") // New rarity field for migrations
   packId        String   @default("birds")
   tags          String[] @default([]) // e.g., ["pares", "kombat"]
+  
+  // Bird Data
+  commonName     String?  @map("common_name")
+  scientificName String?  @map("scientific_name")
+  habitat        String?
+  flightRange    String?  @map("flight_range")
+  heightCm       String?  @map("height_cm")
+  family         String?
+  order          String?
+  species        String?
+  familyGroup    String?  @map("family_group")
+  imageUrls      String[] @default([]) @map("image_urls")
+  audioUrl       String?  @map("audio_url")
+
+  // Combat Stats
+  atk            Int?
+  def            Int?
+
   metadata      Json?    // Additional metadata as JSON
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -194,15 +212,19 @@ model DefenseFactor {
 // ───────────────────────────────────────────────
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  username     String?
-  role         String   @default("player") // "player" | "admin"
-  isActive     Boolean  @default(true) @map("is_active")
-  metadata     Json?
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String?  @map("password_hash")
+  googleId      String?  @unique @map("google_id")
+  displayName   String?  @map("display_name")
+  avatarUrl     String?  @map("avatar_url")
+  username      String?
+  role          String   @default("player") // "player" | "admin"
+  pairsGrade    Int      @default(1) @map("pairs_grade")
+  isActive      Boolean  @default(true) @map("is_active")
+  metadata      Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   cards     UserCard[]
   purchases PackPurchase[]

@@ -1,0 +1,2 @@
+﻿Current __dirname: C:\Users\Carlos\Desktop\KYNDO\backend\seeds
+Absolute PACK_PATH: C:\Users\Carlos\Desktop\KYNDO\birds\pack-1.json

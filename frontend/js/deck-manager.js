@@ -117,7 +117,11 @@ export class DeckManager {
     if (this.isSyncing) return;
     this.isSyncing = true;
     try {
-      const response = await fetch('http://localhost:4001/api/search?limit=200');
+      const token = localStorage.getItem('kyndo_token');
+      const headers = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const response = await fetch('http://localhost:4001/api/search?limit=200', { headers });
       if (response.ok) {
         const data = await response.json();
         if (data.results && data.results.length > 0) {

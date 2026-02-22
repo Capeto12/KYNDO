@@ -59,6 +59,8 @@ router.get('/', async (req: Request, res: Response) => {
         imageUrl: true,
         thumbnailPath: true,
         packId: true,
+        atk: true,
+        def: true,
       },
       take: limit,
       orderBy: [
