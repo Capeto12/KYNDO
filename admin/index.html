@@ -783,7 +783,24 @@
     <div id="toast"></div>
 
     <script>
-        const API = 'http://localhost:4001';
+        function resolveApiBase() {
+            const params = new URLSearchParams(window.location.search);
+            const fromQuery = params.get('api');
+            if (fromQuery) {
+                localStorage.setItem('kyndo_api_base', fromQuery);
+                return fromQuery.replace(/\/$/, '');
+            }
+
+            const fromStorage = localStorage.getItem('kyndo_api_base');
+            if (fromStorage) {
+                return fromStorage.replace(/\/$/, '');
+            }
+
+            // Local default for dev; can be overridden with ?api=https://your-backend
+            return 'http://localhost:4001';
+        }
+
+        const API = resolveApiBase();
 
         // ── Navigation ───────────────────────────────
         function navigate(page) {
@@ -996,13 +1013,13 @@
         <div class="server-row"><span class="server-label">Estado</span><span class="pill online">● Online</span></div>
         <div class="server-row"><span class="server-label">Uptime</span><span class="server-value">${mins}m ${secs}s</span></div>
         <div class="server-row"><span class="server-label">Timestamp</span><span class="server-value" style="font-size:12px">${new Date(h.timestamp).toLocaleString('es-ES')}</span></div>
-        <div class="server-row"><span class="server-label">Puerto</span><span class="server-value">4001</span></div>
+        <div class="server-row"><span class="server-label">API</span><span class="server-value" style="font-size:12px">${API}</span></div>
       `;
             } catch (e) {
                 document.getElementById('dot-server').className = 'status-dot';
                 document.getElementById('server-health').innerHTML = `
         <div class="server-row"><span class="server-label">Estado</span><span class="pill offline">● Offline</span></div>
-        <div style="color:var(--muted);font-size:13px;padding-top:12px">No se puede conectar al backend en puerto 4001.</div>
+        <div style="color:var(--muted);font-size:13px;padding-top:12px">No se puede conectar al backend en ${API}.</div>
       `;
             }
 
