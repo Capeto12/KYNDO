@@ -57,11 +57,7 @@ async function main() {
             throw new Error(`File not found: ${PACK_PATH}`);
         }
 
-        let raw = fs.readFileSync(PACK_PATH, 'utf-8');
-        // Strip BOM if present
-        if (raw.charCodeAt(0) === 0xFEFF) {
-            raw = raw.slice(1);
-        }
+        const raw = fs.readFileSync(PACK_PATH, 'utf-8');
         const pack = JSON.parse(raw);
         const assets = pack.assets || [];
 

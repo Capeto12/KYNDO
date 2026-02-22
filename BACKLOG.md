@@ -20,6 +20,34 @@
 - JWT session: `POST /api/auth/refresh`, middleware `requireAuth`
 - Cliente: botón "Iniciar sesión con Google" en home y en cada juego
 
+### [→] CONTENT-01: Preparar y exportar el contenido de las ~12,000 aves desde Google Drive
+**Archivos**: `birds/pack-1.json` (demo), Google Drive (fuente de verdad)
+**Asignado**: 👤 Carlos — **EN PROGRESO**
+**Tarea**: El contenido real de las aves está en una base de datos de Google Drive con ~12,000 registros (~1,600 completados a la fecha).
+Para poder importarlo al backend, Carlos debe exportar los datos en formato JSON con la siguiente estructura por ave:
+```json
+{
+  "cardId": "ave-001",
+  "commonName": "Colibrí del Sol",
+  "scientificName": "Helianthea viola",
+  "habitat": "Bosque andino",
+  "flightRange": "1800–3500 msnm",
+  "heightCm": 14,
+  "family": "Trochilidae",
+  "order": "Apodiformes",
+  "species": "H. viola",
+  "familyGroup": "Colibríes",
+  "imageUrls": ["url1.webp", "url2.webp", "url3.webp"],
+  "audioUrl": "sonido.mp3"
+}
+```
+Pasos:
+1. Decidir el formato final de `familyGroup` (pendiente de reorganizar en Drive)
+2. Exportar lotes de ~500 aves en archivos JSON
+3. Subir al servidor o pasarlos al endpoint de importación (BACKEND-04)
+
+**Nota**: `pack-1.json` es solo un demo de 40 cartas — no representa la fuente de verdad final.
+
 ### [ ] BACKEND-04: Batch import de aves (datos + media)
 **Archivos**: `backend/src/routes/adminCards.ts`, Prisma schema
 **Asignado**: 🤖 Antigravity
