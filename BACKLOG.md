@@ -1,5 +1,5 @@
 # KYNDO - Backlog de Tareas
-> Actualizado: 2026-02-21
+> Actualizado: 2026-02-21 (rev. backend)
 > Tomar tareas de arriba hacia abajo. Marcar con [x] cuando esté hecha.
 >
 > **Asignaciones:**
@@ -8,23 +8,63 @@
 
 ---
 
+## PRIORIDAD CRÍTICA — Backend: Autenticación y jugadores reales
+
+### [ ] BACKEND-03: Google OAuth2 — Login de jugadores
+**Archivos**: `backend/src/routes/auth.ts`, Prisma schema
+**Asignado**: 🤖 Antigravity (con review de 👤 Carlos)
+**Tarea**: Implementar autenticación con Google (OAuth2 / Google Identity).
+- Nuevo modelo `User` en Prisma (googleId, email, displayName, avatarUrl, pairsGrade, lastActiveAt)
+- Endpoint `GET /api/auth/google` y callback `GET /api/auth/google/callback`
+- En primer login: crear usuario y asignar colección inicial (40 cartas × 3 copias en UserCard)
+- JWT session: `POST /api/auth/refresh`, middleware `requireAuth`
+- Cliente: botón "Iniciar sesión con Google" en home y en cada juego
+
+### [ ] BACKEND-04: Batch import de aves (datos + media)
+**Archivos**: `backend/src/routes/adminCards.ts`, Prisma schema
+**Asignado**: 🤖 Antigravity
+**Tarea**: El admin (o script CLI) debe poder subir los ~12,000 registros de aves en lotes.
+- `POST /api/admin/import/birds` — acepta JSON array, hace upsert por `cardId`
+- Campos nuevos en el schema `Card`:
+  ```
+  commonName, scientificName, habitat, flightRange, heightCm,
+  family, order, species, familyGroup,
+  imageUrls String[], audioUrl String?
+  ```
+- Respuesta: `{ created, updated, failed, errors[] }`
+- Validar tamaño de lote (max 500 registros por request)
+- Rate limit para evitar abuso
+
+### [ ] BACKEND-05: Progreso de jugador sincronizado
+**Archivos**: `backend/src/routes/`, Prisma schema
+**Asignado**: 🤖 Antigravity
+**Tarea**: Mover el progreso del jugador de localStorage al backend.
+- `GET /api/me/progress` — grado actual, historial resumen
+- `PATCH /api/me/progress` — actualizar grado Pairs tras ganar un nivel
+- `POST /api/me/history` — guardar entrada de historial (Pairs o Kombate)
+- `GET /api/me/collection` — colección de cartas del jugador (UserCard)
+- Frontend: sincronizar al final de cada partida si hay sesión activa; fallback a localStorage si no hay sesión
+
+### [ ] BACKEND-06: Panel admin — Monitoreo de jugadores
+**Archivos**: `admin/index.html`, `backend/src/routes/adminUsers.ts`
+**Asignado**: 🤖 Antigravity
+**Tarea**: El admin debe poder ver el estado de todos los jugadores.
+- `GET /api/admin/users` — lista de usuarios con: email, displayName, pairsGrade, lastActiveAt, cardCount
+- `GET /api/admin/users/:id` — detalle: historial, colección, mazos
+- Agregar pestaña "Jugadores" en `admin/index.html`
+- Mostrar tabla: nombre, grado, cartas, última actividad, activo (últimas 24h)
+
+---
+
 ## PRIORIDAD ALTA — Datos y bugs reales
 
-### [ ] BATTLE-03: Agregar stats ATK/DEF explícitos a pack-1.json
+### [~] BATTLE-03: Agregar stats ATK/DEF explícitos a pack-1.json — CANCELADA
 **Archivo**: `birds/pack-1.json`
-**Asignado**: 🤖 Antigravity
-**Tarea**: Actualmente los stats de combate se generan proceduralmente en `battle-controller.js`
-con un hash del `cardId`. Esto es frágil y no permite balancear el juego.
-Agregar campos reales a cada carta:
-```json
-{ "id": "guacamaya-roja", "title": "...", "atk": 72, "def": 58 }
-```
-Distribuir stats coherentes con el tamaño/agresividad real del ave:
-- Águila/Halcón → ATK alto (75-90), DEF media (45-60)
-- Tucán/Guacamaya → ATK media (55-70), DEF alta (65-80)
-- Colibrí/Mariposa → ATK baja (30-45), DEF baja (30-45)
-Rango: 30-90. Excepcionales cerca de 85+, abundantes cerca de 40-.
-Actualizar `battle-controller.js` para leer `card.atk` y `card.def` directamente.
+**Asignado**: ~~🤖 Antigravity~~
+**Razón de cancelación**: `pack-1.json` es solo un demo placeholder de 40 cartas.
+La base de datos real de ~12,000 aves colombianas se está construyendo en Google Drive.
+Cuando llegue el contenido real, `battle-controller.js` leerá `card.atk` y `card.def`
+directamente desde los datos reales. No tiene sentido balancear el demo.
 
 ### [ ] CSS-01: Consolidar CSS duplicado
 **Archivos**: `frontend/styles.css` y `frontend/css/styles.css`
@@ -127,14 +167,11 @@ Kombate no guarda nada. Agregar al terminar cada set de 8 juegos:
 Mostrar en un botón "📋 Historial" en battle.html igual que el de Pairs.
 Usar clave `kyndo_battle_history_v1` en localStorage. Máximo 50 entradas.
 
-### [ ] PAIRS-05: Pestaña de estadísticas globales en Pairs
-**Archivo**: `frontend/index.html` (modal de historial) o `frontend/settings.html`
-**Asignado**: 🤖 Antigravity
-**Tarea**: Mostrar estadísticas acumuladas calculadas del historial (`kyndo_history_v1`):
-- Partidas jugadas / ganadas / % de victoria
-- Grado actual y grado máximo alcanzado
-- Racha máxima histórica y puntuación máxima
-Agregar como segunda pestaña "📊 Estadísticas" dentro del modal de historial existente.
+### [x] PAIRS-05: Pestaña de estadísticas globales en Pairs
+**Archivo**: `frontend/index.html`
+**Asignado**: ✅ Completado (implementado por Carlos en frontend/index.html)
+**Tarea**: Modal de historial con dos pestañas: "Historial" y "Mis Estadísticas".
+Estadísticas: partidas jugadas, % de victoria, grado máximo, racha máxima, puntuación máxima.
 
 ### [ ] DECK-02: Sincronizar colección con backend
 **Archivo**: `frontend/js/deck-manager.js`
